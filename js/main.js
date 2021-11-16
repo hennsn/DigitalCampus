@@ -3,6 +3,8 @@ import * as THREE from 'https://cdn.skypack.dev/three@0.134.0'
 import { OrbitControls } from 'https://cdn.skypack.dev/three@0.134.0/examples/jsm/controls/OrbitControls.js'
 import { GLTFLoader } from 'https://cdn.skypack.dev/three@0.134.0/examples/jsm/loaders/GLTFLoader.js'
 import { DRACOLoader } from 'https://cdn.skypack.dev/three@0.134.0/examples/jsm/loaders/DRACOLoader.js'
+import { HDRCubeTextureLoader } from 'https://cdn.skypack.dev/three@0.134.0/examples/jsm/loaders/HDRCubeTextureLoader.js';
+import { RGBELoader } from "https://cdn.skypack.dev/three@0.134.0/examples/jsm/loaders/RGBELoader.js";
 import Stats from 'https://cdn.skypack.dev/three@0.134.0/examples/jsm/libs/stats.module'
 
 // conventions (may be altered, if sb hates them 😂):
@@ -17,7 +19,7 @@ import Stats from 'https://cdn.skypack.dev/three@0.134.0/examples/jsm/libs/stats
 // named functions probably should have the "function" keyword, while annonymous functions should be lambda expressions
 
 const near = 0.1  // near clipping plane: closer pixels are invisible
-const far  = 1000 // far clipping plane: farther pixels/objects are invisible
+const far  = 2000 // far clipping plane: farther pixels/objects are invisible
 const fov  = 75   // fov in degrees, on the y axis
 
 // camera
@@ -44,8 +46,35 @@ dracoLoader.setDecoderConfig({ type: 'js' })
 const glTFLoader = new GLTFLoader()
 glTFLoader.setDRACOLoader(dracoLoader)
 
+// const environmentMap = new HDRCubeTextureLoader()
+const hdrLoader = new RGBELoader()
+	.setPath('./images/environment/')
+	
+const whiteMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+
+const scale = far * 0.707 // slightly less than 1/sqrt(2)
+const envCube = new THREE.BoxGeometry(scale, scale, scale)
+const envMap = new THREE.Mesh(envCube, whiteMaterial)
+
+
+hdrLoader.setDataType(THREE.HalfFloatType) // alt: UnsignedByteType/FloatType/HalfFloatType
+hdrLoader.load(['kloofendal_38d_partly_cloudy_2k.hdr'], (tex, texData) => {
+	const envMat = new THREE.ShaderMaterial({
+		uniforms: { tex: { value: tex }, exposure: { value: 5 } }, side: THREE.DoubleSide,
+		vertexShader: 'varying vec3 v_pos; void main(){ v_pos = position; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1); }',
+		fragmentShader: 'varying vec3 v_pos; uniform float exposure; uniform sampler2D tex; void main(){ vec3 n = normalize(v_pos); vec3 c = texture(tex, vec2(atan(n.x, n.z)*'+(0.5/Math.PI)+'+.5, n.y*.5+.5)).rgb * exposure; gl_FragColor = vec4(c/(1.0+c), 1); }' // x/(1+x) is equal to Reinhard tonemapping (as long as we don't render in HDR)
+	})
+	tex.magFilter = THREE.LinearFilter
+	tex.needsUpdate = true
+	envMap.material = envMat
+	scene.add(envMap)
+})
+
+window.camera = camera
+window.scene = scene
+
 // temporary sky color as long as we don't have a HDR for that
-scene.background = new THREE.Color(0xbfd1e5)
+scene.background = new THREE.Color(0x768ca1)
 
 const geometry = new THREE.BoxGeometry()
 const material = new THREE.MeshBasicMaterial({ color: 0x77ff33 })
