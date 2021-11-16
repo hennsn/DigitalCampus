@@ -46,7 +46,6 @@ dracoLoader.setDecoderConfig({ type: 'js' })
 const glTFLoader = new GLTFLoader()
 glTFLoader.setDRACOLoader(dracoLoader)
 
-// const environmentMap = new HDRCubeTextureLoader()
 const hdrLoader = new RGBELoader()
 	.setPath('./images/environment/')
 	
@@ -133,6 +132,7 @@ function mainLoop(){
 	// animation / physics stuff goes here
 	
 	stats.update()
+	envMap.position.set(camera.position.x,camera.position.y,camera.position.z) // normally the environment map is fixed in place automatically, but I didn't find the correct map yet (1 texture for all sides combined)
 	renderer.render(scene, camera)
 }
 mainLoop()
