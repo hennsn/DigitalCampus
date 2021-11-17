@@ -100,6 +100,16 @@ glTFLoader.load('models/samples/draco-monkey.glb',
 	(error) => { console.error(error) }
 )
 
+glTFLoader.load('models/samples/dice-compressed.glb',
+	(gltf) => {
+		const model = gltf.scene
+		model.position.set(2,0,0)
+		model.scale.set(.5,.5,.5)
+		scene.add(model)
+	}, undefined,
+	(error) => { console.error(error) }
+)
+
 ////////////////////////////////
 // listeners for interactions //
 ////////////////////////////////
