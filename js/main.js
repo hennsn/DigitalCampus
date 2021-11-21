@@ -7,6 +7,14 @@ import { HDRCubeTextureLoader } from 'https://cdn.skypack.dev/three@0.134.0/exam
 import { RGBELoader } from "https://cdn.skypack.dev/three@0.134.0/examples/jsm/loaders/RGBELoader.js";
 import Stats from 'https://cdn.skypack.dev/three@0.134.0/examples/jsm/libs/stats.module'
 
+import { VRButton } from 'https://cdn.skypack.dev/three@0.134.0/examples/jsm/webxr/VRButton.js'
+
+// what exactly does that do? / how does it work?
+// eher etwas für die #InteractionsGruppe
+// import { XRControllerModelFactory } from 'https://cdn.skypack.dev/three@0.134.0/examples/jsm/webxr/XRControllerModelFactory.js'
+
+
+
 // conventions (may be altered, if sb hates them 😂):
 // x = left/right
 // y = up/down (may change, because z is up in Blender)
@@ -22,15 +30,21 @@ const near = 0.1  // near clipping plane: closer pixels are invisible
 const far  = 2000 // far clipping plane: farther pixels/objects are invisible
 const fov  = 75   // fov in degrees, on the y axis
 
+function printError(err){
+	console.log(err)
+}
+
 // camera
 const camera = new THREE.PerspectiveCamera(fov, window.innerWidth/window.innerHeight, near, far)
 camera.position.y = 1
 camera.position.z = 5
 
 // renderer
-const renderer = new THREE.WebGLRenderer();
-renderer.setSize(window.innerWidth, window.innerHeight);
-document.body.appendChild(renderer.domElement);
+const renderer = new THREE.WebGLRenderer()
+renderer.setSize(window.innerWidth, window.innerHeight)
+renderer.xr.enabled = true
+document.body.appendChild(renderer.domElement)
+document.body.appendChild(VRButton.createButton(renderer))
 
 ////////////////////////////
 // scene + sample objects //
@@ -96,8 +110,7 @@ glTFLoader.load('models/samples/draco-monkey.glb',
 		const model = gltf.scene
 		model.position.y = 1.5
 		scene.add(model)
-	}, undefined,
-	(error) => { console.error(error) }
+	}, undefined, printError
 )
 
 glTFLoader.load('models/samples/dice-compressed.glb',
@@ -106,8 +119,7 @@ glTFLoader.load('models/samples/dice-compressed.glb',
 		model.position.set(2,0,0)
 		model.scale.set(.5,.5,.5)
 		scene.add(model)
-	}, undefined,
-	(error) => { console.error(error) }
+	}, undefined, printError
 )
 
 ////////////////////////////////
@@ -137,7 +149,6 @@ const stats = Stats()
 document.body.appendChild(stats.dom)
 
 function mainLoop(){
-	requestAnimationFrame(mainLoop)
 	
 	// animation / physics stuff goes here
 	
@@ -145,5 +156,4 @@ function mainLoop(){
 	envMap.position.set(camera.position.x,camera.position.y,camera.position.z) // normally the environment map is fixed in place automatically, but I didn't find the correct map yet (1 texture for all sides combined)
 	renderer.render(scene, camera)
 }
-mainLoop()
-
+renderer.setAnimationLoop(mainLoop) // requestAnimationFrame funktioniert nicht für WebXR, aber die hier funktioniert für mit und ohne :)
