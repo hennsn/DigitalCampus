@@ -57,7 +57,7 @@ document.body.appendChild(VRButton.createButton(renderer))
 // scene + sample objects //
 ////////////////////////////
 
-const scene = new THREE.Scene()
+const scene = window.scene = new THREE.Scene()
 // Configure and create Draco decoder.
 const dracoLoader = new DRACOLoader()
 dracoLoader.setDecoderPath('js/libs/draco/')
@@ -70,24 +70,20 @@ glTFLoader.setDRACOLoader(dracoLoader)
 const hdrLoader = new RGBELoader()
 	.setPath('./images/environment/')
 	
-const whiteMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
-
-const scale = far * 0.707 // slightly less than 1/sqrt(2)
-const envCube = new THREE.BoxGeometry(scale, scale, scale)
-const envMap = new THREE.Mesh(envCube, whiteMaterial)
-
-
-hdrLoader.setDataType(THREE.HalfFloatType) // alt: UnsignedByteType/FloatType/HalfFloatType
+hdrLoader.setDataType(THREE.HalfFloatType) // alternatives: UnsignedByteType/FloatType/HalfFloatType
 hdrLoader.load(['kloofendal_38d_partly_cloudy_2k.hdr'], (tex, texData) => {
-	const envMat = new THREE.ShaderMaterial({
+	tex.magFilter = THREE.LinearFilter
+	tex.needsUpdate = true
+	const scale = far * 0.707 // slightly less than 1/sqrt(2)
+	const cube = new THREE.BoxGeometry(scale, scale, scale)
+	const material = new THREE.ShaderMaterial({
 		uniforms: { tex: { value: tex }, exposure: { value: 5 } }, side: THREE.DoubleSide,
 		vertexShader: 'varying vec3 v_pos; void main(){ v_pos = position; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1); }',
 		fragmentShader: 'varying vec3 v_pos; uniform float exposure; uniform sampler2D tex; void main(){ vec3 n = normalize(v_pos); vec3 c = texture(tex, vec2(atan(n.x, n.z)*'+(0.5/Math.PI)+'+.5, n.y*.5+.5)).rgb * exposure; gl_FragColor = vec4(c/(1.0+c), 1); }' // x/(1+x) is equal to Reinhard tonemapping (as long as we don't render in HDR)
 	})
-	tex.magFilter = THREE.LinearFilter
-	tex.needsUpdate = true
-	envMap.material = envMat
-	scene.add(envMap)
+	const mesh = window.envMap = new THREE.Mesh(cube, material)
+	mesh.name = 'EnvironmentMap'
+	scene.add(mesh)
 })
 
 window.camera = camera
@@ -95,11 +91,6 @@ window.scene = scene
 
 // temporary sky color as long as we don't have a HDR for that
 scene.background = new THREE.Color(0x768ca1)
-
-const geometry = new THREE.BoxGeometry()
-const material = new THREE.MeshBasicMaterial({ color: 0x77ff33 })
-const cube = new THREE.Mesh(geometry, material)
-scene.add(cube)
 
 // sun light from above
 // can support shadows, but we need a ground to project them onto, and we need to configure them (best depending on the hardware capabilities)
@@ -114,16 +105,18 @@ scene.add(ambient)
 glTFLoader.load('models/samples/Abbeanum (teils texturiert).glb',
 	(gltf) => {
 		const model = gltf.scene
+		model.name = 'Abbeanum'
 		scene.add(model)
 	}, undefined, printError
 )
 
 // the dummy ground
 const meshGround = new THREE.Mesh(
-	new THREE.PlaneGeometry(10,10),
-	new THREE.MeshBasicMaterial({color: 0x000000, wireframe:true,})
+	new THREE.PlaneGeometry(far, far),
+	new THREE.MeshBasicMaterial({color: 0x778877, wireframe: false})
 )
 //so the ground is on the perceived ground
+meshGround.name = 'Ground'
 meshGround.rotation.x -= Math.PI / 2
 scene.add(meshGround)
 
@@ -216,7 +209,9 @@ function mainLoop(){
 	// animation / physics stuff goes here
 	handleKeyboardState()
 	stats.update()
-	envMap.position.set(camera.position.x,camera.position.y,camera.position.z) // normally the environment map is fixed in place automatically, but I didn't find the correct map yet (1 texture for all sides combined)
+	if(window.envMap){
+		window.envMap.position.set(camera.position.x,camera.position.y,camera.position.z) // normally the environment map is fixed in place automatically, but I didn't find the correct map yet (1 texture for all sides combined)
+	}
 	renderer.render(scene, camera)
 }
 renderer.setAnimationLoop(mainLoop) // requestAnimationFrame funktioniert nicht für WebXR, aber die hier funktioniert für mit und ohne :)
