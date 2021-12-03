@@ -30,13 +30,21 @@ const near = 0.1  // near clipping plane: closer pixels are invisible
 const far  = 2000 // far clipping plane: farther pixels/objects are invisible
 const fov  = 75   // fov in degrees, on the y axis
 
+// the keyboard
+const keyboard = {}
 function printError(err){
 	console.log(err)
 }
 
+// the user
+const ego = { height:1.8, speed:0.2, turnSpeed:Math.PI * 0.01}
+
+
+
+
 // camera
 const camera = new THREE.PerspectiveCamera(fov, window.innerWidth/window.innerHeight, near, far)
-camera.position.y = 1
+camera.position.y = ego.height
 camera.position.z = 5
 
 // renderer
@@ -122,13 +130,23 @@ glTFLoader.load('models/samples/dice-compressed.glb',
 	}, undefined, printError
 )
 
+// the dummy ground
+const meshGround = new THREE.Mesh(
+	new THREE.PlaneGeometry(10,10),
+	new THREE.MeshBasicMaterial({color: 0x000000, wireframe:true,})
+)
+//so the ground is on the perceived ground
+meshGround.rotation.x -= Math.PI / 2
+scene.add(meshGround)
+
+
 ////////////////////////////////
 // listeners for interactions //
 ////////////////////////////////
 
-const controls = new OrbitControls(camera, renderer.domElement)
-controls.target.set(0, 1, 0) // orbit center
-controls.update()// compute transform for 1st frame
+//const controls = new OrbitControls(camera, renderer.domElement)
+//controls.target.set(0, 1, 0) // orbit center
+//controls.update()// compute transform for 1st frame
 
 // adjust the aspect ratio as needed:
 window.addEventListener("resize", (event) => {
@@ -136,6 +154,19 @@ window.addEventListener("resize", (event) => {
 	camera.updateProjectionMatrix()
 	renderer.setSize(window.innerWidth, window.innerHeight)
 })
+
+// Keyboard listeners
+window.addEventListener('keydown', keyDown)
+window.addEventListener('keyup', keyUp)
+
+
+function keyDown(event){
+	keyboard[event.keyCode] = true 
+}
+
+function keyUp(event){
+	keyboard[event.keyCode] = false
+}
 
 // todo webxr button & support
 
@@ -145,13 +176,47 @@ window.addEventListener("resize", (event) => {
 
 // for debugging: fps/frame-time/memory usage
 // browsers are typically locked at the screen refresh rate, so 60 fps (in my case) is perfect
+
+// helper functions for the animation loop
+function handleKeyboardState(){
+	/**
+	 * Helper function for updating the camera controls in the animation loop.
+	*/
+	if(keyboard[37]){ // left arrow pressed
+		camera.rotation.y += ego.turnSpeed
+	}
+	if(keyboard[39]){ // right arrow pressed
+		camera.rotation.y -= ego.turnSpeed
+	}
+	if(keyboard[38] || keyboard[87]){ // up arrow or w pressed
+		camera.position.x += -Math.sin(camera.rotation.y) * ego.speed
+		camera.position.z += -Math.cos(camera.rotation.y) * ego.speed
+	}
+	if(keyboard[40] || keyboard[83]){ // down arrow  or s pressed
+		camera.position.x -= -Math.sin(camera.rotation.y) * ego.speed
+		camera.position.z -= -Math.cos(camera.rotation.y) * ego.speed
+	}
+
+	if(keyboard[65]){
+		camera.position.x -= Math.sin(camera.rotation.y + Math.PI / 2) * ego.speed
+		camera.position.z -= Math.cos(camera.rotation.y + Math.PI / 2) * ego.speed
+	}
+
+	if(keyboard[68]){
+		camera.position.x += Math.sin(camera.rotation.y + Math.PI / 2) * ego.speed
+		camera.position.z += Math.cos(camera.rotation.y + Math.PI / 2) * ego.speed
+	}
+
+
+}
+
 const stats = Stats()
 document.body.appendChild(stats.dom)
 
 function mainLoop(){
 	
 	// animation / physics stuff goes here
-	
+	handleKeyboardState()
 	stats.update()
 	envMap.position.set(camera.position.x,camera.position.y,camera.position.z) // normally the environment map is fixed in place automatically, but I didn't find the correct map yet (1 texture for all sides combined)
 	renderer.render(scene, camera)
