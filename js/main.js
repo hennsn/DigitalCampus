@@ -166,7 +166,7 @@ terrainImage.onload = () => {
 	geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3))
 	geometry.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2))
 	geometry.computeVertexNormals() // could be computed from the texture data
-	const texture = textureLoader.load('images/map/c900.png') // color: 0x808877, 
+	const texture = textureLoader.load('images/map/c900.jpg') // color: 0x808877, 
 	const mesh = window.terrainMesh = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({ map: texture }))
 	mesh.name = 'Terrain'
 	scene.add(mesh)
