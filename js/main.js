@@ -27,7 +27,7 @@ import { VRButton } from 'https://cdn.skypack.dev/three@0.134.0/examples/jsm/web
 // named functions probably should have the "function" keyword, while annonymous functions should be lambda expressions
 
 const near = 0.1  // near clipping plane: closer pixels are invisible
-const far  = 2000 // far clipping plane: farther pixels/objects are invisible
+const far  = 1e5 // far clipping plane: farther pixels/objects are invisible
 const fov  = 75   // fov in degrees, on the y axis
 
 // the keyboard
@@ -67,6 +67,7 @@ dracoLoader.setDecoderConfig({ type: 'js' })
 const glTFLoader = new GLTFLoader()
 glTFLoader.setDRACOLoader(dracoLoader)
 
+const textureLoader = new THREE.TextureLoader() // png, jpg, bmp, ...
 const hdrLoader = new RGBELoader()
 	.setPath('./images/environment/')
 	
@@ -86,6 +87,91 @@ hdrLoader.load(['kloofendal_38d_partly_cloudy_2k.hdr'], (tex, texData) => {
 	scene.add(mesh)
 })
 
+// intershop tower is the center of our world
+var lat0 = 50.9288633
+var lon0 = 11.5846216
+var height0 = 182
+// abbeanum is the center
+lat0 = 50.9339311, lon0 = 11.5807221
+var metersPerDegree = 40e6 / 360
+var degreesToRad = Math.PI / 180
+var lonScale = Math.cos(lat0 * degreesToRad)
+
+function latToLocal(lat){
+	// z is inversed to what we'd expect -> -
+	return -(lat-lat0) * metersPerDegree
+}
+
+function lonToLocal(lon){
+	return (lon-lon0) * metersPerDegree * lonScale
+}
+
+function heightToLocal(h){
+	return h - height0
+}
+
+function mix(a,b,f){
+	return (1-f)*a+f*b
+}
+
+function setPosition(group, lat, lon, height, rot){
+	group.position.set(lonToLocal(lon), heightToLocal(height||0), latToLocal(lat))
+	group.rotation.set(0, (rot||0)*degreesToRad, 0)
+}
+
+const terrainImage = new Image()
+terrainImage.src = 'images/h750.png'
+terrainImage.onload = () => {
+	// I (Antonio) had to guess the coordinates, so an offset is possible
+	var dx = -0.0005
+	var dy = +0.00023
+	var minLat = 50.9186171 + dy
+	var minLon = 11.5628571 + dx
+	var maxLat = 50.9463458 + dy
+	var maxLon = 11.6035806 + dx
+	var img = terrainImage
+	var width = img.width
+	var height = img.height
+	var canvas = document.createElement('canvas')
+	canvas.width = img.width
+	canvas.height = img.height
+	canvas.getContext('2d').drawImage(img, 0, 0, width, height)
+	var data = canvas.getContext('2d').getImageData(0, 0, width, height).data
+	var geometry = new THREE.BufferGeometry()
+	var vertices = []
+	var uvs = []
+	for(var y=0,i=0;y<height;y++){
+		for(var x=0;x<width;x++,i+=4){
+			var r = data[i]
+			var g = data[i+1]
+			var h = (r * 256 + g) * 0.1
+			var u = x/(width-1)
+			var v = y/(height-1)
+			var xi = mix(minLon, maxLon, u)
+			var yi = mix(minLat, maxLat, v)
+			vertices.push(lonToLocal(xi), heightToLocal(h), latToLocal(yi))
+			// uvs.push(u * 0.99 + 0.02, v * 0.99 - 0.003)
+			uvs.push(u, v)
+		}
+	}
+	var indices = []
+	for(var y=1;y<height;y++){
+		var i = (y-1)*width;
+		for(var x=1;x<width;x++,i++){
+			indices.push(i, i+1, i+width+1)
+			indices.push(i, i+1+width, i+width)
+		}
+	}
+	geometry.setIndex(indices)
+	geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3))
+	geometry.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2))
+	geometry.computeVertexNormals() // could be computed from the texture data
+	const texture = textureLoader.load('images/c900.png') // color: 0x808877, 
+	const mesh = window.terrainMesh = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({ map: texture }))
+	mesh.name = 'Terrain'
+	scene.add(mesh)
+}
+
 window.camera = camera
 window.scene = scene
 
@@ -94,40 +180,38 @@ scene.background = new THREE.Color(0x768ca1)
 
 // sun light from above
 // can support shadows, but we need a ground to project them onto, and we need to configure them (best depending on the hardware capabilities)
-const sun = new THREE.DirectionalLight(0xffffff);
-sun.rotation.x = -30*3.14/180
+const sun = window.sun = new THREE.DirectionalLight({ color: { r: 0.8, g: 0.8, b: 0.8 }});
+sun.position.set(0.8,0.7,1) // the sun has its default target at 0,0,0
 scene.add(sun)
+scene.add(sun.target) // needs to be added, if we want to change the suns target
+
 
 // ambient light from below
-const ambient = new THREE.HemisphereLight(0xffffff, 0x444444);
+const ambient = new THREE.HemisphereLight(0x222222, 0x222222);
 scene.add(ambient)
 
 glTFLoader.load('models/samples/Abbeanum (teils texturiert).glb',
 	(gltf) => {
-		const model = gltf.scene
+		const model = window.abbeanum = gltf.scene
 		model.name = 'Abbeanum'
+		setPosition(model, 50.9339769, 11.5804391, 182, +15)
+		var scale = 2.8 // a guess
+		model.scale.set(scale, scale, scale)
 		scene.add(model)
 	}, undefined, printError
 )
-
-// the dummy ground
-const meshGround = new THREE.Mesh(
-	new THREE.PlaneGeometry(far, far),
-	new THREE.MeshBasicMaterial({color: 0x778877, wireframe: false})
-)
-//so the ground is on the perceived ground
-meshGround.name = 'Ground'
-meshGround.rotation.x -= Math.PI / 2
-scene.add(meshGround)
 
 
 ////////////////////////////////
 // listeners for interactions //
 ////////////////////////////////
 
-//const controls = new OrbitControls(camera, renderer.domElement)
-//controls.target.set(0, 1, 0) // orbit center
-//controls.update()// compute transform for 1st frame
+// Antonio wants to use them ^^
+if(localStorage.orbitControls){
+	const controls = new OrbitControls(camera, renderer.domElement)
+	controls.target.set(0, 1, 0) // orbit center
+	controls.update()// compute transform for 1st frame
+}
 
 // adjust the aspect ratio as needed:
 window.addEventListener("resize", (event) => {
