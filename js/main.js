@@ -37,15 +37,14 @@ function printError(err){
 }
 
 // the user
-const ego = { height:1.8, speed:0.2, turnSpeed:Math.PI * 0.01}
+const user = { height: 1.8, speed: 0.2, turnSpeed: 0.03 }
 
 
 
 
 // camera
 const camera = new THREE.PerspectiveCamera(fov, window.innerWidth/window.innerHeight, near, far)
-camera.position.y = ego.height
-camera.position.z = 5
+camera.position.set(0, user.height, 15)
 
 // renderer
 const renderer = new THREE.WebGLRenderer()
@@ -112,20 +111,9 @@ scene.add(sun)
 const ambient = new THREE.HemisphereLight(0xffffff, 0x444444);
 scene.add(ambient)
 
-// works, but somehow the materials are lost :/
-glTFLoader.load('models/samples/draco-monkey.glb',
+glTFLoader.load('models/samples/Abbeanum (teils texturiert).glb',
 	(gltf) => {
 		const model = gltf.scene
-		model.position.y = 1.5
-		scene.add(model)
-	}, undefined, printError
-)
-
-glTFLoader.load('models/samples/dice-compressed.glb',
-	(gltf) => {
-		const model = gltf.scene
-		model.position.set(2,0,0)
-		model.scale.set(.5,.5,.5)
 		scene.add(model)
 	}, undefined, printError
 )
@@ -193,28 +181,28 @@ function handleKeyboardState(){
 	 * Helper function for updating the camera controls in the animation loop.
 	*/
 	if(keyboard[37]){ // left arrow pressed
-		camera.rotation.y += ego.turnSpeed
+		camera.rotation.y += user.turnSpeed
 	}
 	if(keyboard[39]){ // right arrow pressed
-		camera.rotation.y -= ego.turnSpeed
+		camera.rotation.y -= user.turnSpeed
 	}
 	if(keyboard[38] || keyboard[87]){ // up arrow or w pressed
-		camera.position.x += -Math.sin(camera.rotation.y) * ego.speed
-		camera.position.z += -Math.cos(camera.rotation.y) * ego.speed
+		camera.position.x += -Math.sin(camera.rotation.y) * user.speed
+		camera.position.z += -Math.cos(camera.rotation.y) * user.speed
 	}
 	if(keyboard[40] || keyboard[83]){ // down arrow  or s pressed
-		camera.position.x -= -Math.sin(camera.rotation.y) * ego.speed
-		camera.position.z -= -Math.cos(camera.rotation.y) * ego.speed
+		camera.position.x -= -Math.sin(camera.rotation.y) * user.speed
+		camera.position.z -= -Math.cos(camera.rotation.y) * user.speed
 	}
 
 	if(keyboard[65]){
-		camera.position.x -= Math.sin(camera.rotation.y + Math.PI / 2) * ego.speed
-		camera.position.z -= Math.cos(camera.rotation.y + Math.PI / 2) * ego.speed
+		camera.position.x -= Math.sin(camera.rotation.y + Math.PI / 2) * user.speed
+		camera.position.z -= Math.cos(camera.rotation.y + Math.PI / 2) * user.speed
 	}
 
 	if(keyboard[68]){
-		camera.position.x += Math.sin(camera.rotation.y + Math.PI / 2) * ego.speed
-		camera.position.z += Math.cos(camera.rotation.y + Math.PI / 2) * ego.speed
+		camera.position.x += Math.sin(camera.rotation.y + Math.PI / 2) * user.speed
+		camera.position.z += Math.cos(camera.rotation.y + Math.PI / 2) * user.speed
 	}
 
 
