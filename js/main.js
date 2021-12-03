@@ -123,6 +123,8 @@ const terrainImage = new Image()
 terrainImage.src = 'images/map/h750.png'
 terrainImage.onload = () => {
 	// I (Antonio) had to guess the coordinates, so an offset is possible
+	// the Abbeanum is correct now, the Saale is no longer; maybe we can correct is using these two points;
+	// but: it isn't final anyways
 	var dx = -0.0005
 	var dy = +0.00023
 	var minLat = 50.9186171 + dy
