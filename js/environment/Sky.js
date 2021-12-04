@@ -5,10 +5,11 @@ function createSky(scene){
 	// temporary sky color as long as we don't have a HDR for that
 	scene.background = new THREE.Color(0x768ca1)
 	hdrLoader.setDataType(THREE.HalfFloatType) // alternatives: UnsignedByteType/FloatType/HalfFloatType
-	hdrLoader.load(['kloofendal_38d_partly_cloudy_2k.hdr'], (tex, texData) => {
+	const url = 'kloofendal_38d_partly_cloudy_2k.hdr'
+	hdrLoader.load(url, (tex, texData) => {
 		tex.magFilter = THREE.LinearFilter
 		tex.needsUpdate = true
-		const scale = far * 0.707 // slightly less than 1/sqrt(2)
+		const scale = camera.far * 0.707 // slightly less than 1/sqrt(2)
 		const cube = new THREE.BoxGeometry(scale, scale, scale)
 		const material = new THREE.ShaderMaterial({
 			uniforms: { tex: { value: tex }, exposure: { value: 5 } }, side: THREE.DoubleSide,
