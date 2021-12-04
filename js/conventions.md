@@ -1,7 +1,8 @@
 
-# conventions (may be altered, if sb hates them 😂):
+# Conventions
 
 ## Coordinate system
+
 - x = left/right = -longitude
 - y = up/down (may change, because z is up in Blender)
 - z = forward/backward = +latitude
@@ -12,3 +13,7 @@
 
 - named functions probably should have the "function" keyword, while annonymous functions should be lambda expressions
 
+## Automated solution
+
+We can use a plugin like Prettier, and then don't have to worry that much about formatting.
+Antonio'd suggest we use a common config, which aligns with the present conventions.
