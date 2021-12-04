@@ -13,6 +13,14 @@ function fillScene(scene){
 		scene.add(model)
 	}, undefined, printError)
 	
+	glTFLoader.load('models/samples/campus-joined.glb', (gltf) => {
+		const model = window.abbeanum = gltf.scene
+		placeLatLonObject(model, 'City Center', 50.9279284 + 0.0001, 11.5829607 - 0.00016, 150, 0)
+		var scale = 1 // a guess
+		model.scale.set(scale, scale, scale)
+		scene.add(model)
+	}, undefined, printError)
+	
 }
 
 export { fillScene }
