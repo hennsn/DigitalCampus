@@ -1,11 +1,10 @@
 
-import * as THREE from 'https://cdn.skypack.dev/three@0.134.0'
-import { OrbitControls } from 'https://cdn.skypack.dev/three@0.134.0/examples/jsm/controls/OrbitControls.js'
-import { GLTFLoader } from 'https://cdn.skypack.dev/three@0.134.0/examples/jsm/loaders/GLTFLoader.js'
-import { DRACOLoader } from 'https://cdn.skypack.dev/three@0.134.0/examples/jsm/loaders/DRACOLoader.js'
-import { HDRCubeTextureLoader } from 'https://cdn.skypack.dev/three@0.134.0/examples/jsm/loaders/HDRCubeTextureLoader.js';
-import { RGBELoader } from "https://cdn.skypack.dev/three@0.134.0/examples/jsm/loaders/RGBELoader.js";
-import Stats from 'https://cdn.skypack.dev/three@0.134.0/examples/jsm/libs/stats.module'
+import * as THREE from 'https://cdn.skypack.dev/three@0.135.0'
+import { GLTFLoader } from 'https://cdn.skypack.dev/three@0.135.0/examples/jsm/loaders/GLTFLoader.js'
+import { DRACOLoader } from 'https://cdn.skypack.dev/three@0.135.0/examples/jsm/loaders/DRACOLoader.js'
+import { HDRCubeTextureLoader } from 'https://cdn.skypack.dev/three@0.135.0/examples/jsm/loaders/HDRCubeTextureLoader.js';
+import { RGBELoader } from "https://cdn.skypack.dev/three@0.135.0/examples/jsm/loaders/RGBELoader.js";
+import Stats from 'https://cdn.skypack.dev/three@0.135.0/examples/jsm/libs/stats.module'
 
 import { VRButton } from 'https://cdn.skypack.dev/three@0.134.0/examples/jsm/webxr/VRButton.js'
 
@@ -55,7 +54,7 @@ const scene = new THREE.Scene()
 const dracoLoader = new DRACOLoader()
 dracoLoader.setDecoderPath('js/libs/draco/')
 // who can get this working over the CDN? current error message: "Uncaught SyntaxError: Unexpected token 'export'"
-// dracoLoader.setDecoderPath('https://cdn.skypack.dev/three@0.134.0/examples/js/libs/draco/')
+// dracoLoader.setDecoderPath('https://cdn.skypack.dev/three@0.135.0/examples/js/libs/draco/')
 dracoLoader.setDecoderConfig({ type: 'js' })
 const glTFLoader = new GLTFLoader()
 glTFLoader.setDRACOLoader(dracoLoader)
