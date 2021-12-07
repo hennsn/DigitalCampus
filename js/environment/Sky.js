@@ -1,5 +1,5 @@
 
-import * as THREE from 'https://cdn.skypack.dev/three@0.134.0'
+import * as THREE from 'https://cdn.skypack.dev/three@0.135.0'
 
 function createSky(scene){
 	// temporary sky color as long as we don't have a HDR for that
