@@ -56,7 +56,6 @@ function createTerrain(scene){
 		geometry.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2))
 		geometry.computeVertexNormals() // could be computed from the texture data
 		const texture = textureLoader.load('map/c900.jpg')
-		console.log(texture)
 		const mesh = window.terrainMesh = new THREE.Mesh(geometry, new THREE.MeshPhongMaterial({ map: texture }))
 		mesh.name = 'Terrain'
 		scene.add(mesh)
