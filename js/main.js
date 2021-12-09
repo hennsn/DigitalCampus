@@ -6,10 +6,12 @@ import { HDRCubeTextureLoader } from 'https://cdn.skypack.dev/three@0.135.0/exam
 import { RGBELoader } from "https://cdn.skypack.dev/three@0.135.0/examples/jsm/loaders/RGBELoader.js";
 import Stats from 'https://cdn.skypack.dev/three@0.135.0/examples/jsm/libs/stats.module'
 
+import { clamp }  from './Maths.js'
 import { createSky }  from './environment/Sky.js'
 import { createLighting } from './environment/Lighting.js'
 import { fillScene } from './environment/Scene.js'
 import { createTerrain } from './environment/Terrain.js'
+import { handleUserInterface } from './UserInterface.js'
 import { createInteractions, handleInteractions } from './interactions/Interactions.js'
 
 
@@ -74,10 +76,17 @@ createInteractions(scene, camera, renderer)
 const stats = Stats()
 document.body.appendChild(stats.dom)
 
+var lastTime = new Date().getTime()
+
 function mainLoop(){
+	
+	var time = new Date().getTime()
+	var deltaTime = clamp((time-lastTime)/1e3, 0.1, 1.0)
+	lastTime = time
 	
 	// animation / physics stuff goes here
 	handleInteractions(scene, camera)
+	handleUserInterface(deltaTime)
 	stats.update()
 	
 	// todo we should be able to register event listeners for mainLoop, and do our stuff inside of them
