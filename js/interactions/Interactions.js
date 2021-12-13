@@ -53,8 +53,11 @@ function createInteractions(scene, camera, renderer){
 }
 
 // helper functions for the animation loop
-function handleInteractions(scene, camera){
+function handleInteractions(scene, camera, raycaster){
 	
+	raycaster.setFromCamera(camera.position, camera)
+	//we cant check whole scene (too big) maybe copy the important objects from scene then do raycasting collision check
+	const intersections = raycaster.intersectObjects(scene.getObjectByName('Abbeanum').children)
 	/**
 	 * Helper function for updating the camera controls in the animation loop.
 	 */
@@ -65,8 +68,11 @@ function handleInteractions(scene, camera){
 		camera.rotation.y -= user.turnSpeed
 	}
 	if(keyboard[38] || keyboard[87]){ // up arrow or w pressed
+		//test if there is an collision in front of us
+		if(intersections.length<1){
 		camera.position.x += -Math.sin(camera.rotation.y) * user.speed
 		camera.position.z += -Math.cos(camera.rotation.y) * user.speed
+		}	
 	}
 	if(keyboard[40] || keyboard[83]){ // down arrow  or s pressed
 		camera.position.x -= -Math.sin(camera.rotation.y) * user.speed
@@ -74,13 +80,17 @@ function handleInteractions(scene, camera){
 	}
 	
 	if(keyboard[65]){
+		if(intersections.length<1){
 		camera.position.x -= Math.sin(camera.rotation.y + Math.PI / 2) * user.speed
 		camera.position.z -= Math.cos(camera.rotation.y + Math.PI / 2) * user.speed
+		}
 	}
 	
 	if(keyboard[68]){
+		if(intersections.length<1){
 		camera.position.x += Math.sin(camera.rotation.y + Math.PI / 2) * user.speed
 		camera.position.z += Math.cos(camera.rotation.y + Math.PI / 2) * user.speed
+		}
 	}
 	
 }

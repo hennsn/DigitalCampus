@@ -59,6 +59,12 @@ createLighting(scene)
 createTerrain(scene)
 fillScene(scene)
 
+///////////
+// raycaster //
+///////////
+const raycaster = new THREE.Raycaster()
+raycaster.far = 8
+
 // adjust the aspect ratio as needed:
 window.addEventListener('resize', (event) => {
 	camera.aspect = window.innerWidth / window.innerHeight
@@ -83,9 +89,9 @@ function mainLoop(){
 	var time = new Date().getTime()
 	var deltaTime = clamp((time-lastTime)/1e3, 0.1, 1.0)
 	lastTime = time
-	
+
 	// animation / physics stuff goes here
-	handleInteractions(scene, camera)
+	handleInteractions(scene, camera, raycaster)
 	handleUserInterface(deltaTime)
 	stats.update()
 	
