@@ -48,10 +48,11 @@ function updateDownloadBar(dt){
 	if(!isFinished) wasFinished = false
 	
 	// display the current state
-	var targetOpacity = total ? isFinished ? 0 : 1 : 0
-	var targetWidth = loaded*100/(total || 1)
-	width = targetWidth > width ? mix(width, targetWidth, 0.3 * dt) : targetWidth
-	opacity = mix(opacity, targetOpacity, 0.3 * dt)
+	const targetOpacity = total ? isFinished ? 0 : 1 : 0
+	const targetWidth = loaded*100/(total || 1)
+	const mixSpeed = 3 * dt
+	width = targetWidth > width ? mix(width, targetWidth, mixSpeed) : targetWidth
+	opacity = mix(opacity, targetOpacity, mixSpeed)
 	if(opacity * 256 > 1){
 		progressBar.style.width = (0.1 + 0.9 * width) + '%' // 10% are shown at least, so that the bar is always visible when loading
 		progressBar.style.backgroundColor = 'rgba(158,100,255,'+opacity+')'

@@ -57,7 +57,8 @@ function handleInteractions(scene, camera, raycaster){
 	
 	raycaster.setFromCamera(camera.position, camera)
 	//we cant check whole scene (too big) maybe copy the important objects from scene then do raycasting collision check
-	const intersections = raycaster.intersectObjects(scene.getObjectByName('Abbeanum').children)
+	const abbeanum = scene.getObjectByName('Abbeanum')
+	const intersections = abbeanum ? raycaster.intersectObjects(abbeanum.children) : null
 	/**
 	 * Helper function for updating the camera controls in the animation loop.
 	 */

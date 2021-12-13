@@ -87,7 +87,7 @@ var lastTime = new Date().getTime()
 function mainLoop(){
 	
 	var time = new Date().getTime()
-	var deltaTime = clamp((time-lastTime)/1e3, 0.1, 1.0)
+	var deltaTime = clamp((time-lastTime)/1e3, 1e-3, 1.0)
 	lastTime = time
 
 	// animation / physics stuff goes here
