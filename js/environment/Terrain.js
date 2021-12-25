@@ -58,12 +58,8 @@ function createTerrain(scene){
 		geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3))
 		geometry.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2))
 		geometry.computeVertexNormals() // could be computed from the texture data
-<<<<<<< HEAD
-		const texture = textureLoader.load('map/c900.jpg')
-=======
 		const texture = textureLoader.load('map/c900.jpg') // if we want texture loading updated, we could use https://github.com/mrdoob/three.js/issues/10439
 		// 3.js does not support it out-of-the-box
->>>>>>> main
 		const mesh = window.terrainMesh = new THREE.Mesh(geometry, new THREE.MeshPhongMaterial({ map: texture }))
 		mesh.name = 'Terrain'
 		scene.add(mesh)
