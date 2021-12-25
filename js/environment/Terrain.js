@@ -1,13 +1,16 @@
 
-// https://www.geoportal-th.de/de-de/Downloadbereiche/Download-Offene-Geodaten-Th%C3%BCringen/Download-H%C3%B6hendaten
+// die Kartendaten sind von https://www.geoportal-th.de/de-de/Downloadbereiche/Download-Offene-Geodaten-Th%C3%BCringen/Download-H%C3%B6hendaten
+
 import * as THREE from 'https://cdn.skypack.dev/three@0.135.0'
 
 import { mix } from '../Maths.js'
 import { lonToX, latToZ, heightToY } from './Coordinates.js'
+import { printError, updateDownloadProgress } from '../UserInterface.js'
 
 function createTerrain(scene){
 	const terrainImage = new Image()
 	terrainImage.src = 'images/map/h750.png' // alternatives: h1500, h3000
+	// terrainImage.onprogress could be added like this: https://stackoverflow.com/questions/14218607/javascript-loading-progress-of-an-image
 	terrainImage.onload = () => {
 		// I (Antonio) had to guess the coordinates, so an offset is possible
 		// the Abbeanum is correct now, the Saale is no longer; maybe we can correct is using these two points;
@@ -55,7 +58,12 @@ function createTerrain(scene){
 		geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3))
 		geometry.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2))
 		geometry.computeVertexNormals() // could be computed from the texture data
+<<<<<<< HEAD
 		const texture = textureLoader.load('map/c900.jpg')
+=======
+		const texture = textureLoader.load('map/c900.jpg') // if we want texture loading updated, we could use https://github.com/mrdoob/three.js/issues/10439
+		// 3.js does not support it out-of-the-box
+>>>>>>> main
 		const mesh = window.terrainMesh = new THREE.Mesh(geometry, new THREE.MeshPhongMaterial({ map: texture }))
 		mesh.name = 'Terrain'
 		scene.add(mesh)
