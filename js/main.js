@@ -54,16 +54,23 @@ glTFLoader.setDRACOLoader(dracoLoader)
 ///////////
 
 const scene = window.scene = new THREE.Scene()
+// helper scene containing only models for the collision raycasting.
+// collision models are slightly enlarged clones of the visible models.
+// does not contain invisible/non-collidable objects/lights/etc.
+// add it to window for debugging
+const collisionScene = window.collisionScene = new THREE.Scene()
 createSky(scene)
 createLighting(scene)
 createTerrain(scene)
-fillScene(scene)
+fillScene(scene, collisionScene)
 
 ///////////
 // raycaster //
 ///////////
 const raycaster = new THREE.Raycaster()
-raycaster.far = 8
+// only check for close objects => collision
+//raycaster.far = 2
+
 
 // adjust the aspect ratio as needed:
 window.addEventListener('resize', (event) => {
@@ -73,7 +80,7 @@ window.addEventListener('resize', (event) => {
 })
 
 // define interactions
-createInteractions(scene, camera, renderer)
+createInteractions(scene, collisionScene, camera, renderer)
 
 // todo webxr button & support
 
@@ -91,7 +98,7 @@ function mainLoop(){
 	lastTime = time
 
 	// animation / physics stuff goes here
-	handleInteractions(scene, camera, raycaster)
+	handleInteractions(scene, collisionScene, camera, raycaster)
 	handleUserInterface(deltaTime)
 	stats.update()
 	
