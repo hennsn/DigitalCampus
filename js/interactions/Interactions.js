@@ -113,7 +113,7 @@ function handleInteractions(scene, camera, raycaster, dt){
 			
 			// there is an intersection -> adjust the walking direction
 			// we adjust the walking direction by removing the collision component = face normal (n) from the velocity (v)
-			// this can be done by calculating v = v - n * dot(n, v) (Gram-Schmidt Process)
+			// this can be done by calculating v_new = v - n * dot(n, v) (Gram-Schmidt Process)
 			
 			// the first intersection is the closest
 			var intersection = intersections[0]
