@@ -10,12 +10,12 @@ import { printError, updateDownloadProgress } from '../UserInterface.js'
 // I (Antonio) had to guess the coordinates, so an offset is possible
 // the Abbeanum is correct now, the Saale is no longer; maybe we can correct is using these two points;
 // but: it isn't final anyways
-var dx = -0.0005
-var dy = +0.00023
-var minLat = 50.9186171 + dy
-var minLon = 11.5628571 + dx
-var maxLat = 50.9463458 + dy
-var maxLon = 11.6035806 + dx
+const dx = -0.0005
+const dy = +0.00023
+const minLat = 50.9186171 + dy
+const minLon = 11.5628571 + dx
+const maxLat = 50.9463458 + dy
+const maxLon = 11.6035806 + dx
 
 var terrainWidth
 var terrainHeight
@@ -23,10 +23,10 @@ var terrainData
 
 // query a height at a certain integer coordinate
 function getHTG(xi,yi){
-	var index = (xi + yi * terrainWidth) * 4
-	var r = terrainData[index]
-	var g = terrainData[index+1]
-	var h = (r * 256 + g) * 0.1
+	const index = (xi + yi * terrainWidth) * 4
+	const r = terrainData[index]
+	const g = terrainData[index+1]
+	const h = (r * 256 + g) * 0.1
 	return h
 }
 
@@ -37,33 +37,32 @@ function getHeightOnTerrain(x,z){
 	var y = clamp(unmix(minLat, maxLat, zToLat(z)), 0, 1) * (terrainHeight-1)
 	// linear interpolation for the height at that position:
 	// int grid position, needs to be clamped again for that
-	var xi = Math.min(x | 0, terrainWidth-2)
-	var yi = Math.min(y | 0, terrainHeight-2)
+	const xi = Math.min(x | 0, terrainWidth-2)
+	const yi = Math.min(y | 0, terrainHeight-2)
 	// remainder
-	var xf = x - xi
-	var yf = y - yi
+	const xf = x - xi
+	const yf = y - yi
 	// actual linear interpolation
-	var h = mix(mix(getHTG(xi,yi  ), getHTG(xi+1,yi  ), xf),
-				mix(getHTG(xi,yi+1), getHTG(xi+1,yi+1), xf), yf)
+	const h = mix(mix(getHTG(xi,yi), getHTG(xi+1,yi), xf), mix(getHTG(xi,yi+1), getHTG(xi+1,yi+1), xf), yf)
 	return heightToY(h)
 }
 
 function createTerrain(scene){
-	var terrainImage = new Image()
+	const terrainImage = new Image()
 	terrainImage.src = 'images/map/h750.png' // alternatives: h1500, h3000
 	// terrainImage.onprogress could be added like this: https://stackoverflow.com/questions/14218607/javascript-loading-progress-of-an-image
 	terrainImage.onload = () => {
-		var img = terrainImage
-		var width = terrainWidth = img.width
-		var height = terrainHeight = img.height
-		var canvas = document.createElement('canvas')
+		const img = terrainImage
+		const width = terrainWidth = img.width
+		const height = terrainHeight = img.height
+		const canvas = document.createElement('canvas')
 		canvas.width = img.width
 		canvas.height = img.height
 		canvas.getContext('2d').drawImage(img, 0, 0, width, height)
-		var data = terrainData = canvas.getContext('2d').getImageData(0, 0, width, height).data
-		var geometry = new THREE.BufferGeometry()
-		var vertices = []
-		var uvs = []
+		const data = terrainData = canvas.getContext('2d').getImageData(0, 0, width, height).data
+		const geometry = new THREE.BufferGeometry()
+		const vertices = []
+		const uvs = []
 		for(var y=0,i=0;y<height;y++){
 			for(var x=0;x<width;x++,i+=4){
 				var r = data[i]
@@ -78,7 +77,7 @@ function createTerrain(scene){
 				uvs.push(u, v)
 			}
 		}
-		var indices = []
+		const indices = []
 		for(var y=1;y<height;y++){
 			var i = (y-1)*width;
 			for(var x=1;x<width;x++,i++){

@@ -60,11 +60,10 @@ var forward = new THREE.Vector3(0,0,-1)
 var right = new THREE.Vector3(1,0,0)
 
 // helper functions for the animation loop
-function handleInteractions(scene, camera, raycaster){
+function handleInteractions(scene, camera, raycaster, dt){
 	
 	acceleration.set(0,0,0)
-	var dt = 1/60
-	var dtx = dt * 10
+	var dtx = dt * 10 // the lower this number is, the smoother is the motion
 	
 	/**
 	 * Helper function for updating the camera controls in the animation loop.
@@ -110,7 +109,13 @@ function handleInteractions(scene, camera, raycaster){
 		const intersections = abbeanum ? raycaster.intersectObjects(abbeanum.children) : null
 		
 		user.isIntersecting = intersections && intersections.length > 0
-		if(user.isIntersecting){// first one is closest
+		if(user.isIntersecting){
+			
+			// there is an intersection -> adjust the walking direction
+			// we adjust the walking direction by removing the collision component = face normal (n) from the velocity (v)
+			// this can be done by calculating v = v - n * dot(n, v) (Gram-Schmidt Process)
+			
+			// the first intersection is the closest
 			var intersection = intersections[0]
 			var face = intersection.face
 			var normal = face.normal.clone()
@@ -124,13 +129,13 @@ function handleInteractions(scene, camera, raycaster){
 			} else {
 				velocity.sub(normal)
 			}
+			
 		}
 		
 		camera.position.add(velocity)
 		camera.position.y = getHeightOnTerrain(camera.position.x, camera.position.z) + user.height
 		
 	}
-	
 	
 }
 

@@ -86,12 +86,12 @@ var lastTime = new Date().getTime()
 
 function mainLoop(){
 	
-	var time = new Date().getTime()
-	var deltaTime = clamp((time-lastTime)/1e3, 1e-3, 1.0)
+	const time = new Date().getTime()
+	const deltaTime = clamp((time-lastTime)/1e3, 1e-3, 1.0)
 	lastTime = time
 
 	// animation / physics stuff goes here
-	handleInteractions(scene, camera, raycaster)
+	handleInteractions(scene, camera, raycaster, deltaTime)
 	handleUserInterface(deltaTime)
 	stats.update()
 	
