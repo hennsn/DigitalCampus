@@ -3,6 +3,7 @@ import * as THREE from 'https://cdn.skypack.dev/three@0.135.0'
 import { OrbitControls } from 'https://cdn.skypack.dev/three@0.135.0/examples/jsm/controls/OrbitControls.js'
 import { VRButton } from 'https://cdn.skypack.dev/three@0.135.0/examples/jsm/webxr/VRButton.js'
 import { getHeightOnTerrain } from '../environment/Terrain.js'
+import { clamp } from '../Maths.js'
 
 // what exactly does that do? / how does it work?
 // eher etwas für die #InteractionsGruppe
@@ -13,6 +14,7 @@ const keyboard = {}
 
 // the user
 const user = { height: 1.8, speed: 2, turnSpeed: 0.03, isIntersecting: false }
+const distanceToWalls = 1
 
 function createInteractions(scene, camera, renderer){
 	
@@ -63,7 +65,7 @@ var right = new THREE.Vector3(1,0,0)
 function handleInteractions(scene, camera, raycaster, dt){
 	
 	acceleration.set(0,0,0)
-	var dtx = dt * 10 // the lower this number is, the smoother is the motion
+	var dtx = clamp(dt * 10, 0, 1) // the lower this number is, the smoother is the motion
 	
 	/**
 	 * Helper function for updating the camera controls in the animation loop.
@@ -104,6 +106,14 @@ function handleInteractions(scene, camera, raycaster, dt){
 	if(velocity.length() > 1e-3 * user.speed){// we're in motion
 		
 		raycaster.set(camera.position, velocity)
+		
+		// set the raycaster distance: we're not going any farther anyways
+		// todo: we probably should check a little left and right as well, because our player should
+		// have the feeling that he is a box/ellipsoid, not a line
+		// we also should check a little lower and above, so he has to really fit below/above objects
+		raycaster.near = 0
+		raycaster.far  = velocity.length() + distanceToWalls
+		
 		// we cant check whole scene (too big) maybe copy the important objects from scene then do raycasting collision check
 		const abbeanum = scene.getObjectByName('Abbeanum')
 		const intersections = abbeanum ? raycaster.intersectObjects(abbeanum.children) : null
@@ -132,6 +142,7 @@ function handleInteractions(scene, camera, raycaster, dt){
 			
 		}
 		
+		// theoretisch müsste es addScaledVector(velocity, dt) sein, aber damit klippe ich irgendwie immer durch die Wand
 		camera.position.add(velocity)
 		camera.position.y = getHeightOnTerrain(camera.position.x, camera.position.z) + user.height
 		
