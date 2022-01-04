@@ -15,6 +15,16 @@ function fillScene(scene) {
 		})
 		.catch(printError)
 	
+	glTFLoader.loadAsync('models/samples/AbbeanumGround.glb', e => updateDownloadProgress('Abbeanum', e))
+		.then(gltf => {
+			const model = window.abbeanum = gltf.scene
+			placeLatLonObject(model, 'AbbeanumGround', 50.9339769, 11.5804391, 182, +15)
+			var scale = 1.3
+			model.scale.set(scale, scale, scale)
+			scene.add(model)
+		})
+		.catch(printError)
+	
 	glTFLoader.loadAsync('models/samples/AbbeanumDoorOnly.glb', e => updateDownloadProgress('AbbeanumDoorOnly', e))
 	.then(gltf => {
 		const model = window.abbeanum = gltf.scene
