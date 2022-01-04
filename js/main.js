@@ -23,8 +23,6 @@ const near = 0.1  // near clipping plane: closer pixels are invisible
 const far  = 1e5 // far clipping plane: farther pixels/objects are invisible
 const fov  = 75   // fov in degrees, on the y axis
 const camera = window.camera = new THREE.PerspectiveCamera(fov, window.innerWidth/window.innerHeight, near, far)
-camera.position.set(0, 1.8, 15)
-
 //////////////
 // renderer //
 //////////////

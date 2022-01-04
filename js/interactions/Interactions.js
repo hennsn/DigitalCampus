@@ -21,7 +21,7 @@ function createInteractions(scene, camera, renderer){
 	renderer.xr.enabled = true
 	document.body.appendChild(VRButton.createButton(renderer))
 	
-	camera.position.set(0, user.height, 15)
+	camera.position.set(7.2525284107715935, 0.949415911263972, -21.716083277168504)
 	
 	// Antonio wants to use them for debugging
 	if(localStorage.orbitControls){
@@ -63,17 +63,16 @@ var right = new THREE.Vector3(1,0,0)
 
 // helper functions for the animation loop
 function handleInteractions(scene, camera, raycaster, dt){
-	
 	acceleration.set(0,0,0)
 	var dtx = clamp(dt * 10, 0, 1) // the lower this number is, the smoother is the motion
 	
 	/**
 	 * Helper function for updating the camera controls in the animation loop.
 	 */
-	if(keyboard[37]){ // left arrow pressed
+	if(keyboard[39]){ // left arrow pressed
 		camera.rotation.y += user.turnSpeed
 	}
-	if(keyboard[39]){ // right arrow pressed
+	if(keyboard[37]){ // right arrow pressed
 		camera.rotation.y -= user.turnSpeed
 	}
 	if(keyboard[38] || keyboard[87]){ // up arrow or w pressed
