@@ -13,7 +13,7 @@ const keyboard = {}
 // the user
 const user = { height: 1.8, speed: 0.2, turnSpeed: 0.03 }
 
-function createInteractions(scene, camera, renderer){
+function createInteractions(scene, camera, renderer, mouse){
 	
 	renderer.xr.enabled = true
 	document.body.appendChild(VRButton.createButton(renderer))
@@ -30,7 +30,6 @@ function createInteractions(scene, camera, renderer){
 	////////////////////////////////
 	// listeners for interactions //
 	////////////////////////////////
-
 	
 	// Keyboard listeners
 	window.addEventListener('keydown', keyDown)
@@ -47,18 +46,34 @@ function createInteractions(scene, camera, renderer){
 	
 	// for debugging: fps/frame-time/memory usage
 	// browsers are typically locked at the screen refresh rate, so 60 fps (in my case) is perfect
+
+	////////////////////
+	//MOUSE LISTENERS///
+	window.addEventListener( 'mousemove', onMouseMove, false );
 	
+	function onMouseMove(event){
+		mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+		mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+		//console.log("mouse position: (" + window.mouse.x + ", "+ window.mouse.y + ")");
+	}
 	
-	
+	//event listener mouse click//////
+	window.addEventListener('click', onMouseDown, false);
+
+	function onMouseDown(event){
+   		console.log("mouse position: (" + mouse.x + ", "+ mouse.y + ")");
+	}
 }
 
 // helper functions for the animation loop
-function handleInteractions(scene, camera, raycaster){
+function handleInteractions(scene, camera, raycaster, mouse){
+
+	//event listener auf fenster, raycaster for determination which object has been clicked
 	
 	raycaster.setFromCamera(camera.position, camera)
 	//we cant check whole scene (too big) maybe copy the important objects from scene then do raycasting collision check
 	const abbeanum = scene.getObjectByName('Abbeanum')
-	const intersections = abbeanum ? raycaster.intersectObjects(abbeanum.children) : null
+	const intersections = abbeanum ? raycaster.intersectObjects(scene.children) : null //abbeanum.children changed to scene.children
 	/**
 	 * Helper function for updating the camera controls in the animation loop.
 	 */
@@ -93,7 +108,38 @@ function handleInteractions(scene, camera, raycaster){
 		camera.position.z += Math.cos(camera.rotation.y + Math.PI / 2) * user.speed
 		}
 	}
+
+	/*
+	hierhin maus raycaster; eiegntlich kein zweiter raycaster nötig
+	const mouse in main is okay
+
+	letzte zeile renderer nicht nötig, macht main
+
+	// window. ist globaler namensraum
+
+	window event listener triggered, then check with raycaster
+	*/
+
+	/////mouse tracking/////
+
+	function render() {
+
+		// update the picking ray with the camera and mouse position
+		raycaster.setFromCamera( mouse, camera );
 	
+		// calculate objects intersecting the picking ray
+		const intersects = raycaster.intersectObjects( scene.children );
+	
+		for ( let i = 0; i < intersects.length; i ++ ) {
+	
+			intersects[ i ].object.material.color.set( 0xff0000 );
+	
+		}
+	
+		//renderer.render( scene, camera );
+	
+	}
+
 }
 
 export { createInteractions, handleInteractions }

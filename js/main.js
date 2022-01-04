@@ -49,6 +49,10 @@ dracoLoader.setDecoderConfig({ type: 'js' })
 const glTFLoader = window.glTFLoader = new GLTFLoader()
 glTFLoader.setDRACOLoader(dracoLoader)
 
+
+//enable mouse//
+//DragControls.install({THREE: THREE}) /*doesn't help could be commented out */
+
 ///////////
 // scene //
 ///////////
@@ -65,6 +69,9 @@ fillScene(scene)
 const raycaster = new THREE.Raycaster()
 raycaster.far = 8
 
+////mouse/////
+const mouse = new THREE.Vector2();
+
 // adjust the aspect ratio as needed:
 window.addEventListener('resize', (event) => {
 	camera.aspect = window.innerWidth / window.innerHeight
@@ -73,7 +80,7 @@ window.addEventListener('resize', (event) => {
 })
 
 // define interactions
-createInteractions(scene, camera, renderer)
+createInteractions(scene, camera, renderer, mouse)
 
 // todo webxr button & support
 
@@ -83,6 +90,7 @@ const stats = Stats()
 document.body.appendChild(stats.dom)
 
 var lastTime = new Date().getTime()
+let i = 1;
 
 function mainLoop(){
 	
@@ -91,7 +99,7 @@ function mainLoop(){
 	lastTime = time
 
 	// animation / physics stuff goes here
-	handleInteractions(scene, camera, raycaster)
+	handleInteractions(scene, camera, raycaster, mouse)
 	handleUserInterface(deltaTime)
 	stats.update()
 	
@@ -101,7 +109,15 @@ function mainLoop(){
 	}
 	
 	renderer.render(scene, camera)
-	
+
+	//let once = true;
+	if(i<=10){
+		console.log(scene.getObjectByName("AbbeanumDoor"));
+		i++;
+	}
+	  
 }
+	//const door = scene.getObjectByName("AbbeanumDoor");
+	console.log("henlo");
 
 renderer.setAnimationLoop(mainLoop) // requestAnimationFrame funktioniert nicht für WebXR, aber die hier funktioniert für mit und ohne :)
