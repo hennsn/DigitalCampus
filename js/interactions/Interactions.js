@@ -15,7 +15,8 @@ const keyboard = {}
 // the user
 const user = { height: 1.8, speed: 2, turnSpeed: 0.03, isIntersecting: false }
 const distanceToWalls = 1
-
+const enterInterval = 100
+let lastEnter = Date.now()
 function createInteractions(scene, camera, renderer){
 	
 	renderer.xr.enabled = true
@@ -52,7 +53,6 @@ function createInteractions(scene, camera, renderer){
 	// browsers are typically locked at the screen refresh rate, so 60 fps (in my case) is perfect
 	
 	
-	
 }
 
 var velocity = new THREE.Vector3(0,0,0)
@@ -63,6 +63,13 @@ var right = new THREE.Vector3(1,0,0)
 
 // helper functions for the animation loop
 function handleInteractions(scene, camera, raycaster, dt){
+	// get the models - maybe move to not do this every frame
+	const abbeanum = scene.getObjectByName('Abbeanum')
+	const abbeanumInside = scene.getObjectByName('AbbeanumInside')
+	const abbeanumGround = scene.getObjectByName('AbbeanumGround')
+	const abbeanumDoor = scene.getObjectByName('AbbeanumDoor')
+	const cityCenter = scene.getObjectByName('City Center')
+	const terrain = scene.getObjectByName('Terrain')
 	acceleration.set(0,0,0)
 	var dtx = clamp(dt * 10, 0, 1) // the lower this number is, the smoother is the motion
 	
@@ -89,7 +96,16 @@ function handleInteractions(scene, camera, raycaster, dt){
 	if(keyboard[68]){
 		acceleration.add(right)
 	}
-	
+
+	// check for general entrances - this can be made more generic
+	if(keyboard[69] && Date.now() - lastEnter > enterInterval && camera.position.distanceTo(abbeanumDoor.position) < 30){ //e - enter
+		lastEnter = Date.now()
+		abbeanum.visible = !abbeanum.visible
+		abbeanumInside.visible = !abbeanumInside.visible
+		abbeanumGround.visible = !abbeanumGround.visible
+		cityCenter.visible = !cityCenter.visible
+		terrain.visible = !terrain.visible
+	}
 	velocity.multiplyScalar(1-dtx)
 	
 	// transform the input from camera space into world space
@@ -114,12 +130,13 @@ function handleInteractions(scene, camera, raycaster, dt){
 		raycaster.far  = velocity.length() + distanceToWalls
 		
 		// we cant check whole scene (too big) maybe copy the important objects from scene then do raycasting collision check
-		const abbeanum = scene.getObjectByName('Abbeanum')
-		const intersections = abbeanum ? raycaster.intersectObjects(abbeanum.children) : null
-		
-		user.isIntersecting = intersections && intersections.length > 0
+		const collidables = [...abbeanum.children, ...abbeanumInside.children, ...abbeanumGround.children]
+		const intersections = window.intersections = collidables.indexOf(undefined) === -1 ? raycaster.intersectObjects(collidables) : null
+
+		user.isIntersecting = intersections && intersections.length > 0 && intersections[0].object.parent.visible
+		if(intersections && intersections.length > 0) console.log(intersections)
 		if(user.isIntersecting){
-			
+
 			// there is an intersection -> adjust the walking direction
 			// we adjust the walking direction by removing the collision component = face normal (n) from the velocity (v)
 			// this can be done by calculating v_new = v - n * dot(n, v) (Gram-Schmidt Process)

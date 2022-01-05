@@ -44,6 +44,17 @@ function fillScene(scene) {
 		})
 		.catch(printError)
 	
+	glTFLoader.loadAsync('models/samples/Abbeanum Innenraum.glb', e => updateDownloadProgress('AbbeanumInside', e))
+	.then(gltf => {
+		const model = gltf.scene
+		// move the corridor approximately to the right spot
+		placeLatLonObject(model, 'AbbeanumInside', 50.9339769-0.00001, 11.5804391-0.000029, 182, +15)
+		const scale = 1.4 // a guess
+		model.scale.set(scale, scale, scale)
+		model.visible = false
+		scene.add(model)
+	})
+	.catch(printError)
 }
 
 export { fillScene }
