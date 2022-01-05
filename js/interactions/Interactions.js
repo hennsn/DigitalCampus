@@ -134,7 +134,6 @@ function handleInteractions(scene, camera, raycaster, dt){
 		const intersections = window.intersections = collidables.indexOf(undefined) === -1 ? raycaster.intersectObjects(collidables) : null
 
 		user.isIntersecting = intersections && intersections.length > 0 && intersections[0].object.parent.visible
-		if(intersections && intersections.length > 0) console.log(intersections)
 		if(user.isIntersecting){
 
 			// there is an intersection -> adjust the walking direction
