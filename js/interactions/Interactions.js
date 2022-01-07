@@ -118,35 +118,28 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse){
 	/////MOUSE INTERACTIONS//////
 	const abbeanumDoor = scene.getObjectByName('AbbeanumDoor')
 
-	//IF CLICKED SHOULD START HERE
+	//CLICK EVENTS
 	if(wasClicked == true){
 		if(abbeanumDoor) abbeanumDoor.visible = true
 		mousecaster.setFromCamera( mouse, camera );
-		
-		// calculate objects intersecting the picking ray
 
 		//////Array of clickable objects
-		//const clickableObjects = [abbeanumDoor]
-		//const mouseIntersects = mousecaster.intersectObjects(clickableObjects, false); //vs intersectObjects(scene.children)
+		const clickableObjects = [abbeanumDoor]
+		const mouseIntersects = mousecaster.intersectObjects(clickableObjects); //vs intersectObjects(scene.children)
 
+		/*//Just checks one object
 		const mouseIntersects = mousecaster.intersectObject(abbeanumDoor);
-
 		if(mouseIntersects.length>0){
 			console.log('clicked on object')
-		}
-			
-		/*//original raycaster code
+		}*/
+		
+		//check for ray hits
 		for ( let i = 0; i < mouseIntersects.length; i ++ ) {
-		
-			mouseIntersects[ i ].object.material.color.set( 0xff0000 );
-		
+			console.log('clicked on object')
 		}
-		//renderer.render( scene, camera );*/
 
 		if(abbeanumDoor) abbeanumDoor.visible = false;
 		wasClicked = false
-
-		///IF CLICKED SHOULD END HERE
 	}
 }
 
