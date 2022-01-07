@@ -169,22 +169,22 @@ function handleInteractions(scene, camera, raycaster, dt){
 		// theoretisch müsste es addScaledVector(velocity, dt) sein, aber damit klippe ich irgendwie immer durch die Wand
 		camera.position.add(velocity)
 		
-		if(isInside){
-			raycaster.set(camera.position, down)
-			raycaster.near = 0
-			raycaster.far  = user.eyeHeight + 2
-			var intersection = raycaster.intersectObjects(collidables)
-			if(intersection != null && intersection.length > 0){
-				var newY = intersection[0].point.y + user.eyeHeight
-				if(Math.abs(camera.position.y - newY) < 2){// a step is ok
-					camera.position.y = newY
-				} else console.log(camera.position.y, newY)
-			} else {
-				// teleport player back in?
-				// camera.position.y = getHeightOnTerrain(camera.position.x, camera.position.z) + user.eyeHeight
-			}
+		raycaster.set(camera.position, down)
+		raycaster.near = 0
+		raycaster.far  = user.eyeHeight + 2
+		var noneY = -123
+		var intersection = raycaster.intersectObjects(collidables)
+		var floorY = intersection && intersection.length > 0 ? intersection[0].point.y : noneY
+		if(!isInside){
+			// add terrain as intersection
+			var groundY = getHeightOnTerrain(camera.position.x, camera.position.z)
+			floorY = Math.max(floorY, groundY)
+		}
+		if(floorY > noneY){
+			camera.position.y = floorY + user.eyeHeight
 		} else {
-			camera.position.y = getHeightOnTerrain(camera.position.x, camera.position.z) + user.eyeHeight
+			// teleport player back in?
+			// camera.position.y = getHeightOnTerrain(camera.position.x, camera.position.z) + user.eyeHeight
 		}
 		
 		if(abbeanumFlurCollisions) abbeanumFlurCollisions.visible = false
