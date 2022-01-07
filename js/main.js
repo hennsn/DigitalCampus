@@ -23,8 +23,6 @@ const near = 0.1  // near clipping plane: closer pixels are invisible
 const far  = 1e5 // far clipping plane: farther pixels/objects are invisible
 const fov  = 75   // fov in degrees, on the y axis
 const camera = window.camera = new THREE.PerspectiveCamera(fov, window.innerWidth/window.innerHeight, near, far)
-camera.position.set(0, 1.8, 15)
-
 //////////////
 // renderer //
 //////////////
@@ -93,12 +91,12 @@ let i = 1;
 
 function mainLoop(){
 	
-	var time = new Date().getTime()
-	var deltaTime = clamp((time-lastTime)/1e3, 1e-3, 1.0)
+	const time = new Date().getTime()
+	const deltaTime = clamp((time-lastTime)/1e3, 1e-3, 1.0)
 	lastTime = time
 
 	// animation / physics stuff goes here
-	handleInteractions(scene, camera, raycaster, mousecaster, mouse)
+	handleInteractions(scene, camera, raycaster, mousecaster, mouse, deltaTime)
 	handleUserInterface(deltaTime)
 	stats.update()
 	
