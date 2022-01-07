@@ -64,7 +64,7 @@ fillScene(scene)
 const raycaster = new THREE.Raycaster()
 raycaster.far = 8
 const mousecaster = new THREE.Raycaster() //new raycaster for mouse
-mousecaster.far = 15
+mousecaster.far = 3
 
 ////mouse/////
 const mouse = new THREE.Vector2();
