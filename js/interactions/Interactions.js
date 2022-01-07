@@ -9,6 +9,7 @@ import { VRButton } from 'https://cdn.skypack.dev/three@0.135.0/examples/jsm/web
 
 // the keyboard
 const keyboard = {}
+let wasClicked = false
 
 // the user
 const user = { height: 1.8, speed: 0.2, turnSpeed: 0.03 }
@@ -62,6 +63,7 @@ function createInteractions(scene, camera, renderer, mouse){
 	window.addEventListener('click', onMouseClick, false);
 
 	function onMouseClick(event){
+		wasClicked = true;
 		mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
 		mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
    		console.log("mouse position: (" + mouse.x + ", "+ mouse.y + ")");
@@ -116,27 +118,36 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse){
 	/////MOUSE INTERACTIONS//////
 	const abbeanumDoor = scene.getObjectByName('AbbeanumDoor')
 
-	//FUNCTION RENDER STARTED HERE
-	// update the picking ray with the camera and mouse position
-	mousecaster.setFromCamera( mouse, camera );
-	
-	// calculate objects intersecting the picking ray
-
-	//////Array of clickable objects
-	const clickableObjects = [abbeanumDoor]
-	const mouseIntersects = mousecaster.intersectObjects(clickableObjects, false); //vs intersectObjects(scene.children)
-
-	if(mouseIntersects.length>0){
-		console.log('clicked on object')
-	}
+	//IF CLICKED SHOULD START HERE
+	if(wasClicked == true){
+		if(abbeanumDoor) abbeanumDoor.visible = true
+		mousecaster.setFromCamera( mouse, camera );
 		
-	/*//original raycaster code
-	for ( let i = 0; i < mouseIntersects.length; i ++ ) {
-	
-		mouseIntersects[ i ].object.material.color.set( 0xff0000 );
-	
+		// calculate objects intersecting the picking ray
+
+		//////Array of clickable objects
+		//const clickableObjects = [abbeanumDoor]
+		//const mouseIntersects = mousecaster.intersectObjects(clickableObjects, false); //vs intersectObjects(scene.children)
+
+		const mouseIntersects = mousecaster.intersectObject(abbeanumDoor);
+
+		if(mouseIntersects.length>0){
+			console.log('clicked on object')
+		}
+			
+		/*//original raycaster code
+		for ( let i = 0; i < mouseIntersects.length; i ++ ) {
+		
+			mouseIntersects[ i ].object.material.color.set( 0xff0000 );
+		
+		}
+		//renderer.render( scene, camera );*/
+
+		if(abbeanumDoor) abbeanumDoor.visible = false;
+		wasClicked = false
+
+		///IF CLICKED SHOULD END HERE
 	}
-	//renderer.render( scene, camera );*/
 }
 
 export { createInteractions, handleInteractions }
