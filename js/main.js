@@ -68,6 +68,8 @@ fillScene(scene)
 ///////////
 const raycaster = new THREE.Raycaster()
 raycaster.far = 8
+const mousecaster = new THREE.Raycaster() //new raycaster for mouse
+mousecaster.far = 15
 
 ////mouse/////
 const mouse = new THREE.Vector2();
@@ -99,7 +101,7 @@ function mainLoop(){
 	lastTime = time
 
 	// animation / physics stuff goes here
-	handleInteractions(scene, camera, raycaster, mouse)
+	handleInteractions(scene, camera, raycaster, mousecaster, mouse)
 	handleUserInterface(deltaTime)
 	stats.update()
 	
@@ -110,14 +112,13 @@ function mainLoop(){
 	
 	renderer.render(scene, camera)
 
-	//let once = true;
+	//just random loop to check how long it takes for abbeanum door to be registered
 	if(i<=10){
 		console.log(scene.getObjectByName("AbbeanumDoor"));
 		i++;
 	}
 	  
 }
-	//const door = scene.getObjectByName("AbbeanumDoor");
 	console.log("henlo");
 
 renderer.setAnimationLoop(mainLoop) // requestAnimationFrame funktioniert nicht für WebXR, aber die hier funktioniert für mit und ohne :)

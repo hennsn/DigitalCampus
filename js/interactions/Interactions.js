@@ -49,31 +49,34 @@ function createInteractions(scene, camera, renderer, mouse){
 
 	////////////////////
 	//MOUSE LISTENERS///
-	window.addEventListener( 'mousemove', onMouseMove, false );
-	
+
+	//window.addEventListener( 'mousemove', onMouseMove, false );
+	/*
 	function onMouseMove(event){
 		mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
 		mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
 		//console.log("mouse position: (" + window.mouse.x + ", "+ window.mouse.y + ")");
-	}
+	}*/
 	
 	//event listener mouse click//////
-	window.addEventListener('click', onMouseDown, false);
+	window.addEventListener('click', onMouseClick, false);
 
-	function onMouseDown(event){
+	function onMouseClick(event){
+		mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+		mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
    		console.log("mouse position: (" + mouse.x + ", "+ mouse.y + ")");
 	}
 }
 
 // helper functions for the animation loop
-function handleInteractions(scene, camera, raycaster, mouse){
+function handleInteractions(scene, camera, raycaster, mousecaster, mouse){
 
 	//event listener auf fenster, raycaster for determination which object has been clicked
 	
 	raycaster.setFromCamera(camera.position, camera)
 	//we cant check whole scene (too big) maybe copy the important objects from scene then do raycasting collision check
 	const abbeanum = scene.getObjectByName('Abbeanum')
-	const intersections = abbeanum ? raycaster.intersectObjects(scene.children) : null //abbeanum.children changed to scene.children
+	const intersections = abbeanum ? raycaster.intersectObjects(abbeanum.children) : null //abbeanum.children change to scene.children?
 	/**
 	 * Helper function for updating the camera controls in the animation loop.
 	 */
@@ -109,37 +112,31 @@ function handleInteractions(scene, camera, raycaster, mouse){
 		}
 	}
 
-	/*
-	hierhin maus raycaster; eiegntlich kein zweiter raycaster nötig
-	const mouse in main is okay
 
-	letzte zeile renderer nicht nötig, macht main
+	/////MOUSE INTERACTIONS//////
+	const abbeanumDoor = scene.getObjectByName('AbbeanumDoor')
 
-	// window. ist globaler namensraum
-
-	window event listener triggered, then check with raycaster
-	*/
-
-	/////mouse tracking/////
-
-	function render() {
-
-		// update the picking ray with the camera and mouse position
-		raycaster.setFromCamera( mouse, camera );
+	//FUNCTION RENDER STARTED HERE
+	// update the picking ray with the camera and mouse position
+	mousecaster.setFromCamera( mouse, camera );
 	
-		// calculate objects intersecting the picking ray
-		const intersects = raycaster.intersectObjects( scene.children );
+	// calculate objects intersecting the picking ray
+
+	//////Array of clickable objects
+	const clickableObjects = [abbeanumDoor]
+	const mouseIntersects = mousecaster.intersectObjects(clickableObjects, false); //vs intersectObjects(scene.children)
+
+	if(mouseIntersects.length>0){
+		console.log('clicked on object')
+	}
+		
+	/*//original raycaster code
+	for ( let i = 0; i < mouseIntersects.length; i ++ ) {
 	
-		for ( let i = 0; i < intersects.length; i ++ ) {
-	
-			intersects[ i ].object.material.color.set( 0xff0000 );
-	
-		}
-	
-		//renderer.render( scene, camera );
+		mouseIntersects[ i ].object.material.color.set( 0xff0000 );
 	
 	}
-
+	//renderer.render( scene, camera );*/
 }
 
 export { createInteractions, handleInteractions }
