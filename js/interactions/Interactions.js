@@ -20,7 +20,7 @@ const user = { height: 1.8, eyeHeight: 1.7, speed: 2, turnSpeed: 0.03, isInterse
 const distanceToWalls = 1
 const enterInterval = 300 // milli seconds
 let lastEnter = Date.now()
-function createInteractions(scene, camera, renderer){
+function createInteractions(scene, camera, renderer, mouse){
 	
 	renderer.xr.enabled = true
 	document.body.appendChild(VRButton.createButton(renderer))
@@ -59,8 +59,9 @@ function createInteractions(scene, camera, renderer){
 	////////////////////
 	//MOUSE LISTENERS///
 
-	//window.addEventListener( 'mousemove', onMouseMove, false );
 	/*
+	//updates mouse on move, not really necessary
+	//window.addEventListener( 'mousemove', onMouseMove, false );
 	function onMouseMove(event){
 		mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
 		mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
@@ -90,7 +91,7 @@ var down = new THREE.Vector3(0,-1,0)
 var isInside = false
 
 // helper functions for the animation loop
-function handleInteractions(scene, camera, raycaster, dt){
+function handleInteractions(scene, camera, raycaster, mousecaster, mouse, dt){
 	// get the models - maybe move to not do this every frame
 	const abbeanum = scene.getObjectByName('Abbeanum')
 	const abbeanumInside = scene.getObjectByName('AbbeanumInside')
@@ -214,8 +215,6 @@ function handleInteractions(scene, camera, raycaster, dt){
 
 
 	/////MOUSE INTERACTIONS//////
-	//const abbeanumDoor = scene.getObjectByName('AbbeanumDoor')
-
 	//CLICK EVENTS
 	if(wasClicked == true){
 		if(abbeanumDoor) abbeanumDoor.visible = true
