@@ -214,7 +214,7 @@ function handleInteractions(scene, camera, raycaster, dt){
 
 
 	/////MOUSE INTERACTIONS//////
-	const abbeanumDoor = scene.getObjectByName('AbbeanumDoor')
+	//const abbeanumDoor = scene.getObjectByName('AbbeanumDoor')
 
 	//CLICK EVENTS
 	if(wasClicked == true){
