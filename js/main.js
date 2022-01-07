@@ -50,9 +50,6 @@ const glTFLoader = window.glTFLoader = new GLTFLoader()
 glTFLoader.setDRACOLoader(dracoLoader)
 
 
-//enable mouse//
-//DragControls.install({THREE: THREE}) /*doesn't help could be commented out */
-
 ///////////
 // scene //
 ///////////
