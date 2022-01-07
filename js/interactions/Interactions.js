@@ -126,17 +126,17 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse){
 		//////Array of clickable objects
 		const clickableObjects = [abbeanumDoor]
 		const mouseIntersects = mousecaster.intersectObjects(clickableObjects); //vs intersectObjects(scene.children)
+		
+		//check array for ray hits
+		for ( let i = 0; i < mouseIntersects.length; i ++ ) {
+			console.log('clicked on object')
+		}
 
 		/*//Just checks one object
 		const mouseIntersects = mousecaster.intersectObject(abbeanumDoor);
 		if(mouseIntersects.length>0){
 			console.log('clicked on object')
 		}*/
-		
-		//check for ray hits
-		for ( let i = 0; i < mouseIntersects.length; i ++ ) {
-			console.log('clicked on object')
-		}
 
 		if(abbeanumDoor) abbeanumDoor.visible = false;
 		wasClicked = false
