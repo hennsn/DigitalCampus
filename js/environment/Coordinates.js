@@ -45,6 +45,7 @@ function placeLatLonObject(object, name, lat, lon, height, rot){
 	object.name = name
 	object.position.set(lonToX(lon), heightToY(height||0), latToZ(lat))
 	object.rotation.set(0, (rot||0) * degToRad, 0)
+	window[name] = object
 }
 
 export { latToZ, zToLat, lonToX, xToLon, heightToY, yToHeight, placeLatLonObject }

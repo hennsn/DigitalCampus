@@ -10,12 +10,12 @@ import { clamp } from '../Maths.js'
 // import { XRControllerModelFactory } from 'https://cdn.skypack.dev/three@0.135.0/examples/jsm/webxr/XRControllerModelFactory.js'
 
 // the keyboard
-const keyboard = {}
+const keyboard = window.keyboard = {}
 
 // the user
-const user = { height: 1.8, speed: 2, turnSpeed: 0.03, isIntersecting: false }
+const user = { height: 1.8, eyeHeight: 1.7, speed: 2, turnSpeed: 0.03, isIntersecting: false }
 const distanceToWalls = 1
-const enterInterval = 100
+const enterInterval = 300 // milli seconds
 let lastEnter = Date.now()
 function createInteractions(scene, camera, renderer){
 	
@@ -42,11 +42,13 @@ function createInteractions(scene, camera, renderer){
 	
 	
 	function keyDown(event){
-		keyboard[event.keyCode] = true 
+		keyboard[event.key] = event.timeStamp
+		keyboard[event.keyCode] = event.timeStamp
 	}
 	
 	function keyUp(event){
-		keyboard[event.keyCode] = false
+		delete keyboard[event.key]
+		delete keyboard[event.keyCode]
 	}
 	
 	// for debugging: fps/frame-time/memory usage
@@ -61,11 +63,17 @@ var acceleration = new THREE.Vector3(0,0,0)
 var forward = new THREE.Vector3(0,0,-1)
 var right = new THREE.Vector3(1,0,0)
 
+var up = new THREE.Vector3(0,1,0)
+var down = new THREE.Vector3(0,-1,0)
+
+var isInside = false
+
 // helper functions for the animation loop
 function handleInteractions(scene, camera, raycaster, dt){
 	// get the models - maybe move to not do this every frame
 	const abbeanum = scene.getObjectByName('Abbeanum')
 	const abbeanumInside = scene.getObjectByName('AbbeanumInside')
+	const abbeanumFlurCollisions = scene.getObjectByName('AbbeanumFlurCollisions')
 	const abbeanumGround = scene.getObjectByName('AbbeanumGround')
 	const abbeanumDoor = scene.getObjectByName('AbbeanumDoor')
 	const cityCenter = scene.getObjectByName('City Center')
@@ -76,35 +84,31 @@ function handleInteractions(scene, camera, raycaster, dt){
 	/**
 	 * Helper function for updating the camera controls in the animation loop.
 	 */
-	if(keyboard[39]){ // left arrow pressed
+	if(keyboard.ArrowLeft){
 		camera.rotation.y += user.turnSpeed
 	}
-	if(keyboard[37]){ // right arrow pressed
+	if(keyboard.ArrowRight){
 		camera.rotation.y -= user.turnSpeed
 	}
-	if(keyboard[38] || keyboard[87]){ // up arrow or w pressed
+	if(keyboard.w || keyboard.ArrowUp){
 		acceleration.add(forward)
 	}
-	if(keyboard[40] || keyboard[83]){ // down arrow or s pressed
+	if(keyboard.s || keyboard.ArrowDown){
 		acceleration.sub(forward)
 	}
 	
-	if(keyboard[65]){
-		acceleration.sub(right)
-	}
-	
-	if(keyboard[68]){
-		acceleration.add(right)
-	}
+	if(keyboard.a) acceleration.sub(right)
+	if(keyboard.d) acceleration.add(right)
 
 	// check for general entrances - this can be made more generic
-	if(keyboard[69] && Date.now() - lastEnter > enterInterval && camera.position.distanceTo(abbeanumDoor.position) < 30){ //e - enter
+	if((keyboard.e || keyboard.Enter) && Date.now() - lastEnter > enterInterval && camera.position.distanceTo(abbeanumDoor.position) < 30){ // e - enter
 		lastEnter = Date.now()
-		abbeanum.visible = !abbeanum.visible
-		abbeanumInside.visible = !abbeanumInside.visible
-		abbeanumGround.visible = !abbeanumGround.visible
-		cityCenter.visible = !cityCenter.visible
-		terrain.visible = !terrain.visible
+		isInside = !isInside
+		abbeanum.visible = !isInside
+		abbeanumGround.visible = !isInside
+		abbeanumInside.visible = isInside
+		cityCenter.visible = !isInside
+		terrain.visible = !isInside
 	}
 	velocity.multiplyScalar(1-dtx)
 	
@@ -120,6 +124,8 @@ function handleInteractions(scene, camera, raycaster, dt){
 	// check if there is something in the way
 	if(velocity.length() > 1e-3 * user.speed){// we're in motion
 		
+		if(abbeanumFlurCollisions) abbeanumFlurCollisions.visible = true
+		
 		raycaster.set(camera.position, velocity)
 		
 		// set the raycaster distance: we're not going any farther anyways
@@ -130,8 +136,11 @@ function handleInteractions(scene, camera, raycaster, dt){
 		raycaster.far  = velocity.length() + distanceToWalls
 		
 		// we cant check whole scene (too big) maybe copy the important objects from scene then do raycasting collision check
-		const collidables = [...abbeanum.children, ...abbeanumInside.children, ...abbeanumGround.children]
-		const intersections = window.intersections = collidables.indexOf(undefined) === -1 ? raycaster.intersectObjects(collidables) : null
+		const collidables = ( isInside ? 
+			[abbeanumFlurCollisions] :
+			[abbeanum, abbeanumGround]
+		).filter(model => !!model)
+		const intersections = window.intersections = raycaster.intersectObjects(collidables)
 
 		user.isIntersecting = intersections && intersections.length > 0 && intersections[0].object.parent.visible
 		if(user.isIntersecting){
@@ -159,7 +168,26 @@ function handleInteractions(scene, camera, raycaster, dt){
 		
 		// theoretisch müsste es addScaledVector(velocity, dt) sein, aber damit klippe ich irgendwie immer durch die Wand
 		camera.position.add(velocity)
-		camera.position.y = getHeightOnTerrain(camera.position.x, camera.position.z) + user.height
+		
+		if(isInside){
+			raycaster.set(camera.position, down)
+			raycaster.near = 0
+			raycaster.far  = user.eyeHeight + 2
+			var intersection = raycaster.intersectObjects(collidables)
+			if(intersection != null && intersection.length > 0){
+				var newY = intersection[0].point.y + user.eyeHeight
+				if(Math.abs(camera.position.y - newY) < 2){// a step is ok
+					camera.position.y = newY
+				} else console.log(camera.position.y, newY)
+			} else {
+				// teleport player back in?
+				// camera.position.y = getHeightOnTerrain(camera.position.x, camera.position.z) + user.eyeHeight
+			}
+		} else {
+			camera.position.y = getHeightOnTerrain(camera.position.x, camera.position.z) + user.eyeHeight
+		}
+		
+		if(abbeanumFlurCollisions) abbeanumFlurCollisions.visible = false
 		
 	}
 	

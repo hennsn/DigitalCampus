@@ -44,12 +44,23 @@ function fillScene(scene) {
 		})
 		.catch(printError)
 	
-	glTFLoader.loadAsync('models/samples/Abbeanum Innenraum.glb', e => updateDownloadProgress('AbbeanumInside', e))
+	glTFLoader.loadAsync('models/samples/ScannedAbbeanumInside.glb', e => updateDownloadProgress('AbbeanumInside', e))
 	.then(gltf => {
 		const model = gltf.scene
 		// move the corridor approximately to the right spot
-		placeLatLonObject(model, 'AbbeanumInside', 50.9339769-0.00001, 11.5804391-0.000029, 182, +15)
-		const scale = 1.4 // a guess
+		placeLatLonObject(model, 'AbbeanumInside', 50.9341011+0.000026, 11.5807997-0.00017, 185, +15)
+		var scale = 1.2 // a guess
+		model.scale.set(scale, scale, scale)
+		model.visible = false
+		scene.add(model)
+	})
+	.catch(printError)
+	
+	glTFLoader.loadAsync('models/samples/AbbeanumFlurCollisions.glb', e => updateDownloadProgress('AbbeanumFlurCollisions', e))
+	.then(gltf => {
+		const model = gltf.scene
+		placeLatLonObject(model, 'AbbeanumFlurCollisions', 50.9341011+0.000026, 11.5807997-0.00017, 185, +15)
+		var scale = 1.2 // a guess
 		model.scale.set(scale, scale, scale)
 		model.visible = false
 		scene.add(model)
