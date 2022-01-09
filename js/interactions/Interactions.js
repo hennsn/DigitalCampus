@@ -69,7 +69,7 @@ var down = new THREE.Vector3(0,-1,0)
 var isInside = false
 
 // helper functions for the animation loop
-function handleInteractions(scene, camera, raycaster, dt){
+function handleInteractions(scene, camera, raycasterList, dt){
 	// get the models - maybe move to not do this every frame
 	const abbeanum = scene.getObjectByName('Abbeanum')
 	const abbeanumInside = scene.getObjectByName('AbbeanumInside')
@@ -126,31 +126,57 @@ function handleInteractions(scene, camera, raycaster, dt){
 		
 		if(abbeanumFlurCollisions) abbeanumFlurCollisions.visible = true
 		
-		raycaster.set(camera.position, velocity)
+		//how wide around the player we want to check?
+		const cameraLeft = new THREE.Vector3(camera.position.x-1.5, camera.position.y, camera.position.z)
+		const cameraRight  = new THREE.Vector3(camera.position.x+1.5, camera.position.y, camera.position.z)
+
+		//initialize the rays for front, left side and right side
+		raycasterList[0].set(camera.position, velocity)
+		raycasterList[1].set(cameraLeft, velocity)
+		raycasterList[2].set(cameraRight, velocity)
 		
 		// set the raycaster distance: we're not going any farther anyways
 		// todo: we probably should check a little left and right as well, because our player should
 		// have the feeling that he is a box/ellipsoid, not a line
 		// we also should check a little lower and above, so he has to really fit below/above objects
-		raycaster.near = 0
-		raycaster.far  = velocity.length() + distanceToWalls
+		// just set all the same near and far
+		for(var i=0; i<raycasterList.length; i++)
+		{
+			raycasterList[i].near = 0
+			raycasterList[i].far  = velocity.length() + distanceToWalls
+		}
+
 		
 		// we cant check whole scene (too big) maybe copy the important objects from scene then do raycasting collision check
 		const collidables = ( isInside ? 
 			[abbeanumFlurCollisions] :
 			[abbeanum, abbeanumGround]
 		).filter(model => !!model)
-		const intersections = window.intersections = raycaster.intersectObjects(collidables)
-
-		user.isIntersecting = intersections && intersections.length > 0 && intersections[0].object.parent.visible
+		// get intersections of left and right ray also
+		const intersections = window.intersections = raycasterList[0].intersectObjects(collidables)
+		const intersectionsLeft = window.intersections = raycasterList[1].intersectObjects(collidables)
+		const intersectionsRight = window.intersections = raycasterList[2].intersectObjects(collidables)
+		
+		user.isIntersecting = intersections && intersections.length> 0&& intersections[0].object.parent.visible ||
+		intersectionsLeft && intersectionsLeft.length> 0&& intersectionsLeft[0].object.parent.visible ||
+		intersectionsRight && intersectionsRight.length> 0&& intersectionsRight[0].object.parent.visible
 		if(user.isIntersecting){
 
 			// there is an intersection -> adjust the walking direction
 			// we adjust the walking direction by removing the collision component = face normal (n) from the velocity (v)
 			// this can be done by calculating v_new = v - n * dot(n, v) (Gram-Schmidt Process)
-			
-			// the first intersection is the closest
-			var intersection = intersections[0]
+			if(intersections[0]!=null){
+				var intersection=intersections[0]
+			}
+			//check if left object is colliding
+			if(intersectionsLeft[0]!=null){
+				var intersection=intersectionsLeft[0]
+			}
+			//check if right object is coilliding
+			if(intersectionsRight[0]!=null){
+				var intersection=intersectionsRight[0]
+			}
+
 			var face = intersection.face
 			var normal = face.normal.clone()
 			var object = intersection.object
@@ -169,11 +195,11 @@ function handleInteractions(scene, camera, raycaster, dt){
 		// theoretisch müsste es addScaledVector(velocity, dt) sein, aber damit klippe ich irgendwie immer durch die Wand
 		camera.position.add(velocity)
 		
-		raycaster.set(camera.position, down)
-		raycaster.near = 0
-		raycaster.far  = user.eyeHeight + 2
+		raycasterList[0].set(camera.position, down)
+		raycasterList[0].near = 0
+		raycasterList[0].far  = user.eyeHeight + 2
 		var noneY = -123
-		var intersection = raycaster.intersectObjects(collidables)
+		var intersection = raycasterList[0].intersectObjects(collidables)
 		var floorY = intersection && intersection.length > 0 ? intersection[0].point.y : noneY
 		if(!isInside){
 			// add terrain as intersection

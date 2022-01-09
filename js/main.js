@@ -61,6 +61,10 @@ fillScene(scene)
 // raycaster //
 ///////////
 const raycaster = new THREE.Raycaster()
+const raycasterLeft = new THREE.Raycaster()
+const raycasterRight = new THREE.Raycaster()
+// raycasters for checking box around player
+const raycasterList = [raycaster, raycasterLeft, raycasterRight]
 raycaster.far = 8
 
 // adjust the aspect ratio as needed:
@@ -89,7 +93,7 @@ function mainLoop(){
 	lastTime = time
 
 	// animation / physics stuff goes here
-	handleInteractions(scene, camera, raycaster, deltaTime)
+	handleInteractions(scene, camera, raycasterList, deltaTime)
 	handleUserInterface(deltaTime)
 	stats.update()
 	
