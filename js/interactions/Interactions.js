@@ -68,6 +68,7 @@ var down = new THREE.Vector3(0,-1,0)
 
 var isInside = false
 
+
 // helper functions for the animation loop
 function handleInteractions(scene, camera, raycasterList, dt){
 	// get the models - maybe move to not do this every frame
@@ -78,6 +79,7 @@ function handleInteractions(scene, camera, raycasterList, dt){
 	const abbeanumDoor = scene.getObjectByName('AbbeanumDoor')
 	const cityCenter = scene.getObjectByName('City Center')
 	const terrain = scene.getObjectByName('Terrain')
+	const abbeanumHS1 = scene.getObjectByName('AbbeanumHS1')
 	acceleration.set(0,0,0)
 	var dtx = clamp(dt * 10, 0, 1) // the lower this number is, the smoother is the motion
 	
@@ -101,14 +103,14 @@ function handleInteractions(scene, camera, raycasterList, dt){
 	if(keyboard.d) acceleration.add(right)
 
 
-	if(keyboard.l) abbeanumInside.position.z -= 0.1 //model front
-	if(keyboard.i) abbeanumInside.position.x -= 0.1//modeul left
-	if(keyboard.j) abbeanumInside.position.z += 0.1//model back
-	if(keyboard.k) abbeanumInside.position.x += 0.1//model right
-	if(keyboard.o) abbeanumInside.rotation.y += 0.5 * user.turnSpeed //model rot left
-	if(keyboard.u) abbeanumInside.rotation.y -= 0.5 * user.turnSpeed//model rot right
-	if(keyboard.n) abbeanumInside.position.y -= 0.1//model down
-	if(keyboard.m) abbeanumInside.position.y += 0.1//model up
+	if(keyboard.l) abbeanumHS1.position.z -= 0.1 //model front
+	if(keyboard.i) abbeanumHS1.position.x -= 0.1//modeul left
+	if(keyboard.j) abbeanumHS1.position.z += 0.1//model back
+	if(keyboard.k) abbeanumHS1.position.x += 0.1//model right
+	if(keyboard.o) abbeanumHS1.rotation.y += 0.5 * user.turnSpeed //model rot left
+	if(keyboard.u) abbeanumHS1.rotation.y -= 0.5 * user.turnSpeed//model rot right
+	if(keyboard.n) abbeanumHS1.position.y -= 0.1//model down
+	if(keyboard.m) abbeanumHS1.position.y += 0.1//model up
 
 	// check for general entrances - this can be made more generic
 	if((keyboard.e || keyboard.Enter) && Date.now() - lastEnter > enterInterval && camera.position.distanceTo(abbeanumDoor.position) < 30){ // e - enter
@@ -117,6 +119,7 @@ function handleInteractions(scene, camera, raycasterList, dt){
 		abbeanum.visible = !isInside
 		abbeanumGround.visible = !isInside
 		abbeanumInside.visible = isInside
+		abbeanumHS1.visible = isInside
 		cityCenter.visible = !isInside
 		terrain.visible = !isInside
 	}

@@ -1,3 +1,4 @@
+import * as THREE from 'https://cdn.skypack.dev/three@0.135.0'
 
 import { placeLatLonObject } from './Coordinates.js'
 import { printError, updateDownloadProgress } from '../UserInterface.js'
@@ -58,11 +59,13 @@ function fillScene(scene) {
 	})
 	.catch(printError)
 
-	glTFLoader.loadAsync('models/samples/HS3.glb', e => updateDownloadProgress('HS3', e))
+	glTFLoader.loadAsync('models/samples/AbbeanumHS1.glb', e => updateDownloadProgress('AbbeanumHS1', e))
 	.then(gltf => {
 		const model = gltf.scene
-		// move to random spot
-		placeLatLonObject(model, 'HS3', 50.9339769-0.00001, 11.5804391-0.000029, 182, +15)
+		model.position.set(-4.447491982365474, 5.1999999999999975, -32.57777777689315)
+		model.rotation.set(-3.141592653589793, 4.731592653589793, -3.141592653589793)
+
+		model.name = 'AbbeanumHS1'
 		const scale = 1.4 // a guess
 		model.scale.set(scale, scale, scale)
 		model.visible = false
