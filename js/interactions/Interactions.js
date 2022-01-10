@@ -13,7 +13,7 @@ import { clamp } from '../Maths.js'
 const keyboard = window.keyboard = {}
 
 // the user
-const user = { height: 1.8, eyeHeight: 1.7, speed: 2, turnSpeed: 0.03, isIntersecting: false }
+const user = { height: 1.7, eyeHeight: 1.6, speed: 2, turnSpeed: 0.03, isIntersecting: false }
 const distanceToWalls = 1
 const enterInterval = 300 // milli seconds
 let lastEnter = Date.now()
@@ -72,7 +72,7 @@ var isInside = false
 function handleInteractions(scene, camera, raycasterList, dt){
 	// get the models - maybe move to not do this every frame
 	const abbeanum = scene.getObjectByName('Abbeanum')
-	const abbeanumInside = scene.getObjectByName('AbbeanumInside')
+	const abbeanumInside = scene.getObjectByName('ScannedAbbeanumInside')
 	const abbeanumFlurCollisions = scene.getObjectByName('AbbeanumFlurCollisions')
 	const abbeanumGround = scene.getObjectByName('AbbeanumGround')
 	const abbeanumDoor = scene.getObjectByName('AbbeanumDoor')
@@ -85,10 +85,10 @@ function handleInteractions(scene, camera, raycasterList, dt){
 	 * Helper function for updating the camera controls in the animation loop.
 	 */
 	if(keyboard.ArrowLeft){
-		camera.rotation.y += user.turnSpeed
+		camera.rotation.y -= user.turnSpeed
 	}
 	if(keyboard.ArrowRight){
-		camera.rotation.y -= user.turnSpeed
+		camera.rotation.y += user.turnSpeed
 	}
 	if(keyboard.w || keyboard.ArrowUp){
 		acceleration.add(forward)
@@ -99,6 +99,16 @@ function handleInteractions(scene, camera, raycasterList, dt){
 	
 	if(keyboard.a) acceleration.sub(right)
 	if(keyboard.d) acceleration.add(right)
+
+
+	if(keyboard.l) abbeanumInside.position.z -= 0.1 //model front
+	if(keyboard.i) abbeanumInside.position.x -= 0.1//modeul left
+	if(keyboard.j) abbeanumInside.position.z += 0.1//model back
+	if(keyboard.k) abbeanumInside.position.x += 0.1//model right
+	if(keyboard.o) abbeanumInside.rotation.y += 0.5 * user.turnSpeed //model rot left
+	if(keyboard.u) abbeanumInside.rotation.y -= 0.5 * user.turnSpeed//model rot right
+	if(keyboard.n) abbeanumInside.position.y -= 0.1//model down
+	if(keyboard.m) abbeanumInside.position.y += 0.1//model up
 
 	// check for general entrances - this can be made more generic
 	if((keyboard.e || keyboard.Enter) && Date.now() - lastEnter > enterInterval && camera.position.distanceTo(abbeanumDoor.position) < 30){ // e - enter
