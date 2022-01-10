@@ -80,6 +80,11 @@ function handleInteractions(scene, camera, raycasterList, dt){
 	const cityCenter = scene.getObjectByName('City Center')
 	const terrain = scene.getObjectByName('Terrain')
 	const abbeanumHS1 = scene.getObjectByName('AbbeanumHS1')
+
+	const trashcan = window.trashcan = scene.getObjectByName('Trashcan')
+	const stick = scene.getObjectByName('Stick')
+	const laptop = scene.getObjectByName('Laptop')
+
 	acceleration.set(0,0,0)
 	var dtx = clamp(dt * 10, 0, 1) // the lower this number is, the smoother is the motion
 	
@@ -103,14 +108,14 @@ function handleInteractions(scene, camera, raycasterList, dt){
 	if(keyboard.d) acceleration.add(right)
 
 
-	if(keyboard.l) abbeanumHS1.position.z -= 0.1 //model front
-	if(keyboard.i) abbeanumHS1.position.x -= 0.1//modeul left
-	if(keyboard.j) abbeanumHS1.position.z += 0.1//model back
-	if(keyboard.k) abbeanumHS1.position.x += 0.1//model right
-	if(keyboard.o) abbeanumHS1.rotation.y += 0.5 * user.turnSpeed //model rot left
-	if(keyboard.u) abbeanumHS1.rotation.y -= 0.5 * user.turnSpeed//model rot right
-	if(keyboard.n) abbeanumHS1.position.y -= 0.1//model down
-	if(keyboard.m) abbeanumHS1.position.y += 0.1//model up
+	if(keyboard.l) trashcan.position.z -= 0.1 //model front
+	if(keyboard.i) trashcan.position.x -= 0.1//modeul left
+	if(keyboard.j) trashcan.position.z += 0.1//model back
+	if(keyboard.k) trashcan.position.x += 0.1//model right
+	if(keyboard.o) trashcan.rotation.y += 0.5 * user.turnSpeed //model rot left
+	if(keyboard.u) trashcan.rotation.y -= 0.5 * user.turnSpeed//model rot right
+	if(keyboard.n) trashcan.position.y -= 0.1//model down
+	if(keyboard.m) trashcan.position.y += 0.1//model up
 
 	// check for general entrances - this can be made more generic
 	if((keyboard.e || keyboard.Enter) && Date.now() - lastEnter > enterInterval && camera.position.distanceTo(abbeanumDoor.position) < 30){ // e - enter

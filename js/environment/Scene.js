@@ -72,6 +72,8 @@ function fillScene(scene) {
 		scene.add(model)
 	})
 	.catch(printError)
+
+
 	glTFLoader.loadAsync('models/samples/ScannedAbbeanumInside.glb', e => updateDownloadProgress('ScannedAbbeanumInside', e))
 	.then(gltf => {
 		const model = gltf.scene
@@ -84,6 +86,58 @@ function fillScene(scene) {
 	})
 	.catch(printError)
 
+
+	glTFLoader.loadAsync('models/samples/ScannedAbbeanumInside.glb', e => updateDownloadProgress('ScannedAbbeanumInside', e))
+	.then(gltf => {
+		const model = gltf.scene
+		model.position.set(-8.070218779393336, 3.8000000000000007, -25.577777777269173)
+		model.name = 'ScannedAbbeanumInside'
+		const scale = 1.4 // a guess
+		model.scale.set(scale, scale, scale)
+		model.visible = false
+		scene.add(model)
+	})
+	.catch(printError)
+
+
+	glTFLoader.loadAsync('models/samples/Laptop.glb', e => updateDownloadProgress('Laptop', e))
+	.then(gltf => {
+		const model = gltf.scene
+		model.position.set(7.2525284107715935, 0.949415911263972, -21.716083277168504)
+		model.name = 'Laptop'
+		//const scale = 1.4 // a guess
+		//model.scale.set(scale, scale, scale)
+		model.visible = true
+		scene.add(model)
+	})
+	.catch(printError)
+
+
+	glTFLoader.loadAsync('models/samples/stock.glb', e => updateDownloadProgress('Stick', e))
+	.then(gltf => {
+		const model = gltf.scene
+		model.position.set(7.2525284107715935, 0.949415911263972, -21.716083277168504)
+		model.name = 'Stick'
+		//const scale = 1.4 // a guess
+		//model.scale.set(scale, scale, scale)
+		model.visible = true
+		scene.add(model)
+	})
+	.catch(printError)
+
+/* something is funky about the trashcan
+	glTFLoader.loadAsync('models/samples/Trashcan.glb', e => updateDownloadProgress('Trashcan', e))
+	.then(gltf => {
+		const model = gltf.scene
+		model.position.set(-128.17562068967146, -8.389054586305152, 84.08548520059321)
+		model.name = 'Trashcan'
+		const scale = 10 // a guess
+		model.scale.set(scale, scale, scale)
+		model.visible = true
+		scene.add(model)
+	})
+	.catch(printError)
+*/
 
 }
 
