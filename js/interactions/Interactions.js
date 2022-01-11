@@ -99,7 +99,11 @@ var rayChecks = [
 	new THREE.Vector3( 0.0, 0.0,+0.2),
 ]
 
-const hs1DoorPosition = new THREE.Vector3(-14.2, 3.8, -36.4)
+const hs1DoorPosition  = new THREE.Vector3(-14.2, 3.8, -36.4)
+const mainDoorPosition = new THREE.Vector3(2.84, 1.67, -20.35)
+const doorInteractionRadius = 3
+
+var couldInteract = null
 
 // helper functions for the animation loop
 function handleInteractions(scene, camera, raycaster, dt){
@@ -151,15 +155,24 @@ function handleInteractions(scene, camera, raycaster, dt){
 	if(keyboard.u) debuggedObject.rotation.y -= dt * 5 * user.turnSpeed // model rot right
 	if(keyboard.n) debuggedObject.position.y -= dt // model down
 	if(keyboard.m) debuggedObject.position.y += dt // model up
+	
+	var canInteract = 
+		(scene != outsideScene && camera.position.distanceTo(hs1DoorPosition) < doorInteractionRadius) ||
+		(abbeanumDoor && camera.position.distanceTo(mainDoorPosition) < doorInteractionRadius)
+	
+	if(couldInteract != canInteract || couldInteract == null){
+		couldInteract = canInteract
+		controlHints.innerHTML = canInteract ? 'WASD walk<br>LEFT/RIGHT turn<br>E interact' : 'WASD walk<br>LEFT/RIGHT turn'
+	}
 
 	// check for general entrances - this can be made more generic
 	if((keyboard.e || keyboard.Enter) && 
 		Date.now() - lastEnter > enterInterval
 	){
-		if(scene != outsideScene && camera.position.distanceTo(hs1DoorPosition) < 5){
+		if(scene != outsideScene && camera.position.distanceTo(hs1DoorPosition) < doorInteractionRadius){
 			lastEnter = Date.now()
 			window.scene = scene = (scene == flurScene) ? hs1Scene : flurScene
-		} else if(abbeanumDoor && camera.position.distanceTo(abbeanumDoor.position) < 30){
+		} else if(camera.position.distanceTo(mainDoorPosition) < doorInteractionRadius){
 			lastEnter = Date.now()
 			window.scene = scene = (scene == outsideScene) ? flurScene : outsideScene
 		}
