@@ -8,7 +8,7 @@ import Stats from 'https://cdn.skypack.dev/three@0.135.0/examples/jsm/libs/stats
 
 import { clamp }  from './Maths.js'
 import { createSky }  from './environment/Sky.js'
-import { createLighting } from './environment/Lighting.js'
+import { createLighting, createInsideLighting } from './environment/Lighting.js'
 import { fillScene } from './environment/Scene.js'
 import { createTerrain } from './environment/Terrain.js'
 import { handleUserInterface } from './UserInterface.js'
@@ -51,21 +51,32 @@ glTFLoader.setDRACOLoader(dracoLoader)
 // scene //
 ///////////
 
-const scene = window.scene = new THREE.Scene()
-createSky(scene)
-createLighting(scene)
-createTerrain(scene)
-fillScene(scene)
+var outsideScene = window.outsideScene = new THREE.Scene()
+outsideScene.name = 'outside'
+createSky(outsideScene)
+createLighting(outsideScene)
+createTerrain(outsideScene)
+fillScene(outsideScene)
 
-///////////
+var flurScene = window.flurScene = new THREE.Scene()
+flurScene.name = 'flur'
+createInsideLighting(flurScene)
+// todo define lighting
+// todo add objects
+
+var hs1Scene = window.hs1Scene = new THREE.Scene()
+hs1Scene.name = 'hs1'
+createInsideLighting(hs1Scene)
+// todo define lighting
+// todo add objects
+
+// start location
+window.scene = outsideScene
+
+///////////////
 // raycaster //
-///////////
-const raycaster = new THREE.Raycaster()
-const raycasterLeft = new THREE.Raycaster()
-const raycasterRight = new THREE.Raycaster()
-// raycasters for checking box around player
-const raycasterList = [raycaster, raycasterLeft, raycasterRight]
-raycaster.far = 8
+///////////////
+const raycaster = window.raycaster = new THREE.Raycaster()
 
 // adjust the aspect ratio as needed:
 window.addEventListener('resize', (event) => {
@@ -88,18 +99,21 @@ var lastTime = new Date().getTime()
 
 function mainLoop(){
 	
+	const scene = window.scene
+	
 	const time = new Date().getTime()
 	const deltaTime = clamp((time-lastTime)/1e3, 1e-3, 1.0)
 	lastTime = time
 
 	// animation / physics stuff goes here
-	handleInteractions(scene, camera, raycasterList, deltaTime)
+	handleInteractions(scene, camera, raycaster, deltaTime)
 	handleUserInterface(deltaTime)
 	stats.update()
 	
 	// todo we should be able to register event listeners for mainLoop, and do our stuff inside of them
 	if(window.envMap){
-		window.envMap.position.set(camera.position.x,camera.position.y,camera.position.z) // normally the environment map is fixed in place automatically, but I didn't find the correct map yet (1 texture for all sides combined)
+		// normally the environment map is fixed in place automatically, but I didn't find the correct map yet (1 texture for all sides combined)
+		window.envMap.position.set(camera.position.x, camera.position.y, camera.position.z)
 	}
 	
 	renderer.render(scene, camera)

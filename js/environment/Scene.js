@@ -12,7 +12,7 @@ function fillScene(scene) {
 			placeLatLonObject(model, 'Abbeanum', 50.9339769, 11.5804391, 182, +15)
 			var scale = 1.3 // a guess
 			model.scale.set(scale, scale, scale)
-			scene.add(model)
+			outsideScene.add(model)
 		})
 		.catch(printError)
 	
@@ -22,7 +22,7 @@ function fillScene(scene) {
 			placeLatLonObject(model, 'AbbeanumGround', 50.9339769, 11.5804391, 182, +15)
 			var scale = 1.3
 			model.scale.set(scale, scale, scale)
-			scene.add(model)
+			outsideScene.add(model)
 		})
 		.catch(printError)
 	
@@ -32,8 +32,9 @@ function fillScene(scene) {
 		placeLatLonObject(model, 'AbbeanumDoor', 50.9339769, 11.5804391, 182, +15)
 		var scale = 1.3 // a guess
 		model.scale.set(scale, scale, scale)
-		scene.add(model)
 		model.visible = false
+		outsideScene.add(model)
+		flurScene.add(model.clone()) // objects must be cloned, when you want to add them to multiple scenes
 	})
 	.catch(printError)
 
@@ -41,74 +42,53 @@ function fillScene(scene) {
 		.then(gltf => {
 			const model = gltf.scene
 			placeLatLonObject(model, 'City Center', 50.9279284 + 0.0001, 11.5829607 - 0.00016, 150, 0)
-			scene.add(model)
+			outsideScene.add(model)
 		})
 		.catch(printError)
 	
-
+	// these two belong together:
+	glTFLoader.loadAsync('models/samples/ScannedAbbeanumInside.glb', e => updateDownloadProgress('ScannedAbbeanumInside', e))
+	.then(gltf => {
+		const model = gltf.scene
+		placeLatLonObject(model, 'ScannedAbbeanumInside', 50.93416130, 11.58060685, 185.800)
+		const scale = 1.4 // a guess
+		model.scale.set(scale, scale, scale)
+		flurScene.add(model)
+	})
+	.catch(printError)
 	glTFLoader.loadAsync('models/samples/AbbeanumFlurCollisions.glb', e => updateDownloadProgress('AbbeanumFlurCollisions', e))
 	.then(gltf => {
 		const model = gltf.scene
 		// move the corridor approximately to the right spot
-		model.position.set(-8.070218779393336, 3.8000000000000007, -25.577777777269173)
+		model.position.set(-8.0702, 3.8, -25.578)
 		model.name = 'AbbeanumFlurCollisions'
 		const scale = 1.4 // a guess
 		model.scale.set(scale, scale, scale)
 		model.visible = false
-		scene.add(model)
+		flurScene.add(model)
 	})
 	.catch(printError)
+	
 
 	glTFLoader.loadAsync('models/samples/AbbeanumHS1.glb', e => updateDownloadProgress('AbbeanumHS1', e))
 	.then(gltf => {
 		const model = gltf.scene
-		model.position.set(-4.447491982365474, 5.1999999999999975, -32.57777777689315)
-		model.rotation.set(-3.141592653589793, 4.731592653589793, -3.141592653589793)
-
-		model.name = 'AbbeanumHS1'
+		placeLatLonObject(model, 'AbbeanumHS1', 50.93422430, 11.58065859, 187.200, 271)
+		// model.position.set(-4.4474, 5.2, -32.578)
+		// model.rotation.set(-Math.PI, 4.7316, -Math.PI)
 		const scale = 1.4 // a guess
 		model.scale.set(scale, scale, scale)
-		model.visible = false
-		scene.add(model)
+		hs1Scene.add(model)
 	})
 	.catch(printError)
 
-
-	glTFLoader.loadAsync('models/samples/ScannedAbbeanumInside.glb', e => updateDownloadProgress('ScannedAbbeanumInside', e))
-	.then(gltf => {
-		const model = gltf.scene
-		model.position.set(-8.070218779393336, 3.8000000000000007, -25.577777777269173)
-		model.name = 'ScannedAbbeanumInside'
-		const scale = 1.4 // a guess
-		model.scale.set(scale, scale, scale)
-		model.visible = false
-		scene.add(model)
-	})
-	.catch(printError)
-
-
-	glTFLoader.loadAsync('models/samples/ScannedAbbeanumInside.glb', e => updateDownloadProgress('ScannedAbbeanumInside', e))
-	.then(gltf => {
-		const model = gltf.scene
-		model.position.set(-8.070218779393336, 3.8000000000000007, -25.577777777269173)
-		model.name = 'ScannedAbbeanumInside'
-		const scale = 1.4 // a guess
-		model.scale.set(scale, scale, scale)
-		model.visible = false
-		scene.add(model)
-	})
-	.catch(printError)
 
 
 	glTFLoader.loadAsync('models/samples/Laptop.glb', e => updateDownloadProgress('Laptop', e))
 	.then(gltf => {
 		const model = gltf.scene
-		model.position.set(7.2525284107715935, 0.949415911263972, -21.716083277168504)
-		model.name = 'Laptop'
-		//const scale = 1.4 // a guess
-		//model.scale.set(scale, scale, scale)
-		model.visible = true
-		scene.add(model)
+		placeLatLonObject(model, 'Laptop', 50.93434396, 11.58056024, 185.848, 0)
+		flurScene.add(model)
 	})
 	.catch(printError)
 
@@ -116,12 +96,8 @@ function fillScene(scene) {
 	glTFLoader.loadAsync('models/samples/stock.glb', e => updateDownloadProgress('Stick', e))
 	.then(gltf => {
 		const model = gltf.scene
-		model.position.set(7.2525284107715935, 0.949415911263972, -21.716083277168504)
-		model.name = 'Stick'
-		//const scale = 1.4 // a guess
-		//model.scale.set(scale, scale, scale)
-		model.visible = true
-		scene.add(model)
+		placeLatLonObject(model, 'Stick', 50.93398862, 11.58047630, 185.664, 0)
+		flurScene.add(model)
 	})
 	.catch(printError)
 
