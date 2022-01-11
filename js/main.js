@@ -129,6 +129,7 @@ function mainLoop(){
 	//just random loop to check how long it takes for abbeanum door to be registered
 	if(i<=10){
 		console.log(scene.getObjectByName("AbbeanumDoor"));
+		console.log(scene.getObjectByName("Laptop"))
 		i++;
 	}
 	  

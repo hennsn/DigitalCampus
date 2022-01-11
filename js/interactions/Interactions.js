@@ -284,19 +284,27 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, dt){
 		
 	}
 
+	/*To do:
+	objects in the array that are inside that abbeanum are undefined
+	either two array for inside/outside objects, or only add objects to array when we enter the building */
 
 	/////MOUSE INTERACTIONS//////
 	//CLICK EVENTS
 	if(wasClicked == true){
 		if(abbeanumDoor) abbeanumDoor.visible = true
+		if(laptop) laptop.visible = true
+		if(stick) stick.visible = true
+
 		mousecaster.setFromCamera( mouse, camera );
 
 		//////Array of clickable objects
-		const clickableObjects = [abbeanumDoor]
+		const clickableObjects = [abbeanumDoor, laptop, stick]
+		console.log(clickableObjects)
 		const mouseIntersects = mousecaster.intersectObjects(clickableObjects); //vs intersectObjects(scene.children)
 		
 		//check array for ray hits
 		for ( let i = 0; i < mouseIntersects.length; i ++ ) {
+			console.log(clickableObjects)
 			console.log('clicked on object')
 		}
 
@@ -307,6 +315,8 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, dt){
 		}*/
 
 		if(abbeanumDoor) abbeanumDoor.visible = false;
+		if(laptop) laptop.visible = false //actually makes the whole laptop disappear
+		if(stick) stick.visible = false //guess same?
 		wasClicked = false
 	}
 }
