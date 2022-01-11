@@ -4,6 +4,7 @@ import { OrbitControls } from 'https://cdn.skypack.dev/three@0.135.0/examples/js
 import { VRButton } from 'https://cdn.skypack.dev/three@0.135.0/examples/jsm/webxr/VRButton.js'
 import { getHeightOnTerrain } from '../environment/Terrain.js'
 import { clamp } from '../Maths.js'
+import { playAudioTrack } from '../UserInterface.js'
 
 // what exactly does that do? / how does it work?
 // eher etwas für die #InteractionsGruppe
@@ -44,6 +45,9 @@ function createInteractions(scene, camera, renderer){
 	function keyDown(event){
 		keyboard[event.key] = event.timeStamp
 		keyboard[event.keyCode] = event.timeStamp
+		if(event.key == 'z'){// a simple audio test: press z to play the audio
+			playAudioTrack('audio/springTestSound.wav')
+		}
 	}
 	
 	function keyUp(event){
