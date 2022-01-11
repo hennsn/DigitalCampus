@@ -103,7 +103,7 @@ const hs1DoorPosition  = new THREE.Vector3(-14.2, 3.8, -36.4)
 const mainDoorPosition = new THREE.Vector3(2.84, 1.67, -20.35)
 const doorInteractionRadius = 3
 
-var couldInteract = null
+var couldInteract = false
 
 // helper functions for the animation loop
 function handleInteractions(scene, camera, raycaster, dt){
@@ -160,11 +160,12 @@ function handleInteractions(scene, camera, raycaster, dt){
 		(scene != outsideScene && camera.position.distanceTo(hs1DoorPosition) < doorInteractionRadius) ||
 		(abbeanumDoor && camera.position.distanceTo(mainDoorPosition) < doorInteractionRadius)
 	
-	if(couldInteract != canInteract || couldInteract == null){
+	if(couldInteract != canInteract){
 		couldInteract = canInteract
 		controlHints.innerHTML = canInteract ? 'WASD walk<br>LEFT/RIGHT turn<br>E interact' : 'WASD walk<br>LEFT/RIGHT turn'
 	}
 
+	// we could create an "Interactable" class, which does this, and could generalize pickups with that
 	// check for general entrances - this can be made more generic
 	if((keyboard.e || keyboard.Enter) && 
 		Date.now() - lastEnter > enterInterval
