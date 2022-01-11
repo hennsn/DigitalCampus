@@ -10,3 +10,39 @@ body {
 	height: 0.5em;
 	background: #69f;
 }
+
+#missionText {
+	position: fixed;
+    top: 0.7em;
+    text-align: center;
+    width: 100%;
+    color: lightyellow;
+    font-size: 2.5em;
+	/* Kapitälchen */
+	font-variant: small-caps;
+	/* black outline, not perfect, but better than nothing */
+    text-shadow: 2px 0 0 #000, 0 -2px 0 #000, 0 2px 0 #000, -2px 0 0 #000;
+	/* cannot be selected */
+	-webkit-user-select: none; /* Safari */        
+	-moz-user-select: none; /* Firefox */
+	-ms-user-select: none; /* IE10+/Edge */
+	user-select: none; /* Standard */
+}
+
+#controlHints {
+	position: fixed;
+	bottom: 0em;
+	padding: 1em;
+	color: moccasin;
+	font-size: 2em;
+	text-align: center;
+	/* Kapitälchen */
+	font-variant: small-caps;
+	/* black outline */
+    text-shadow: 2px 0 0 #000, 0 -2px 0 #000, 0 2px 0 #000, -2px 0 0 #000;
+	/* cannot be selected */
+	-webkit-user-select: none; /* Safari */        
+	-moz-user-select: none; /* Firefox */
+	-ms-user-select: none; /* IE10+/Edge */
+	user-select: none; /* Standard */
+}

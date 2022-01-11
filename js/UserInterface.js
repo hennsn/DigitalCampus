@@ -64,4 +64,10 @@ function handleUserInterface(dt){
 	updateDownloadBar(dt)
 }
 
-export { printError, handleUserInterface, updateDownloadProgress }
+function playAudioTrack(srcUrl){
+	var audio = new Audio(srcUrl)
+	audio.play()
+	return audio
+}
+
+export { printError, handleUserInterface, updateDownloadProgress, playAudioTrack }
