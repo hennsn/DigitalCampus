@@ -20,7 +20,7 @@ body {
     font-size: 2.5em;
 	/* Kapitälchen */
 	font-variant: small-caps;
-	/* black outline */
+	/* black outline, not perfect, but better than nothing */
     text-shadow: 2px 0 0 #000, 0 -2px 0 #000, 0 2px 0 #000, -2px 0 0 #000;
 	/* cannot be selected */
 	-webkit-user-select: none; /* Safari */        
