@@ -68,9 +68,20 @@ var down = new THREE.Vector3(0,-1,0)
 
 var isInside = false
 
+// left/right, up/down, forward/backward
+var rayChecks = [
+	new THREE.Vector3( 0.0, 0.0, 0.0),
+	new THREE.Vector3(+0.2, 0.0, 0.0),
+	new THREE.Vector3(-0.2, 0.0, 0.0),
+	new THREE.Vector3( 0.0,-0.2, 0.0),
+	new THREE.Vector3( 0.0,+0.2, 0.0),
+	new THREE.Vector3( 0.0, 0.0,-0.2),
+	new THREE.Vector3( 0.0, 0.0,+0.2),
+]
 
 // helper functions for the animation loop
 function handleInteractions(scene, camera, raycasterList, dt){
+	
 	// get the models - maybe move to not do this every frame
 	const abbeanum = scene.getObjectByName('Abbeanum')
 	const abbeanumInside = scene.getObjectByName('ScannedAbbeanumInside')
@@ -92,10 +103,10 @@ function handleInteractions(scene, camera, raycasterList, dt){
 	 * Helper function for updating the camera controls in the animation loop.
 	 */
 	if(keyboard.ArrowLeft){
-		camera.rotation.y -= user.turnSpeed
+		camera.rotation.y += user.turnSpeed
 	}
 	if(keyboard.ArrowRight){
-		camera.rotation.y += user.turnSpeed
+		camera.rotation.y -= user.turnSpeed
 	}
 	if(keyboard.w || keyboard.ArrowUp){
 		acceleration.add(forward)
@@ -107,15 +118,15 @@ function handleInteractions(scene, camera, raycasterList, dt){
 	if(keyboard.a) acceleration.sub(right)
 	if(keyboard.d) acceleration.add(right)
 
-
-	if(keyboard.l) trashcan.position.z -= 0.1 //model front
-	if(keyboard.i) trashcan.position.x -= 0.1//modeul left
-	if(keyboard.j) trashcan.position.z += 0.1//model back
-	if(keyboard.k) trashcan.position.x += 0.1//model right
-	if(keyboard.o) trashcan.rotation.y += 0.5 * user.turnSpeed //model rot left
-	if(keyboard.u) trashcan.rotation.y -= 0.5 * user.turnSpeed//model rot right
-	if(keyboard.n) trashcan.position.y -= 0.1//model down
-	if(keyboard.m) trashcan.position.y += 0.1//model up
+	// placing an object
+	if(keyboard.l) trashcan.position.z -= 0.1 // model front
+	if(keyboard.i) trashcan.position.x -= 0.1 // model left
+	if(keyboard.j) trashcan.position.z += 0.1 // model back
+	if(keyboard.k) trashcan.position.x += 0.1 // model right
+	if(keyboard.o) trashcan.rotation.y += 0.5 * user.turnSpeed // model rot left
+	if(keyboard.u) trashcan.rotation.y -= 0.5 * user.turnSpeed // model rot right
+	if(keyboard.n) trashcan.position.y -= 0.1 // model down
+	if(keyboard.m) trashcan.position.y += 0.1 // model up
 
 	// check for general entrances - this can be made more generic
 	if((keyboard.e || keyboard.Enter) && Date.now() - lastEnter > enterInterval && camera.position.distanceTo(abbeanumDoor.position) < 30){ // e - enter
@@ -144,80 +155,59 @@ function handleInteractions(scene, camera, raycasterList, dt){
 		
 		if(abbeanumFlurCollisions) abbeanumFlurCollisions.visible = true
 		
-		//how wide around the player we want to check?
-		const cameraLeft = new THREE.Vector3(camera.position.x-1.5, camera.position.y, camera.position.z)
-		const cameraRight  = new THREE.Vector3(camera.position.x+1.5, camera.position.y, camera.position.z)
-
-		//initialize the rays for front, left side and right side
-		raycasterList[0].set(camera.position, velocity)
-		raycasterList[1].set(cameraLeft, velocity)
-		raycasterList[2].set(cameraRight, velocity)
-		
-		// set the raycaster distance: we're not going any farther anyways
-		// todo: we probably should check a little left and right as well, because our player should
-		// have the feeling that he is a box/ellipsoid, not a line
-		// we also should check a little lower and above, so he has to really fit below/above objects
-		// just set all the same near and far
-		for(var i=0; i<raycasterList.length; i++)
-		{
-			raycasterList[i].near = 0
-			raycasterList[i].far  = velocity.length() + distanceToWalls
-		}
-
-		
 		// we cant check whole scene (too big) maybe copy the important objects from scene then do raycasting collision check
 		const collidables = ( isInside ? 
 			[abbeanumFlurCollisions] :
 			[abbeanum, abbeanumGround]
 		).filter(model => !!model)
-		// get intersections of left and right ray also
-		const intersections = window.intersections = raycasterList[0].intersectObjects(collidables)
-		const intersectionsLeft = window.intersections = raycasterList[1].intersectObjects(collidables)
-		const intersectionsRight = window.intersections = raycasterList[2].intersectObjects(collidables)
 		
-		user.isIntersecting = intersections && intersections.length> 0&& intersections[0].object.parent.visible ||
-		intersectionsLeft && intersectionsLeft.length> 0&& intersectionsLeft[0].object.parent.visible ||
-		intersectionsRight && intersectionsRight.length> 0&& intersectionsRight[0].object.parent.visible
-		if(user.isIntersecting){
-
-			// there is an intersection -> adjust the walking direction
-			// we adjust the walking direction by removing the collision component = face normal (n) from the velocity (v)
-			// this can be done by calculating v_new = v - n * dot(n, v) (Gram-Schmidt Process)
-			if(intersections[0]!=null){
-				var intersection=intersections[0]
+		var isIntersecting = false
+		const raycaster = raycasterList[0] // why is there a list???
+		raycaster.near = 0
+		raycaster.far  = velocity.length() + distanceToWalls
+		const cameraSpaceRight = new THREE.Vector3(-velocity.z, 0, velocity.x).normalize()
+		for(var i=0;i<rayChecks.length;i++){
+			const rayCheck = rayChecks[i]
+			const position = camera.position.clone()
+			position.addScaledVector(cameraSpaceRight, rayCheck.x)
+			position.addScaledVector(up, rayCheck.y)
+			position.addScaledVector(velocity, rayCheck.z / velocity.length())
+			raycaster.set(position, velocity)
+			const intersections = raycaster.intersectObjects(collidables)
+			if(intersections && intersections.length > 0){
+				
+				const intersection = intersections[0]
+				
+				isIntersecting = true
+				
+				// we can do this slowing-down for every closest intersection
+				// this will prevent clipping through edges
+				const face   = intersection.face
+				const normal = face.normal.clone()
+				const object = intersection.object
+				// transform normal from object space to world space
+				normal.transformDirection(object.matrixWorld)
+				// remove the projection
+				normal.multiplyScalar(velocity.dot(normal))
+				if(normal.dot(velocity) < 0){// ensure we don't get accelerated by negative walls
+					velocity.add(normal)
+				} else {
+					velocity.sub(normal)
+				}
+				
 			}
-			//check if left object is colliding
-			if(intersectionsLeft[0]!=null){
-				var intersection=intersectionsLeft[0]
-			}
-			//check if right object is coilliding
-			if(intersectionsRight[0]!=null){
-				var intersection=intersectionsRight[0]
-			}
-
-			var face = intersection.face
-			var normal = face.normal.clone()
-			var object = intersection.object
-			// transform normal from object space to world space
-			normal.transformDirection(object.matrixWorld)
-			// remove the projection
-			normal.multiplyScalar(velocity.dot(normal))
-			if(normal.dot(velocity) < 0){// ensure we don't get accelerated by negative walls
-				velocity.add(normal)
-			} else {
-				velocity.sub(normal)
-			}
-			
 		}
+		
+		user.isIntersecting = isIntersecting
 		
 		// theoretisch müsste es addScaledVector(velocity, dt) sein, aber damit klippe ich irgendwie immer durch die Wand
 		camera.position.add(velocity)
 		
-		raycasterList[0].set(camera.position, down)
-		raycasterList[0].near = 0
-		raycasterList[0].far  = user.eyeHeight + 2
+		raycaster.set(camera.position, down)
+		raycaster.near = 0
+		raycaster.far  = user.eyeHeight + 2
 		var noneY = -123
-		var intersection = raycasterList[0].intersectObjects(collidables)
+		var intersection = raycaster.intersectObjects(collidables)
 		var floorY = intersection && intersection.length > 0 ? intersection[0].point.y : noneY
 		if(!isInside){
 			// add terrain as intersection
