@@ -1,7 +1,11 @@
 import * as THREE from 'https://cdn.skypack.dev/three@0.135.0'
+// import { OutlinePass } from 'https://cdn.skypack.dev/three@0.135.0/examples/jsm/postprocessing/OutlinePass.js';
+
+
 
 import { placeLatLonObject } from './Coordinates.js'
 import { printError, updateDownloadProgress } from '../UserInterface.js'
+
 
 function fillScene(scene) {
 	
@@ -29,12 +33,34 @@ function fillScene(scene) {
 	glTFLoader.loadAsync('models/samples/AbbeanumDoorOnly.glb', e => updateDownloadProgress('AbbeanumDoorOnly', e))
 	.then(gltf => {
 		const model = window.abbeanum = gltf.scene
-		placeLatLonObject(model, 'AbbeanumDoor', 50.9339769, 11.5804391, 182, +15)
+		
+		placeLatLonObject(model, 'AbbeanumDoor', 50.9339769, 11.5804402, 182, +15)
 		var scale = 1.3 // a guess
 		model.scale.set(scale, scale, scale)
-		model.visible = false
+		 model.visible = false
+		// model.children[2].material.wireframe = true;
+
+
+
 		outsideScene.add(model)
 		flurScene.add(model.clone()) // objects must be cloned, when you want to add them to multiple scenes
+	})
+	.catch(printError)
+
+	glTFLoader.loadAsync('models/samples/AbbeanumDoorOnly.glb', e => updateDownloadProgress('AbbeanumDoorOnly', e))
+	.then(gltf => {
+		const model = window.abbeanum = gltf.scene
+		
+		placeLatLonObject(model, 'HS1Door', 50.93426111, 11.58053290, 185.848, +15)
+		var scale = 1.3 // a guess
+		model.scale.set(scale, scale, scale)
+		 model.visible = false
+		// model.children[2].material.wireframe = true;
+
+
+
+		flurScene.add(model)
+		//flurScene.add(model.clone()) // objects must be cloned, when you want to add them to multiple scenes
 	})
 	.catch(printError)
 

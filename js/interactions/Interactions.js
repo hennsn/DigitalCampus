@@ -106,7 +106,7 @@ const doorInteractionRadius = 3
 var couldInteract = false
 
 // helper functions for the animation loop
-function handleInteractions(scene, camera, raycaster, dt){
+function handleInteractions(scene, camera, raycaster, dt, outlinepass = null){
 	
 	// get the models - maybe move to not do this every frame
 	const abbeanum = scene.getObjectByName('Abbeanum')
@@ -114,6 +114,7 @@ function handleInteractions(scene, camera, raycaster, dt){
 	const abbeanumFlurCollisions = scene.getObjectByName('AbbeanumFlurCollisions')
 	const abbeanumGround = scene.getObjectByName('AbbeanumGround')
 	const abbeanumDoor = scene.getObjectByName('AbbeanumDoor')
+	const hs1Door = scene.getObjectByName('HS1Door')
 	const cityCenter = scene.getObjectByName('City Center')
 	const terrain = scene.getObjectByName('Terrain')
 	const abbeanumHS1 = scene.getObjectByName('AbbeanumHS1')
@@ -156,9 +157,49 @@ function handleInteractions(scene, camera, raycaster, dt){
 	if(keyboard.n) debuggedObject.position.y -= dt // model down
 	if(keyboard.m) debuggedObject.position.y += dt // model up
 	
+
+
+	// ---------------------------------------------- INTERACTION CHECKERS -------------------------------------------------
 	var canInteract = 
 		(scene != outsideScene && camera.position.distanceTo(hs1DoorPosition) < doorInteractionRadius) ||
 		(abbeanumDoor && camera.position.distanceTo(mainDoorPosition) < doorInteractionRadius)
+
+
+
+
+	
+	// checks for the abeanum door if its near and displays wireframe
+	if(abbeanumDoor && camera.position.distanceTo(mainDoorPosition) < doorInteractionRadius){
+
+		//console.log(abbeanumDoor.children[2])
+		
+		outlinepass.selectedObjects = [abbeanumDoor.children[2]];
+		abbeanumDoor.children[2].material.wireframe = true;
+		abbeanumDoor.children[2].material.color = new THREE.Color(0xff0000);
+		abbeanumDoor.visible = true;
+	}
+	else if(abbeanumDoor != undefined){
+		//abbeanumDoor.children[2].material.wireframe = true;
+		abbeanumDoor.visible = false;
+	}
+	
+	if(scene != outsideScene && camera.position.distanceTo(hs1DoorPosition) < doorInteractionRadius && hs1Door != undefined){
+
+		//console.log(abbeanumDoor.children[2])
+		
+		//outlinepass.selectedObjects = [hs1Door[2]];
+		hs1Door.children[2].material.wireframe = true;
+		hs1Door.children[2].material.color = new THREE.Color(0xff0000);
+		hs1Door.visible = true;
+	}
+	else if(hs1Door != undefined){
+		//abbeanumDoor.children[2].material.wireframe = true;
+		hs1Door.visible = false;
+	}
+	
+	
+	
+	
 	
 	if(couldInteract != canInteract){
 		couldInteract = canInteract
