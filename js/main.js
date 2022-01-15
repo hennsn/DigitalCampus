@@ -101,12 +101,14 @@ createInteractions(scene, camera, renderer, mouse)
 
 const stats = Stats()
 document.body.appendChild(stats.dom)
+//Inventory hidden
+//document.getElementById("inventory").style.visibility = 'hidden'
 
 var lastTime = new Date().getTime()
 let i = 1;
 
 function mainLoop(){
-	
+
 	const scene = window.scene
 	
 	const time = new Date().getTime()
@@ -126,14 +128,14 @@ function mainLoop(){
 	
 	renderer.render(scene, camera)
 
+	/*no longer needed
 	//just random loop to check how long it takes for abbeanum door to be registered
 	if(i<=10){
 		console.log(scene.getObjectByName("AbbeanumDoor"));
 		console.log(scene.getObjectByName("Laptop"))
 		i++;
-	}
-	  
+	}*/  
 }
-	console.log("henlo");
+console.log("henlo");
 
 renderer.setAnimationLoop(mainLoop) // requestAnimationFrame funktioniert nicht für WebXR, aber die hier funktioniert für mit und ohne :)

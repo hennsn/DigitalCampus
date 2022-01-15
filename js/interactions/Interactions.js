@@ -16,6 +16,11 @@ const keyboard = window.keyboard = {}
 
 //boolean for raycasting check
 let wasClicked = false
+//boolean for inventory
+let inventoryOpen = false;
+
+///COUNTER FOR STORY (we'll see if it works that way or if it's to simple) /////
+let story = 0
 
 // the user
 const user = { height: 1.7, eyeHeight: 1.6, speed: 2, turnSpeed: 0.03, isIntersecting: false }
@@ -66,6 +71,17 @@ function createInteractions(scene, camera, renderer, mouse){
 					formatNumber(xToLon(camera.position.x), 8) + ", " +
 					formatNumber(yToHeight(camera.position.y), 3)
 				);
+				break;
+			case 'q':
+				//opens inventory
+				if(inventoryOpen == false){
+					document.getElementById("inventory").style.visibility = 'visible';
+					inventoryOpen = true
+				}else{
+					document.getElementById("inventory").style.visibility = 'hidden';
+					inventoryOpen = false
+				}
+				
 				break;
 		}
 	}
@@ -288,26 +304,52 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, dt){
 	objects in the array that are inside that abbeanum are undefined
 	either two array for inside/outside objects, or only add objects to array when we enter the building */
 
+	////////////////
+	/// MISSION TEXT BOX ///
+	////////////////
+	if(scene == flurScene && story == 0){
+		missionText.innerHTML = "Gehe zum Hörsaal 1"
+		story = 1
+	}
+	if(scene == hs1Scene && story == 1){
+		missionText.innerHTML = "Gehe zum Beameranschluss bei der Tafel"
+		story = 1
+	}
+
+
 	/////MOUSE INTERACTIONS//////
 	//CLICK EVENTS
 	if(wasClicked == true){
 		if(abbeanumDoor) abbeanumDoor.visible = true
-		if(laptop) laptop.visible = true
-		if(stick) stick.visible = true
+		//we probably don't need these:
+		//if(laptop) laptop.visible = true
+		//if(stick) stick.visible = true
 
 		mousecaster.setFromCamera( mouse, camera );
 
-		//////Array of clickable objects
-		///add something like if(scene != outsideScene) 
-		const clickableObjects = [abbeanumDoor, laptop, stick]
-		console.log(clickableObjects)
-		const mouseIntersects = mousecaster.intersectObjects(clickableObjects); //vs intersectObjects(scene.children)
+		//////Array of clickable objects	
+		const clickableObjects = (
+			scene == outsideScene ? [abbeanumDoor] :
+			scene == flurScene ? [laptop, stick] :
+			scene == hs1Scene ? [] :
+			[]
+		).filter(model => !!model)
 		
+		//clicked object
+		const first = clickableObjects[0]
 
+		console.log(clickableObjects)
+
+		const mouseIntersects = mousecaster.intersectObjects(clickableObjects); //vs intersectObjects(scene.children)
 		//check array for ray hits
 		for ( let i = 0; i < mouseIntersects.length; i ++ ) {
 			console.log(clickableObjects)
-			console.log('clicked on object')
+			console.log('clicked on object: ', first.name)
+
+			//makes laptop invisible when clicked
+			if(first == laptop){
+				if(laptop) laptop.visible = false
+			}
 		}
 
 		/*//Just checks one object
@@ -316,9 +358,10 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, dt){
 			console.log('clicked on object')
 		}*/
 
+	
 		if(abbeanumDoor) abbeanumDoor.visible = false;
-		if(laptop) laptop.visible = false //actually makes the whole laptop disappear
-		if(stick) stick.visible = false //guess same?
+		//if(laptop) laptop.visible = false //actually makes the whole laptop disappear if we click ANYWHERE IN THE SCENE
+		//if(stick) stick.visible = false //guess same?
 		wasClicked = false
 	}
 }
