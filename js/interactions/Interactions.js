@@ -298,10 +298,12 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, dt){
 		mousecaster.setFromCamera( mouse, camera );
 
 		//////Array of clickable objects
+		///add something like if(scene != outsideScene) 
 		const clickableObjects = [abbeanumDoor, laptop, stick]
 		console.log(clickableObjects)
 		const mouseIntersects = mousecaster.intersectObjects(clickableObjects); //vs intersectObjects(scene.children)
 		
+
 		//check array for ray hits
 		for ( let i = 0; i < mouseIntersects.length; i ++ ) {
 			console.log(clickableObjects)
