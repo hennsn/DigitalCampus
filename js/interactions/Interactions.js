@@ -75,6 +75,7 @@ function createInteractions(scene, camera, renderer, mouse){
 			case 'q':
 				//opens inventory
 				if(inventoryOpen == false){
+					playAudioTrack('audio/inventorySound.mp3');
 					document.getElementById("inventory").style.visibility = 'visible';
 					inventoryOpen = true
 				}else{
