@@ -22,6 +22,9 @@ let inventoryOpen = false;
 ///COUNTER FOR STORY (we'll see if it works that way or if it's to simple) /////
 let story = 0
 
+//array für alle modelle die wir einsammeln
+const inInventory = []
+
 // the user
 const user = { height: 1.7, eyeHeight: 1.6, speed: 2, turnSpeed: 0.03, isIntersecting: false }
 const distanceToWalls = 1
@@ -339,7 +342,7 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, dt){
 		//clicked object
 		const first = clickableObjects[0]
 
-		console.log(clickableObjects)
+		//console.log(clickableObjects)
 
 		const mouseIntersects = mousecaster.intersectObjects(clickableObjects); //vs intersectObjects(scene.children)
 		//check array for ray hits
@@ -347,11 +350,20 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, dt){
 			console.log(clickableObjects)
 			console.log('clicked on object: ', first.name)
 
-			//makes laptop invisible when clicked
+			//makes laptop invisible when clicked; needs to be in for loop bc otherwise laptop disappears when floor is clicked
 			if(first == laptop){
+				if(inInventory[0] != laptop){
+					inInventory.push(laptop) //puts laptop in inventory
+				}else{
+					console.log('already stored')
+				}
+				//if(inInventory[0] == laptop) console.log('yes')
+				//console.log(inInventory)
 				if(laptop) laptop.visible = false
 			}
 		}
+
+		
 
 		/*//Just checks one object
 		const mouseIntersects = mousecaster.intersectObject(abbeanumDoor);
