@@ -23,7 +23,8 @@ let inventoryOpen = false;
 let story = 0
 
 //array für alle modelle die wir einsammeln
-const inInventory = []
+const inInventory = ["Handy", "USB Stick"]
+inventory.innerHTML += "Handy <br> USB Stick"
 
 // the user
 const user = { height: 1.7, eyeHeight: 1.6, speed: 2, turnSpeed: 0.03, isIntersecting: false }
@@ -352,18 +353,21 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, dt){
 
 			//makes laptop invisible when clicked; needs to be in for loop bc otherwise laptop disappears when floor is clicked
 			if(first == laptop){
-				if(inInventory[0] != laptop){
-					inInventory.push(laptop) //puts laptop in inventory
+				if(!inInventory.includes("Laptop")){
+					inInventory.push("Laptop") //puts laptop (as string) in inventory
+					printInventory()
 				}else{
 					console.log('already stored')
 				}
-				//if(inInventory[0] == laptop) console.log('yes')
-				//console.log(inInventory)
+				console.log(inInventory) //just to check
 				if(laptop) laptop.visible = false
 			}
 		}
 
-		
+		//prints everything in inventory-array to window inventory
+		function printInventory(){
+			inventory.innerHTML = inInventory.join("<br/>")
+		}
 
 		/*//Just checks one object
 		const mouseIntersects = mousecaster.intersectObject(abbeanumDoor);
