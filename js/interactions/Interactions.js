@@ -15,7 +15,7 @@ import { xToLon, yToHeight, zToLat } from '../environment/Coordinates.js'
 const keyboard = window.keyboard = {}
 
 // the user
-const user = { height: 1.7, eyeHeight: 1.6, speed: 2, turnSpeed: 0.03, isIntersecting: false }
+let user = { height: 1.7, eyeHeight: 1.6, speed: 2, turnSpeed: 0.03, isIntersecting: false }
 const distanceToWalls = 1
 const enterInterval = 300 // milli seconds
 let lastEnter = Date.now()
@@ -107,6 +107,8 @@ var couldInteract = false
 
 // helper functions for the animation loop
 function handleInteractions(scene, camera, raycaster, dt, outlinepass = null){
+
+	
 	
 	// get the models - maybe move to not do this every frame
 	const abbeanum = scene.getObjectByName('Abbeanum')
@@ -123,6 +125,11 @@ function handleInteractions(scene, camera, raycaster, dt, outlinepass = null){
 	const stick = scene.getObjectByName('Stick')
 	const laptop = scene.getObjectByName('Laptop')
 	
+
+	if(scene != outsideScene){
+		user.speed = 0.7;
+	}
+
 	var debuggedObject = trashcan
 
 	acceleration.set(0,0,0)
@@ -196,6 +203,7 @@ function handleInteractions(scene, camera, raycaster, dt, outlinepass = null){
 		//abbeanumDoor.children[2].material.wireframe = true;
 		hs1Door.visible = false;
 	}
+	
 	
 	
 	
