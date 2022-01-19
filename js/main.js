@@ -21,6 +21,7 @@ import { fillScene } from './environment/Scene.js'
 import { createTerrain } from './environment/Terrain.js'
 import { handleUserInterface } from './UserInterface.js'
 import { createInteractions, handleInteractions } from './interactions/Interactions.js'
+import { updateMultiplayer } from './environment/Multiplayer.js'
 
 ////////////
 // camera //
@@ -145,6 +146,7 @@ function mainLoop(){
 	// animation / physics stuff goes here
 	handleInteractions(scene, camera, raycaster, deltaTime, outlinePass)
 	handleUserInterface(deltaTime)
+	updateMultiplayer(scene, time, deltaTime, camera)
 	stats.update()
 	
 	// todo we should be able to register event listeners for mainLoop, and do our stuff inside of them
