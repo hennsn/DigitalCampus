@@ -6,6 +6,7 @@ import { getHeightOnTerrain } from '../environment/Terrain.js'
 import { clamp } from '../Maths.js'
 import { playAudioTrack } from '../UserInterface.js'
 import { xToLon, yToHeight, zToLat } from '../environment/Coordinates.js'
+import { updateSparkles } from '../environment/Sparkles.js'
 
 // what exactly does that do? / how does it work?
 // eher etwas für die #InteractionsGruppe
@@ -106,7 +107,7 @@ const doorInteractionRadius = 3
 var couldInteract = false
 
 // helper functions for the animation loop
-function handleInteractions(scene, camera, raycaster, dt, outlinepass = null){
+function handleInteractions(scene, camera, raycaster, time, dt, outlinepass = null){
 
 	
 	
@@ -312,6 +313,8 @@ function handleInteractions(scene, camera, raycaster, dt, outlinepass = null){
 		if(abbeanumFlurCollisions) abbeanumFlurCollisions.visible = false
 		
 	}
+	
+	updateSparkles(scene, camera, [mainDoorPosition], time, dt)
 	
 }
 

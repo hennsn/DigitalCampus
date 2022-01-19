@@ -144,7 +144,7 @@ function mainLoop(){
 	lastTime = time
 
 	// animation / physics stuff goes here
-	handleInteractions(scene, camera, raycaster, deltaTime, outlinePass)
+	handleInteractions(scene, camera, raycaster, time, deltaTime, outlinePass)
 	handleUserInterface(deltaTime)
 	updateMultiplayer(scene, time, deltaTime, camera)
 	stats.update()
