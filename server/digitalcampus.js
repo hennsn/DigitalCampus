@@ -1,12 +1,9 @@
 var http = require('http')
-var express = require('express')
-var url = require('url')
-var cors = require('cors')
+var url  = require('url')
 
 var players = {}
 
 var timeout = 10e3 // ms
-
 
 http.createServer((req, res) => {
 	var params = url.parse(req.url, true).query
@@ -21,7 +18,10 @@ http.createServer((req, res) => {
 		}
 		players[params.name] = { x: params.x*1, y: params.y*1, z: params.z*1, lastTime: time }
 		// list all new players
-		res.writeHead(200, {'Content-Type': 'text/plain', 'Access-Control-Allow-Origin': '*'})
+		res.writeHead(200, {
+			'Content-Type': 'text/plain',
+			'Access-Control-Allow-Origin': '*'
+		})
 		// could be filtered for the "self" player,
 		// lastTime isn't really needed either
 		res.end(JSON.stringify(players))
