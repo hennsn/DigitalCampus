@@ -35,7 +35,7 @@ function updateMultiplayer(scene, time, deltaTime, camera){
 	if(!selfName && selfName != '' && scene.getObjectByName('Abbeanum')){
 		// ask for the name, when the user is ready and sees the first stuff
 		// we also could prevent duplicate names just by asking our api
-		selfName = window.prompt("Your Multiplayer Name:")
+		selfName = window.prompt("Your Multiplayer Name:") || ''
 	}
 	
 	// if nobody is online, we need much less frequent updates
