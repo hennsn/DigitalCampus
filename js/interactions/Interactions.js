@@ -17,7 +17,7 @@ import {Door, InventoryObject, InfoObject} from './Interactable.js'
 const keyboard = window.keyboard = {}
 
 // the user
-let user = { height: 1.7, eyeHeight: 1.6, speed: 2, turnSpeed: 0.03, isIntersecting: false }
+let user = { height: 1.7, eyeHeight: 1.6, speed: 1.3, turnSpeed: 0.03, insideSpeed: 0.7, outsideSpeed: 1.3, isIntersecting: false, }
 const distanceToWalls = 1
 let lastInteractionTime = Date.now()
 function createInteractions(scene, camera, renderer){
@@ -146,7 +146,10 @@ function handleInteractions(scene, camera, raycaster, time, dt, outlinepass = nu
 	const interactables = [abbeanumDoorInteractable, hs1DoorInteractable]//, stickInteractable, laptopInteractable, ]
 	
 	if(scene != outsideScene){
-		user.speed = 0.7;
+		user.speed = user.insideSpeed;
+	}
+	else {
+		user.speed = user.outsideSpeed
 	}
 
 	var debuggedObject = trashcan
@@ -192,14 +195,17 @@ function handleInteractions(scene, camera, raycaster, time, dt, outlinepass = nu
 	const currentInteractables = interactables.filter(interactable => 
 							 interactable != undefined && interactable.canInteract(scene, camera, lastInteractionTime))
 	const sparkleTargets = currentInteractables.map(o => o.position)
-	const canInteract = (currentInteractables != undefined && currentInteractables != [])
+	const canInteract = (currentInteractables != undefined && currentInteractables.length > 0)
 
 	
 	if(couldInteract != canInteract){
 		couldInteract = canInteract
 		controlHints.innerHTML = canInteract ? 'WASD walk<br>LEFT/RIGHT turn<br>E interact' : 'WASD walk<br>LEFT/RIGHT turn'
 	}
-
+	console.log("couldInteract:")
+	console.log(couldInteract)
+	console.log("canInteract:")
+	console.log(canInteract)
 	// we could create an "Interactable" class, which does this, and could generalize pickups with that
 	// check for general entrances - this can be made more generic
 	if((keyboard.e || keyboard.Enter) && 
