@@ -202,10 +202,6 @@ function handleInteractions(scene, camera, raycaster, time, dt, outlinepass = nu
 		couldInteract = canInteract
 		controlHints.innerHTML = canInteract ? 'WASD walk<br>LEFT/RIGHT turn<br>E interact' : 'WASD walk<br>LEFT/RIGHT turn'
 	}
-	console.log("couldInteract:")
-	console.log(couldInteract)
-	console.log("canInteract:")
-	console.log(canInteract)
 	// we could create an "Interactable" class, which does this, and could generalize pickups with that
 	// check for general entrances - this can be made more generic
 	if((keyboard.e || keyboard.Enter) && 
