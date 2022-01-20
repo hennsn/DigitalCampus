@@ -134,14 +134,19 @@ function handleInteractions(scene, camera, raycaster, time, dt, outlinepass = nu
 
 	const trashcan = window.trashcan = scene.getObjectByName('Trashcan')
 	// inventory object? where?
-	//const trashcanInteractable = new InventoryObject(trashcan.children[2], [flurScene])
+	const trashcanInteractable = new InventoryObject(trashcan.children[2], [flurScene])
 	
 	const stick = scene.getObjectByName('Stick')
-	//const stickInteractable = stick ? new InventoryObject(stick.children[2], [flurScene]) : undefined
+	const stickInteractable = stick ? new InventoryObject(stick.children[2], [flurScene]) : undefined
 
 	const laptop = scene.getObjectByName('Laptop')
-	//const laptopInteractable = laptop ? new InventoryObject(stick.children[2], [flurScene]) : undefined
+	const laptopInteractable = laptop ? new InventoryObject(laptop.children[2], [flurScene]) : undefined
 	
+	const laptop2 = scene.getObjectByName('Laptop2')
+	const laptop2Interactable = laptop ? new InventoryObject(laptop2.children[2], [flurScene]) : undefined
+
+	const blackboards = scene.getObjectByName('Blackboards')
+	const blackboardsInteractable = blackboards ? new InventoryObject(blackboards.children[2], [flurScene]) : undefined
 
 	const interactables = [abbeanumDoorInteractable, hs1DoorInteractable]//, stickInteractable, laptopInteractable, ]
 	
@@ -152,7 +157,8 @@ function handleInteractions(scene, camera, raycaster, time, dt, outlinepass = nu
 		user.speed = user.outsideSpeed
 	}
 
-	var debuggedObject = trashcan
+	// set to city center so it's less likely someone notices when accidentally pressing one of the buttons :D
+	const debuggedObject = cityCenter
 
 	acceleration.set(0,0,0)
 	var dtx = clamp(dt * 10, 0, 1) // the lower this number is, the smoother is the motion

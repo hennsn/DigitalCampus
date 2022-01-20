@@ -72,6 +72,8 @@ function fillScene(scene) {
 		})
 		.catch(printError)
 	
+	// ---------------------------------------------- CORRIDOR MODELS -------------------------------------------------
+	
 	// these two belong together:
 	glTFLoader.loadAsync('models/samples/ScannedAbbeanumInside.glb', e => updateDownloadProgress('ScannedAbbeanumInside', e))
 	.then(gltf => {
@@ -95,6 +97,24 @@ function fillScene(scene) {
 	})
 	.catch(printError)
 	
+	glTFLoader.loadAsync('models/samples/Laptop 2.glb', e => updateDownloadProgress('Laptop2', e))
+	.then(gltf => {
+		const model = gltf.scene
+		placeLatLonObject(model, 'Laptop2', 50.93434376, 11.58054766, 185.848, 190)
+		flurScene.add(model)
+	})
+	.catch(printError)
+
+
+	glTFLoader.loadAsync('models/samples/stock.glb', e => updateDownloadProgress('Stick', e))
+	.then(gltf => {
+		const model = gltf.scene
+		placeLatLonObject(model, 'Stick', 50.93434376, 11.58053088, 185.848, 0)
+		flurScene.add(model)
+	})
+	.catch(printError)
+
+	// ---------------------------------------------- HS1 MODELS -------------------------------------------------
 
 	glTFLoader.loadAsync('models/samples/AbbeanumHS1.glb', e => updateDownloadProgress('AbbeanumHS1', e))
 	.then(gltf => {
@@ -107,39 +127,33 @@ function fillScene(scene) {
 		hs1Scene.add(model)
 	})
 	.catch(printError)
-
-
-
+	
+	//TODO: place in the right scene (hs1) when models finished
 	glTFLoader.loadAsync('models/samples/Laptop.glb', e => updateDownloadProgress('Laptop', e))
 	.then(gltf => {
 		const model = gltf.scene
-		placeLatLonObject(model, 'Laptop', 50.93434396, 11.58056024, 185.848, 0)
+		placeLatLonObject(model, 'Laptop', 50.93434396, 11.58056024, 185.848, 190)
 		flurScene.add(model)
 	})
 	.catch(printError)
 
 
-	glTFLoader.loadAsync('models/samples/stock.glb', e => updateDownloadProgress('Stick', e))
+	glTFLoader.loadAsync('models/samples/Tafel.glb', e => updateDownloadProgress('Blackboards', e))
 	.then(gltf => {
 		const model = gltf.scene
-		placeLatLonObject(model, 'Stick', 50.93398862, 11.58047630, 185.664, 0)
+		placeLatLonObject(model, 'Blackboards', 50.93427628, 11.58048617, 185.848, 330)
 		flurScene.add(model)
 	})
 	.catch(printError)
 
-/* something is funky about the trashcan
+
 	glTFLoader.loadAsync('models/samples/Trashcan.glb', e => updateDownloadProgress('Trashcan', e))
 	.then(gltf => {
 		const model = gltf.scene
-		model.position.set(-128.17562068967146, -8.389054586305152, 84.08548520059321)
-		model.name = 'Trashcan'
-		const scale = 10 // a guess
-		model.scale.set(scale, scale, scale)
-		model.visible = true
-		scene.add(model)
+		placeLatLonObject(model, 'Trashcan', 50.93433103, 11.58052473, 185.090, 0)
+		flurScene.add(model)
 	})
 	.catch(printError)
-*/
 
 }
 
