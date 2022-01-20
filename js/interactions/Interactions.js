@@ -224,7 +224,17 @@ function handleInteractions(scene, camera, raycaster, time, dt, outlinepass = nu
 		currentInteractables != undefined &&
 		currentInteractables.length > 0
 	)
-	{
+	{	
+		// sort interactables, such that the closest element will be interacted with
+		currentInteractables.sort((e1,e2) => {
+							if(camera.position.distanceTo(e1.position) > camera.position.distanceTo(e2.position)){
+								return 1
+							}
+							else{
+								return -1
+							}
+						})
+				
 		currentInteractables[0].interact(scene)
 		lastInteractionTime = Date.now()
 	}
