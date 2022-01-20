@@ -2,9 +2,17 @@
 import * as THREE from 'https://cdn.skypack.dev/three@0.135.0'
 import { GLTFLoader } from 'https://cdn.skypack.dev/three@0.135.0/examples/jsm/loaders/GLTFLoader.js'
 import { DRACOLoader } from 'https://cdn.skypack.dev/three@0.135.0/examples/jsm/loaders/DRACOLoader.js'
+
+
+import { OutlinePass } from 'https://cdn.skypack.dev/three@0.135.0/examples/jsm/postprocessing/OutlinePass.js'
+import { EffectComposer } from 'https://cdn.skypack.dev/three@0.135.0/examples/jsm/postprocessing/EffectComposer.js';
+import { RenderPass } from 'https://cdn.skypack.dev/three@0.135.0/examples/jsm/postprocessing/RenderPass.js';
+
+
 import { HDRCubeTextureLoader } from 'https://cdn.skypack.dev/three@0.135.0/examples/jsm/loaders/HDRCubeTextureLoader.js';
 import { RGBELoader } from "https://cdn.skypack.dev/three@0.135.0/examples/jsm/loaders/RGBELoader.js";
 import Stats from 'https://cdn.skypack.dev/three@0.135.0/examples/jsm/libs/stats.module'
+
 
 import { clamp }  from './Maths.js'
 import { createSky }  from './environment/Sky.js'
@@ -13,7 +21,7 @@ import { fillScene } from './environment/Scene.js'
 import { createTerrain } from './environment/Terrain.js'
 import { handleUserInterface } from './UserInterface.js'
 import { createInteractions, handleInteractions } from './interactions/Interactions.js'
-
+import { updateMultiplayer } from './environment/Multiplayer.js'
 
 ////////////
 // camera //
@@ -54,10 +62,36 @@ glTFLoader.setDRACOLoader(dracoLoader)
 
 var outsideScene = window.outsideScene = new THREE.Scene()
 outsideScene.name = 'outside'
+
+
+
+
+
+
+
+
+// ----------------------------- OUTLINE PASS AND RENDERPASS FOR EFFECTIVE OUTLINE -------------------------------
+// NOT WORKING YET, SO NOT NEEDED, but when deleting please mind, that the outlinepass is given to the handle interactions funcion
+ var composer = new EffectComposer( renderer );
+ const renderPass = new RenderPass( outsideScene, camera );
+ 				composer.addPass( renderPass );
+ var outlinePass = new OutlinePass(new THREE.Vector2(window.innerWidth, window.innerHeight), outsideScene, camera);
+ composer.addPass( outlinePass );
+
+
+
+
+
+
+
+
 createSky(outsideScene)
 createLighting(outsideScene)
 createTerrain(outsideScene)
 fillScene(outsideScene)
+
+
+
 
 var flurScene = window.flurScene = new THREE.Scene()
 flurScene.name = 'flur'
@@ -73,6 +107,7 @@ createInsideLighting(hs1Scene)
 
 // start location
 window.scene = outsideScene
+
 
 ///////////////
 // raycaster //
@@ -110,14 +145,15 @@ let i = 1;
 function mainLoop(){
 
 	const scene = window.scene
-	
+
 	const time = new Date().getTime()
 	const deltaTime = clamp((time-lastTime)/1e3, 1e-3, 1.0)
 	lastTime = time
 
 	// animation / physics stuff goes here
-	handleInteractions(scene, camera, raycaster, mousecaster, mouse, deltaTime)
+	handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, deltaTime, outlinePass)
 	handleUserInterface(deltaTime)
+	updateMultiplayer(scene, time, deltaTime, camera)
 	stats.update()
 	
 	// todo we should be able to register event listeners for mainLoop, and do our stuff inside of them

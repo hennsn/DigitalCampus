@@ -6,6 +6,8 @@ import { getHeightOnTerrain } from '../environment/Terrain.js'
 import { clamp } from '../Maths.js'
 import { playAudioTrack } from '../UserInterface.js'
 import { xToLon, yToHeight, zToLat } from '../environment/Coordinates.js'
+import { updateSparkles } from '../environment/Sparkles.js'
+import {Door, InventoryObject, InfoObject} from './Interactable.js'
 
 // what exactly does that do? / how does it work?
 // eher etwas für die #InteractionsGruppe
@@ -27,10 +29,9 @@ const inInventory = ["Handy", "USB Stick"]
 inventory.innerHTML += "Handy <br> USB Stick"
 
 // the user
-const user = { height: 1.7, eyeHeight: 1.6, speed: 2, turnSpeed: 0.03, isIntersecting: false }
+let user = { height: 1.7, eyeHeight: 1.6, speed: 1.3, turnSpeed: 0.03, insideSpeed: 0.7, outsideSpeed: 1.3, isIntersecting: false, }
 const distanceToWalls = 1
-const enterInterval = 300 // milli seconds
-let lastEnter = Date.now()
+let lastInteractionTime = Date.now()
 function createInteractions(scene, camera, renderer, mouse){
 	
 	renderer.xr.enabled = true
@@ -143,28 +144,79 @@ var rayChecks = [
 ]
 
 const hs1DoorPosition  = new THREE.Vector3(-14.2, 3.8, -36.4)
-const mainDoorPosition = new THREE.Vector3(2.84, 1.67, -20.35)
+const abbeanumDoorPosition = new THREE.Vector3(2.84, 1.67, -20.35)
 const doorInteractionRadius = 3
 
-var couldInteract = null
+var couldInteract = false
 
 // helper functions for the animation loop
-function handleInteractions(scene, camera, raycaster, mousecaster, mouse, dt){
+function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, dt, outlinepass = null){
+
+	
+	
 	// get the models - maybe move to not do this every frame
 	const abbeanum = scene.getObjectByName('Abbeanum')
 	const abbeanumInside = scene.getObjectByName('ScannedAbbeanumInside')
 	const abbeanumFlurCollisions = scene.getObjectByName('AbbeanumFlurCollisions')
 	const abbeanumGround = scene.getObjectByName('AbbeanumGround')
+	const abbeanumHS1 = scene.getObjectByName('AbbeanumHS1')
+	
+
 	const abbeanumDoor = scene.getObjectByName('AbbeanumDoor')
+	const abbeanumDoorInteractable = 
+			window.abbeanumDoorInteractable =
+			abbeanumDoor ?
+			new Door(abbeanumDoor, abbeanumDoorPosition, [flurScene, outsideScene]) :
+			undefined
+	
+	const hs1Door = scene.getObjectByName('HS1Door')
+	const hs1DoorInteractable = hs1Door ? new Door(hs1Door, hs1DoorPosition, [flurScene, hs1Scene]) : undefined
+
 	const cityCenter = scene.getObjectByName('City Center')
 	const terrain = scene.getObjectByName('Terrain')
-	const abbeanumHS1 = scene.getObjectByName('AbbeanumHS1')
 
 	const trashcan = window.trashcan = scene.getObjectByName('Trashcan')
-	const stick = scene.getObjectByName('Stick')
-	const laptop = scene.getObjectByName('Laptop')
+	// inventory object? where?
+	const trashcanInteractable = trashcan ?
+											new InventoryObject(trashcan, trashcan.position, [flurScene]) :
+											undefined
 	
-	var debuggedObject = trashcan
+	const stick = scene.getObjectByName('Stick')
+	const stickInteractable = stick ?
+										new InventoryObject(stick, stick.position, [flurScene]) :
+										undefined
+
+	const laptop = scene.getObjectByName('Laptop')
+	const laptopInteractable = laptop ?
+										new InventoryObject(laptop, laptop.position, [flurScene]) :
+										undefined
+	
+	const laptop2 = scene.getObjectByName('Laptop2')
+	const laptop2Interactable = laptop ? 
+										new InventoryObject(laptop2, laptop2.position, [flurScene]) :
+										undefined
+
+	const blackboards = scene.getObjectByName('Blackboards')
+	const blackboardsInteractable = blackboards ? 
+									new InventoryObject(blackboards, blackboards.position, [flurScene]) :
+									undefined
+
+	const cup = scene.getObjectByName('Cup')
+	const cupInteractable = cup ? 
+									new InventoryObject(cup, cup.position, [flurScene]) :
+									undefined
+								
+	const interactables = [abbeanumDoorInteractable, hs1DoorInteractable, laptopInteractable, stickInteractable,
+							trashcanInteractable, laptop2Interactable, blackboardsInteractable, cupInteractable]
+	if(scene != outsideScene){
+		user.speed = user.insideSpeed;
+	}
+	else {
+		user.speed = user.outsideSpeed
+	}
+
+	// set to city center so it's less likely someone notices when accidentally pressing one of the buttons :D
+	const debuggedObject = cup
 
 	acceleration.set(0,0,0)
 	var dtx = clamp(dt * 10, 0, 1) // the lower this number is, the smoother is the motion
@@ -198,26 +250,41 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, dt){
 	if(keyboard.n) debuggedObject.position.y -= dt // model down
 	if(keyboard.m) debuggedObject.position.y += dt // model up
 	
-	var canInteract = 
-		(scene != outsideScene && camera.position.distanceTo(hs1DoorPosition) < doorInteractionRadius) ||
-		(abbeanumDoor && camera.position.distanceTo(mainDoorPosition) < doorInteractionRadius)
+
+
+	// ---------------------------------------------- INTERACTION CHECKERS -------------------------------------------------
+	// we are only looking for all interactable objects in our interactable array
+	// we will choose the closest for interaction.
+	// if that does not work, it might have to be changed to the closest one that we look at.
+	const currentInteractables = interactables.filter(interactable => 
+							 interactable != undefined && interactable.canInteract(scene, camera, lastInteractionTime))
+	const sparkleTargets = currentInteractables.map(o => o.position)
+	const canInteract = (currentInteractables != undefined && currentInteractables.length > 0)
+
 	
-	if(couldInteract != canInteract || couldInteract == null){
+	if(couldInteract != canInteract){
 		couldInteract = canInteract
 		controlHints.innerHTML = canInteract ? 'WASD walk<br>LEFT/RIGHT turn<br>E interact' : 'WASD walk<br>LEFT/RIGHT turn'
 	}
-
+	// we could create an "Interactable" class, which does this, and could generalize pickups with that
 	// check for general entrances - this can be made more generic
 	if((keyboard.e || keyboard.Enter) && 
-		Date.now() - lastEnter > enterInterval
-	){
-		if(scene != outsideScene && camera.position.distanceTo(hs1DoorPosition) < doorInteractionRadius){
-			lastEnter = Date.now()
-			window.scene = scene = (scene == flurScene) ? hs1Scene : flurScene
-		} else if(camera.position.distanceTo(mainDoorPosition) < doorInteractionRadius){
-			lastEnter = Date.now()
-			window.scene = scene = (scene == outsideScene) ? flurScene : outsideScene
-		}
+		currentInteractables != undefined &&
+		currentInteractables.length > 0
+	)
+	{	
+		// sort interactables, such that the closest element will be interacted with
+		currentInteractables.sort((e1,e2) => {
+							if(camera.position.distanceTo(e1.position) > camera.position.distanceTo(e2.position)){
+								return 1
+							}
+							else{
+								return -1
+							}
+						})
+				
+		currentInteractables[0].interact(scene)
+		lastInteractionTime = Date.now()
 	}
 	
 	velocity.multiplyScalar(1-dtx)
@@ -304,6 +371,7 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, dt){
 		if(abbeanumFlurCollisions) abbeanumFlurCollisions.visible = false
 		
 	}
+	updateSparkles(scene, camera, sparkleTargets, time, dt)
 
 	/*To do:
 	objects in the array that are inside that abbeanum are undefined
