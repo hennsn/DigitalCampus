@@ -113,7 +113,7 @@ function createInteractions(scene, camera, renderer, mouse){
 	}*/
 	
 	//event listener mouse click//////
-	window.addEventListener('click', onMouseClick, false);
+	window.addEventListener('mousedown', onMouseClick, false);
 
 	function onMouseClick(event){
 		wasClicked = true;
@@ -374,8 +374,11 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 	updateSparkles(scene, camera, sparkleTargets, time, dt)
 
 	/*To do:
-	objects in the array that are inside that abbeanum are undefined
-	either two array for inside/outside objects, or only add objects to array when we enter the building */
+	something is funky about the interactable class
+	i always get a 'test' error at raycaster/3js (=basically a layer error)
+	BUT the reliable way of making the objects visible true, then false or putting them in a certain scene does NOT solve it  
+	
+	Find out how to completely disable keyboard input during voice lines*/
 
 	////////////////
 	/// MISSION TEXT BOX ///
@@ -394,47 +397,53 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 	//CLICK EVENTS
 	if(wasClicked == true){
 		if(abbeanumDoor) abbeanumDoor.visible = true
-		//we probably don't need these:
-		//if(laptop) laptop.visible = true
-		//if(stick) stick.visible = true
 
 		mousecaster.setFromCamera( mouse, camera );
 
-		//////Array of clickable objects	
+		//////Array of clickable objects
 		const clickableObjects = (
 			scene == outsideScene ? [abbeanumDoor] :
-			scene == flurScene ? [laptop, stick] :
+			scene == flurScene ? [laptop, stick, trashcan, laptop2, blackboards, cup] :
 			scene == hs1Scene ? [] :
 			[]
 		).filter(model => !!model)
-		
-		//clicked object
-		const first = clickableObjects[0]
 
-		//console.log(clickableObjects)
+		let first 
 
 		const mouseIntersects = mousecaster.intersectObjects(clickableObjects); //vs intersectObjects(scene.children)
-		//check array for ray hits
 		for ( let i = 0; i < mouseIntersects.length; i ++ ) {
-			console.log(clickableObjects)
-			console.log('clicked on object: ', first.name)
+		
+			if(clickableObjects != undefined && clickableObjects.length > 0){
+				clickableObjects.sort((e1,e2) => {
+					if(camera.position.distanceTo(e1.position) > camera.position.distanceTo(e2.position)){
+						return 1
+					}
+					else{
+						return -1
+					}
+				})
+				first = clickableObjects[0]
+				//clickableObjects[0].interact(scene)
+				console.log('clicked on object: ', first.name)
 
-			//makes laptop invisible when clicked; needs to be in for loop bc otherwise laptop disappears when floor is clicked
-			if(first == laptop){
-				if(!inInventory.includes("Laptop")){
-					inInventory.push("Laptop") //puts laptop (as string) in inventory
-					printInventory()
-				}else{
-					console.log('already stored')
+				if(first == laptop){
+					pushLaptop()
+					if(laptop) laptop.visible = false
 				}
-				console.log(inInventory) //just to check
-				if(laptop) laptop.visible = false
-			}
-		}
+				if(first == stick){
+					pushStick()
+					if(stick) stick.visible = false
+				}
+				if(first == laptop2){ //needs to be changed to HS2 Tür later
+					pushLaptop2()
+					if(laptop2) laptop2.visible = false
+				}
+				if(first == cup){
+					pushCup()
+					if(cup) cup.visible = false
+				}
 
-		//prints everything in inventory-array to window inventory
-		function printInventory(){
-			inventory.innerHTML = inInventory.join("<br/>")
+			}
 		}
 
 		/*//Just checks one object
@@ -442,13 +451,63 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 		if(mouseIntersects.length>0){
 			console.log('clicked on object')
 		}*/
-
 	
 		if(abbeanumDoor) abbeanumDoor.visible = false;
-		//if(laptop) laptop.visible = false //actually makes the whole laptop disappear if we click ANYWHERE IN THE SCENE
-		//if(stick) stick.visible = false //guess same?
 		wasClicked = false
 	}
+}
+
+
+//prints everything in inventory-array to window inventory
+function printInventory(){
+	inventory.innerHTML = inInventory.join("<br/>")
+}
+
+//fills inventory
+function pushLaptop(){
+	if(!inInventory.includes("Laptop")){ //won't be needed in the final story
+		inInventory.push("Laptop") 
+		printInventory()
+	}else{
+		console.log('already stored')
+	}
+	//console.log(inInventory)
+}
+function pushStick(){
+	if(!inInventory.includes("Stick")){
+		inInventory.push("Stick") 
+		printInventory()
+	}else{
+		console.log('already stored')
+	}
+	//console.log(inInventory)
+}
+function pushLaptop2(){
+	if(!inInventory.includes("Laptop mit Backup")){ //vom HS2
+		inInventory.push("Laptop mit Backup") 
+		printInventory()
+	}else{
+		console.log('already stored')
+	}
+	//console.log(inInventory)
+}
+function pushCup(){
+	if(!inInventory.includes("Cup")){
+		inInventory.push("Cup") 
+		printInventory()
+	}else{
+		console.log('already stored')
+	}
+	//console.log(inInventory)
+}
+function pushHDMI(){
+	if(!inInventory.includes("HDMI-Kabel")){ //vom fernseher im gang
+		inInventory.push("HDMI-Kabel") 
+		printInventory()
+	}else{
+		console.log('already stored')
+	}
+	//console.log(inInventory)
 }
 
 export { createInteractions, handleInteractions }

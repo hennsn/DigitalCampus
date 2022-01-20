@@ -57,7 +57,7 @@ class InventoryObject extends Interactable {
     }
 
     #takeObject(){
-
+        //hier meinen code für inventar aufnahme
     }
 }
 
