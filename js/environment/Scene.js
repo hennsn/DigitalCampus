@@ -60,7 +60,7 @@ function fillScene(scene) {
 
 
 		flurScene.add(model)
-		//flurScene.add(model.clone()) // objects must be cloned, when you want to add them to multiple scenes
+		hs1Scene.add(model.clone()) // objects must be cloned, when you want to add them to multiple scenes
 	})
 	.catch(printError)
 
