@@ -137,6 +137,13 @@ function fillScene(scene) {
 	})
 	.catch(printError)
 
+	glTFLoader.loadAsync('models/samples/cup.glb', e => updateDownloadProgress('cup', e))
+	.then(gltf => {
+		const model = gltf.scene
+		placeLatLonObject(model, 'Cup', 50.93413354, 11.58046075, 185.848, 0)
+		flurScene.add(model)
+	})
+	.catch(printError)
 
 	glTFLoader.loadAsync('models/samples/blackboards.glb', e => updateDownloadProgress('blackboards', e))
 	.then(gltf => {

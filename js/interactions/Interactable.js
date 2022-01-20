@@ -1,7 +1,6 @@
-// the interactableMesh field is neither correct nor useful, I think
 class Interactable {
-    constructor(interactableMesh, position, scenes) {
-        this.interactableMesh = interactableMesh
+    constructor(interactableModel, position, scenes) {
+        this.interactableModel = interactableModel
         this.position = position
         // as long as we don't have one interactable model for each scene,
         // we need a list of !! exactly 2 !! scenes for scene changes
@@ -24,12 +23,13 @@ class Interactable {
 
     // interact is a facade to the individual interaction implementations of inheriting classes
     interact() {
+        console.log('Interacting with ' + this.interactableModel.name)
     }
 }
 
 class Door extends Interactable {
-    constructor(interactableMesh, position, scenes) {
-        super(interactableMesh, position, scenes)
+    constructor(interactableModel, position, scenes) {
+        super(interactableModel, position, scenes)
     }
 
     #openDoor(currentScene){
@@ -40,17 +40,19 @@ class Door extends Interactable {
     }
 
     interact(currentScene){
+        super.interact()
         this.#openDoor(currentScene)
     }
 }
 
 
 class InventoryObject extends Interactable {
-    constructor(interactableMesh, position, scenes) {
-        super(interactableMesh, position, scenes)
+    constructor(interactableModel, position, scenes) {
+        super(interactableModel, position, scenes)
     }
 
     interact(){
+        super.interact()
         this.#takeObject()
     }
 
@@ -61,11 +63,12 @@ class InventoryObject extends Interactable {
 
 
 class InfoObject extends Interactable {
-    constructor(interactableMesh, position, scenes) {
-        super(interactableMesh, position, scenes)
+    constructor(interactableModel, position, scenes) {
+        super(interactableModel, position, scenes)
     }
 
     interact(){
+        super.interact()
         this.#getInfo()
     }
 

@@ -123,11 +123,11 @@ function handleInteractions(scene, camera, raycaster, time, dt, outlinepass = nu
 	const abbeanumDoorInteractable = 
 			window.abbeanumDoorInteractable =
 			abbeanumDoor ?
-			new Door(abbeanumDoor.children[2], abbeanumDoorPosition, [flurScene, outsideScene]) :
+			new Door(abbeanumDoor, abbeanumDoorPosition, [flurScene, outsideScene]) :
 			undefined
 	
 	const hs1Door = scene.getObjectByName('HS1Door')
-	const hs1DoorInteractable = hs1Door ? new Door(hs1Door.children[2], hs1DoorPosition, [flurScene, hs1Scene]) : undefined
+	const hs1DoorInteractable = hs1Door ? new Door(hs1Door, hs1DoorPosition, [flurScene, hs1Scene]) : undefined
 
 	const cityCenter = scene.getObjectByName('City Center')
 	const terrain = scene.getObjectByName('Terrain')
@@ -135,31 +135,36 @@ function handleInteractions(scene, camera, raycaster, time, dt, outlinepass = nu
 	const trashcan = window.trashcan = scene.getObjectByName('Trashcan')
 	// inventory object? where?
 	const trashcanInteractable = trashcan ?
-											new InventoryObject(trashcan.children[2], trashcan.position, [flurScene]) :
+											new InventoryObject(trashcan, trashcan.position, [flurScene]) :
 											undefined
 	
 	const stick = scene.getObjectByName('Stick')
 	const stickInteractable = stick ?
-										new InventoryObject(stick.children[2], stick.position, [flurScene]) :
+										new InventoryObject(stick, stick.position, [flurScene]) :
 										undefined
 
 	const laptop = scene.getObjectByName('Laptop')
 	const laptopInteractable = laptop ?
-										new InventoryObject(laptop.children[2], laptop.position, [flurScene]) :
+										new InventoryObject(laptop, laptop.position, [flurScene]) :
 										undefined
 	
 	const laptop2 = scene.getObjectByName('Laptop2')
 	const laptop2Interactable = laptop ? 
-										new InventoryObject(laptop2.children[2], laptop2.position, [flurScene]) :
+										new InventoryObject(laptop2, laptop2.position, [flurScene]) :
 										undefined
 
 	const blackboards = scene.getObjectByName('Blackboards')
 	const blackboardsInteractable = blackboards ? 
-									new InventoryObject(blackboards.children[2], blackboards.position, [flurScene]) :
+									new InventoryObject(blackboards, blackboards.position, [flurScene]) :
 									undefined
 
+	const cup = scene.getObjectByName('Cup')
+	const cupInteractable = cup ? 
+									new InventoryObject(cup, cup.position, [flurScene]) :
+									undefined
+								
 	const interactables = [abbeanumDoorInteractable, hs1DoorInteractable, laptopInteractable, stickInteractable,
-							trashcanInteractable, laptop2Interactable, blackboardsInteractable]
+							trashcanInteractable, laptop2Interactable, blackboardsInteractable, cupInteractable]
 	if(scene != outsideScene){
 		user.speed = user.insideSpeed;
 	}
@@ -168,7 +173,7 @@ function handleInteractions(scene, camera, raycaster, time, dt, outlinepass = nu
 	}
 
 	// set to city center so it's less likely someone notices when accidentally pressing one of the buttons :D
-	const debuggedObject = laptop2
+	const debuggedObject = cup
 
 	acceleration.set(0,0,0)
 	var dtx = clamp(dt * 10, 0, 1) // the lower this number is, the smoother is the motion
