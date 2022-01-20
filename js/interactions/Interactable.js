@@ -1,3 +1,4 @@
+// the interactableMesh field is neither correct nor useful, I think
 class Interactable {
     constructor(interactableMesh, position, scenes) {
         this.interactableMesh = interactableMesh
