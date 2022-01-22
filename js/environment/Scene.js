@@ -109,7 +109,7 @@ function fillScene(scene) {
 	glTFLoader.loadAsync('models/samples/stick.glb', e => updateDownloadProgress('stick', e))
 	.then(gltf => {
 		const model = gltf.scene
-		placeLatLonObject(model, 'Stick', 50.93427661, 11.58048150, 185.848, 0)
+		placeLatLonObject(model, 'Stick', 50.93407069, 11.58046219, 185.848, 0)
 		flurScene.add(model)
 	})
 	.catch(printError)
