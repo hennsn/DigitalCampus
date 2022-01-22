@@ -45,7 +45,7 @@ function updateMultiplayer(scene, time, deltaTime, camera){
 		lastTime = time
 		state = 'waiting'
 		const x = new XMLHttpRequest()
-		x.open("GET", "https://anionoa.uber.space/?"+
+		x.open("GET", "https://anionoa.uber.space/digitalcampus?"+
 			"name="+encodeURIComponent(selfName)+
 			"&x="+(camera.position.x*1)+
 			"&y="+(camera.position.y*1)+
