@@ -2,7 +2,7 @@ import {inInventory} from './Interactions.js'
 import {printInventory} from './Interactions.js'
 
 class Interactable {
-    constructor(interactableModel, position, scenes) {
+    constructor(interactableModel, position, scenes, unlocked=true) {
         this.interactableModel = interactableModel
         this.position = position
         // as long as we don't have one interactable model for each scene,
@@ -12,9 +12,12 @@ class Interactable {
         this.interactionRadius = 3
         // in ms
         this.interactionInterval = 300
+        this.unlocked = unlocked
     }
 
     canInteract(currentScene, camera, lastInteractionTime) {
+        if (!this.unlocked)
+            return false
         if(Date.now() - lastInteractionTime < this.interactionInterval)
             return false
         if (!this.scenes.includes(currentScene)) 
