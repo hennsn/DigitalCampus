@@ -70,9 +70,7 @@ class InventoryObject extends Interactable {
     interact(){
         super.interact()
         this.#takeObject()
-    }
-
-    
+    }    
 }
 
 

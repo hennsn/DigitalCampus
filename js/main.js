@@ -67,9 +67,6 @@ outsideScene.name = 'outside'
 
 
 
-
-
-
 // ----------------------------- OUTLINE PASS AND RENDERPASS FOR EFFECTIVE OUTLINE -------------------------------
 // NOT WORKING YET, SO NOT NEEDED, but when deleting please mind, that the outlinepass is given to the handle interactions funcion
  var composer = new EffectComposer( renderer );
@@ -77,11 +74,6 @@ outsideScene.name = 'outside'
  				composer.addPass( renderPass );
  var outlinePass = new OutlinePass(new THREE.Vector2(window.innerWidth, window.innerHeight), outsideScene, camera);
  composer.addPass( outlinePass );
-
-
-
-
-
 
 
 
@@ -111,7 +103,7 @@ window.scene = outsideScene
 
 ///////////////
 // raycaster //
-///////////
+//////////////
 const raycaster = window.raycaster = new THREE.Raycaster()
 raycaster.far = 8
 const mousecaster = new THREE.Raycaster() //new raycaster for mouse
@@ -136,8 +128,6 @@ createInteractions(scene, camera, renderer, mouse)
 
 const stats = Stats()
 document.body.appendChild(stats.dom)
-//Inventory hidden
-//document.getElementById("inventory").style.visibility = 'hidden'
 
 var lastTime = new Date().getTime()
 let i = 1;
@@ -163,14 +153,6 @@ function mainLoop(){
 	}
 	
 	renderer.render(scene, camera)
-
-	/*no longer needed
-	//just random loop to check how long it takes for abbeanum door to be registered
-	if(i<=10){
-		console.log(scene.getObjectByName("AbbeanumDoor"));
-		console.log(scene.getObjectByName("Laptop"))
-		i++;
-	}*/  
 }
 console.log("henlo");
 

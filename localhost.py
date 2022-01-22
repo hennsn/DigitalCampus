@@ -1,4 +1,6 @@
 #Use to create local host
+#My PC misinterprets .js files as plain text, hence the server
+#You can just continue using your server, it won't matter
 import http.server
 import socketserver
 

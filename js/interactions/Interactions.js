@@ -112,7 +112,7 @@ function createInteractions(scene, camera, renderer, mouse){
 		//console.log("mouse position: (" + window.mouse.x + ", "+ window.mouse.y + ")");
 	}*/
 	
-	//event listener mouse click//////
+	//event listener mouse click//
 	window.addEventListener('mousedown', onMouseClick, false);
 
 	function onMouseClick(event){
@@ -151,8 +151,6 @@ var couldInteract = false
 
 // helper functions for the animation loop
 function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, dt, outlinepass = null){
-
-	
 	
 	// get the models - maybe move to not do this every frame
 	const abbeanum = scene.getObjectByName('Abbeanum')
@@ -389,9 +387,9 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 		story = 1
 	}
 
-
+	/////////////////////////////
 	/////MOUSE INTERACTIONS//////
-	//CLICK EVENTS
+	////////////////////////////
 	if(wasClicked == true){
 		if(abbeanumDoor) abbeanumDoor.visible = true
 
@@ -405,9 +403,10 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 			[]
 		).filter(model => !!model)
 
-		const mouseIntersects = mousecaster.intersectObjects(clickableObjects); //vs intersectObjects(scene.children)
+		const mouseIntersects = mousecaster.intersectObjects(clickableObjects);
 		for ( let i = 0; i < mouseIntersects.length; i ++ ) {
 		
+			//mainly needed for debugging
 			if(clickableObjects != undefined && clickableObjects.length > 0){
 				clickableObjects.sort((e1,e2) => {
 					if(camera.position.distanceTo(e1.position) > camera.position.distanceTo(e2.position)){
@@ -417,8 +416,8 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 						return -1
 					}
 				})
-				//console.log('yes: ', currentInteractables[0].interactableModel.name) //another way of adressing
-				console.log(clickableObjects)
+				//console.log('Using: ', currentInteractables[0].interactableModel.name) //another way of adressing
+				//console.log(clickableObjects)
 				currentInteractables[0].interact(scene)
 			}
 		}
@@ -435,7 +434,7 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 }
 
 
-//prints everything in inventory-array to window inventory
+//prints everything in inventory-array to inventory-textbox
 function printInventory(){
 	inventory.innerHTML = inInventory.join("<br/>")
 }
