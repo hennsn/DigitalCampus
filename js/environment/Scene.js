@@ -100,7 +100,7 @@ function fillScene(scene) {
 	glTFLoader.loadAsync('models/samples/laptop2.glb', e => updateDownloadProgress('laptop2', e))
 	.then(gltf => {
 		const model = gltf.scene
-		placeLatLonObject(model, 'Laptop2', 50.93432123, 11.58050823, 185.848, 280)
+		placeLatLonObject(model, 'Laptop with Backup', 50.93432123, 11.58050823, 185.848, 280) //Laptop2 originally
 		flurScene.add(model)
 	})
 	.catch(printError)

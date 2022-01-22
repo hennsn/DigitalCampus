@@ -1,3 +1,6 @@
+import {inInventory} from './Interactions.js'
+import {printInventory} from './Interactions.js'
+
 class Interactable {
     constructor(interactableModel, position, scenes) {
         this.interactableModel = interactableModel
@@ -23,6 +26,7 @@ class Interactable {
 
     // interact is a facade to the individual interaction implementations of inheriting classes
     interact() {
+        //console.log('YES')
         console.log('Interacting with ' + this.interactableModel.name)
     }
 }
@@ -51,14 +55,24 @@ class InventoryObject extends Interactable {
         super(interactableModel, position, scenes)
     }
 
+    #takeObject(){
+        //console.log('Inventory: ', inInventory)
+        if(!inInventory.includes(this.interactableModel.name)){
+            inInventory.push(this.interactableModel.name)
+            printInventory()
+            //maybe remove object instead?
+            this.interactableModel.visible = false
+        }else{
+            console.log('already stored')
+        }
+    }
+
     interact(){
         super.interact()
         this.#takeObject()
     }
 
-    #takeObject(){
-        //hier meinen code für inventar aufnahme
-    }
+    
 }
 
 

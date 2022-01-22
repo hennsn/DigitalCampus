@@ -102,7 +102,7 @@ function createInteractions(scene, camera, renderer, mouse){
 
 	////////////////////
 	//MOUSE LISTENERS///
-
+	////////////////////
 	/*
 	//updates mouse on move, not really necessary
 	//window.addEventListener( 'mousemove', onMouseMove, false );
@@ -191,7 +191,7 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 										new InventoryObject(laptop, laptop.position, [flurScene]) :
 										undefined
 	
-	const laptop2 = scene.getObjectByName('Laptop2')
+	const laptop2 = scene.getObjectByName('Laptop with Backup') //Laptop2 originally
 	const laptop2Interactable = laptop ? 
 										new InventoryObject(laptop2, laptop2.position, [flurScene]) :
 										undefined
@@ -256,6 +256,7 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 	// we are only looking for all interactable objects in our interactable array
 	// we will choose the closest for interaction.
 	// if that does not work, it might have to be changed to the closest one that we look at.
+	/////ADD A FILTER TO CHECK WHETHER 'currentInteractables[i].interactableModel.name' is already in 'inInventory' array //////
 	const currentInteractables = interactables.filter(interactable => 
 							 interactable != undefined && interactable.canInteract(scene, camera, lastInteractionTime))
 	const sparkleTargets = currentInteractables.map(o => o.position)
@@ -374,15 +375,11 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 	updateSparkles(scene, camera, sparkleTargets, time, dt)
 
 	/*To do:
-	something is funky about the interactable class
-	i always get a 'test' error at raycaster/3js (=basically a layer error)
-	BUT the reliable way of making the objects visible true, then false or putting them in a certain scene does NOT solve it  
-	
 	Find out how to completely disable keyboard input during voice lines*/
 
-	////////////////
+	////////////////////////
 	/// MISSION TEXT BOX ///
-	////////////////
+	///////////////////////
 	if(scene == flurScene && story == 0){
 		missionText.innerHTML = "Gehe zum Hörsaal 1"
 		story = 1
@@ -403,12 +400,10 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 		//////Array of clickable objects
 		const clickableObjects = (
 			scene == outsideScene ? [abbeanumDoor] :
-			scene == flurScene ? [laptop, stick, trashcan, laptop2, blackboards, cup] :
+			scene == flurScene ? [laptop, stick, trashcan, laptop2, blackboards, cup, hs1Door] :
 			scene == hs1Scene ? [] :
 			[]
 		).filter(model => !!model)
-
-		let first 
 
 		const mouseIntersects = mousecaster.intersectObjects(clickableObjects); //vs intersectObjects(scene.children)
 		for ( let i = 0; i < mouseIntersects.length; i ++ ) {
@@ -422,31 +417,13 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 						return -1
 					}
 				})
-				first = clickableObjects[0]
-				//clickableObjects[0].interact(scene)
-				console.log('clicked on object: ', first.name)
-
-				if(first == laptop){
-					pushLaptop()
-					if(laptop) laptop.visible = false
-				}
-				if(first == stick){
-					pushStick()
-					if(stick) stick.visible = false
-				}
-				if(first == laptop2){ //needs to be changed to HS2 Tür later
-					pushLaptop2()
-					if(laptop2) laptop2.visible = false
-				}
-				if(first == cup){
-					pushCup()
-					if(cup) cup.visible = false
-				}
-
+				//console.log('yes: ', currentInteractables[0].interactableModel.name) //another way of adressing
+				console.log(clickableObjects)
+				currentInteractables[0].interact(scene)
 			}
 		}
 
-		/*//Just checks one object
+		/*Just checks one object
 		const mouseIntersects = mousecaster.intersectObject(abbeanumDoor);
 		if(mouseIntersects.length>0){
 			console.log('clicked on object')
@@ -463,51 +440,4 @@ function printInventory(){
 	inventory.innerHTML = inInventory.join("<br/>")
 }
 
-//fills inventory
-function pushLaptop(){
-	if(!inInventory.includes("Laptop")){ //won't be needed in the final story
-		inInventory.push("Laptop") 
-		printInventory()
-	}else{
-		console.log('already stored')
-	}
-	//console.log(inInventory)
-}
-function pushStick(){
-	if(!inInventory.includes("Stick")){
-		inInventory.push("Stick") 
-		printInventory()
-	}else{
-		console.log('already stored')
-	}
-	//console.log(inInventory)
-}
-function pushLaptop2(){
-	if(!inInventory.includes("Laptop mit Backup")){ //vom HS2
-		inInventory.push("Laptop mit Backup") 
-		printInventory()
-	}else{
-		console.log('already stored')
-	}
-	//console.log(inInventory)
-}
-function pushCup(){
-	if(!inInventory.includes("Cup")){
-		inInventory.push("Cup") 
-		printInventory()
-	}else{
-		console.log('already stored')
-	}
-	//console.log(inInventory)
-}
-function pushHDMI(){
-	if(!inInventory.includes("HDMI-Kabel")){ //vom fernseher im gang
-		inInventory.push("HDMI-Kabel") 
-		printInventory()
-	}else{
-		console.log('already stored')
-	}
-	//console.log(inInventory)
-}
-
-export { createInteractions, handleInteractions }
+export { createInteractions, handleInteractions, inInventory, printInventory }
