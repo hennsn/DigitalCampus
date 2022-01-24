@@ -258,6 +258,13 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 	const currentInteractables = interactables.filter(interactable => 
 							 interactable != undefined && interactable.canInteract(scene, camera, lastInteractionTime))
 	const sparkleTargets = currentInteractables.map(o => o.position)
+	//calculate box sizes of the interactables, so we can decide on which area the particles can spawn
+	var box = new THREE.Box3()
+	const sparkleTarget = currentInteractables.map(o=> box=new  THREE.Box3().setFromObject(o.interactableModel)) 
+	var targetSizes=[
+		box.max.x - box.min.x,
+		box.max.y - box.min.y,
+		box.max.z - box.min.z];
 	const canInteract = (currentInteractables != undefined && currentInteractables.length > 0)
 
 	
@@ -368,9 +375,9 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 		}
 		
 		if(abbeanumFlurCollisions) abbeanumFlurCollisions.visible = false
-		
+
 	}
-	updateSparkles(scene, camera, sparkleTargets, time, dt)
+	updateSparkles(scene, camera, targetSizes, sparkleTargets, time, dt)
 
 	/*To do:
 	Find out how to completely disable keyboard input during voice lines*/

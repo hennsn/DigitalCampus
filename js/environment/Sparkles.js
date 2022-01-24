@@ -7,7 +7,7 @@ var spawnRadius = 1
 var flyRadius = 2
 
 var nextSpawnTime = 0
-var spawnsPerSecond = 2
+var spawnsPerSecond = 5
 var scale = 0.15
 var speed = 1.5 / flyRadius
 
@@ -20,8 +20,8 @@ var material = new THREE.MeshBasicMaterial({
 })
 const geometry = new THREE.PlaneGeometry(1, 1)
 
-function updateSparkles(scene, camera, targets, time, deltaTime){
-	
+function updateSparkles(scene, camera, sparklesTargetSize ,targets, time, deltaTime){
+
 	var particles = scene.getObjectByName('particles')
 	if(!particles){
 		particles = new THREE.Object3D()
@@ -34,12 +34,17 @@ function updateSparkles(scene, camera, targets, time, deltaTime){
 		// spawn new particle
 		const plane = new THREE.Mesh(geometry, material.clone())
 		const target = targets[(Math.random() * targets.length)|0] // select a random target
+		// add targetSize to spawn radius
+		// i removed spawnradius, because we got the correct sizes of the interactableobjects
 		plane.position.set(
-			target.x + (Math.random()-0.5) * spawnRadius, 
-			target.y + (Math.random()-0.5) * spawnRadius,
-			target.z + (Math.random()-0.5) * spawnRadius
+			target.x + (Math.random()-0.5) * (sparklesTargetSize[0]), 
+			target.y + (Math.random()-0.5) * (sparklesTargetSize[1]),
+			target.z + (Math.random()-0.5) * (sparklesTargetSize[2])
 		)
+
 		plane.scale.set(scale, scale, scale)
+		//initialize random color sparkles
+		plane.material.color=new THREE.Color(Math.random(), Math.random(), Math.random())
 		plane.rotation.set(Math.random()*6.28, Math.random()*6.28, Math.random()*6.28)
 		plane.targetRot = new THREE.Euler(Math.random()*6.28, Math.random()*6.28, Math.random()*6.28)
 		plane.targetPos = plane.position.clone().add(new THREE.Vector3(
@@ -54,6 +59,8 @@ function updateSparkles(scene, camera, targets, time, deltaTime){
 	var lerp = speed * deltaTime
 	for(var i=particles.children.length-1;i>=0;i--){
 		const particle = particles.children[i]
+		//lets sparkles flash in random colors
+		//particle.material.color=new THREE.Color(Math.random(), Math.random(), Math.random())
 		particle.position.lerp(particle.targetPos, lerp)
 		particle.rotation.x = mix(particle.rotation.x, particle.targetRot.x, lerp)
 		particle.rotation.y = mix(particle.rotation.y, particle.targetRot.y, lerp)
