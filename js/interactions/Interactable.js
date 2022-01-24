@@ -1,5 +1,6 @@
 import {inInventory} from './Interactions.js'
 import {printInventory} from './Interactions.js'
+import { playAudioTrack } from '../UserInterface.js'
 
 class Interactable {
     constructor(interactableModel, position, scenes, unlocked=true) {
@@ -44,6 +45,7 @@ class Door extends Interactable {
         // for some reason that (🔼 ) doesnt work?
         const new_scene = this.scenes[0] == currentScene ? this.scenes[1] : this.scenes[0]
         currentScene = window.scene = new_scene
+        playAudioTrack('audio/door-1-open.mp3');
     }
 
     interact(currentScene){
