@@ -15,7 +15,7 @@ import {Door, InventoryObject, InfoObject} from './Interactable.js'
 
 // the keyboard
 const keyboard = window.keyboard = {}
-
+let debuggedObject
 //boolean for raycasting check
 let wasClicked = false
 //boolean for inventory
@@ -32,6 +32,13 @@ inventory.innerHTML += "Handy <br> USB Stick"
 let user = { height: 1.7, eyeHeight: 1.6, speed: 1.3, turnSpeed: 0.03, insideSpeed: 0.7, outsideSpeed: 1.3, isIntersecting: false, }
 const distanceToWalls = 1
 let lastInteractionTime = Date.now()
+
+// Entry points for the scenes
+const outsideEntryPointFromAbbeanum = new THREE.Vector3(2.8885, 1.6634, -20.2698)
+const CorridorEntryPointFromHS1 = new THREE.Vector3(-16.9378, 3.8484, -34.7462)
+const CorridorEntryPointFromOutside = new THREE.Vector3(1.4122, 1.4596, -20.0527)
+const HS1EntryPointFromCorridor = new THREE.Vector3(-15.5154, 3.8484, -35.038)
+
 function createInteractions(scene, camera, renderer, mouse){
 	
 	renderer.xr.enabled = true
@@ -70,11 +77,20 @@ function createInteractions(scene, camera, renderer, mouse){
 			case 'h': 
 				// print the current camera position in world coordinates
 				// can be used to place objects
+				console.log('player')
 				console.log(
 					camera.position,
 					formatNumber(zToLat(camera.position.z), 8) + ", " +
 					formatNumber(xToLon(camera.position.x), 8) + ", " +
 					formatNumber(yToHeight(camera.position.y), 3)
+				);
+				console.log('\n')
+				console.log('moving object')
+				console.log(
+					formatNumber(zToLat(debuggedObject.position.z), 8) + ", " +
+					formatNumber(xToLon(debuggedObject.position.x), 8) + ", " +
+					formatNumber(yToHeight(debuggedObject.position.y), 3) + "\n" +
+					debuggedObject.position.x + ' ' + debuggedObject.position.y + ' ' + debuggedObject.position.z 
 				);
 				break;
 			case 'q':
@@ -160,15 +176,26 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 	const abbeanumHS1 = scene.getObjectByName('AbbeanumHS1')
 	
 
-	const abbeanumDoor = scene.getObjectByName('AbbeanumDoor')
-	const abbeanumDoorInteractable = 
-			window.abbeanumDoorInteractable =
-			abbeanumDoor ?
-			new Door(abbeanumDoor, abbeanumDoorPosition, [flurScene, outsideScene]) :
+	const abbeanumDoorEntrance = scene.getObjectByName('AbbeanumDoorEntrance')
+	const abbeanumDoorEntranceInteractable = 
+			window.abbeanumDoorEntranceInteractable =
+			abbeanumDoorEntrance ?
+			new Door(abbeanumDoorEntrance, abbeanumDoorEntrance.position, [flurScene], CorridorEntryPointFromOutside) :
 			undefined
 	
-	const hs1Door = scene.getObjectByName('HS1Door')
-	const hs1DoorInteractable = hs1Door ? new Door(hs1Door, hs1DoorPosition, [flurScene, hs1Scene]) : undefined
+		const abbeanumDoorExit = scene.getObjectByName('AbbeanumDoorExit')
+		const abbeanumDoorExitInteractable = 
+				window.abbeanumDoorInteractable =
+				abbeanumDoorExit ?
+				new Door(abbeanumDoorExit, abbeanumDoorExit.position, [outsideScene], outsideEntryPointFromAbbeanum) :
+				undefined
+		
+
+	const hs1DoorEntrance = scene.getObjectByName('HS1DoorEntrance')
+	const hs1DoorEntranceInteractable = hs1DoorEntrance ? new Door(hs1DoorEntrance, hs1DoorEntrance.position, [hs1Scene], HS1EntryPointFromCorridor) : undefined
+
+	const hs1DoorExit = scene.getObjectByName('HS1DoorExit')
+	const hs1DoorExitInteractable = hs1DoorExit ? new Door(hs1DoorExit, hs1DoorExit.position, [flurScene], CorridorEntryPointFromHS1) : undefined
 
 	const cityCenter = scene.getObjectByName('City Center')
 	const terrain = scene.getObjectByName('Terrain')
@@ -204,7 +231,9 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 									new InventoryObject(cup, cup.position, [flurScene]) :
 									undefined
 								
-	const interactables = [abbeanumDoorInteractable, hs1DoorInteractable, laptopInteractable, stickInteractable,
+	const interactables = [abbeanumDoorEntranceInteractable, abbeanumDoorExitInteractable, 
+							hs1DoorEntranceInteractable, hs1DoorExitInteractable, 
+						 	laptopInteractable, stickInteractable,
 							trashcanInteractable, laptop2Interactable, blackboardsInteractable, cupInteractable]
 	if(scene != outsideScene){
 		user.speed = user.insideSpeed;
@@ -214,7 +243,7 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 	}
 
 	// set to city center so it's less likely someone notices when accidentally pressing one of the buttons :D
-	const debuggedObject = cup
+	debuggedObject = window.debuggedObject = abbeanumHS1
 
 	acceleration.set(0,0,0)
 	var dtx = clamp(dt * 10, 0, 1) // the lower this number is, the smoother is the motion
@@ -289,7 +318,7 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 							}
 						})
 				
-		currentInteractables[0].interact(scene)
+		currentInteractables[0].interact(scene, camera)
 		lastInteractionTime = Date.now()
 	}
 	
@@ -398,15 +427,15 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 	/////MOUSE INTERACTIONS//////
 	////////////////////////////
 	if(wasClicked == true){
-		if(abbeanumDoor) abbeanumDoor.visible = true
+		if(abbeanumDoorEntrance) abbeanumDoorEntrance.visible = true
 
 		mousecaster.setFromCamera( mouse, camera );
 
 		//////Array of clickable objects
 		const clickableObjects = (
-			scene == outsideScene ? [abbeanumDoor] :
-			scene == flurScene ? [laptop, stick, trashcan, laptop2, blackboards, cup, hs1Door] :
-			scene == hs1Scene ? [] :
+			scene == outsideScene ? [abbeanumDoorEntrance] :
+			scene == flurScene ? [abbeanumDoorExit, laptop, stick, trashcan, laptop2, blackboards, cup, hs1DoorEntrance] :
+			scene == hs1Scene ? [hs1DoorExit] :
 			[]
 		).filter(model => !!model)
 
@@ -424,8 +453,7 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 					}
 				})
 				//console.log('Using: ', currentInteractables[0].interactableModel.name) //another way of adressing
-				//console.log(clickableObjects)
-				currentInteractables[0].interact(scene)
+				currentInteractables[0].interact(scene, camera)
 			}
 		}
 
@@ -435,7 +463,7 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 			console.log('clicked on object')
 		}*/
 	
-		if(abbeanumDoor) abbeanumDoor.visible = false;
+		if(abbeanumDoorEntrance) abbeanumDoorEntrance.visible = false;
 		wasClicked = false
 	}
 }
