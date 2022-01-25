@@ -35,7 +35,9 @@ function fillScene(scene) {
 	.then(gltf => {
 		const model = window.abbeanum = gltf.scene
 		
-		placeLatLonObject(model, 'AbbeanumDoor', 50.9339769, 11.5804402, 182, +15)
+		placeLatLonObject(model, 'AbbeanumDoorEntry', 50.93411238, 11.58074817, 183.243, +15)
+		// 1.8253643247305833 1.2429999999999977 -20.141888888356544
+
 		var scale = 1.3 // a guess
 		model.scale.set(scale, scale, scale)
 		model.visible = false
@@ -50,7 +52,7 @@ function fillScene(scene) {
 
 	glTFLoader.loadAsync('models/samples/abbeanumDoorOnly.glb', e => updateDownloadProgress('AbbeanumDoorOnly', e))
 	.then(gltf => {
-		const model = window.abbeanum = gltf.scene
+		const model = gltf.scene
 		
 		placeLatLonObject(model, 'HS1Door', 50.93424283, 11.58048785, 185.848, +15)
 		var scale = 1.3 // a guess

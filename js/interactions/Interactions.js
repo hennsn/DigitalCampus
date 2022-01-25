@@ -170,7 +170,7 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 	const abbeanumHS1 = scene.getObjectByName('AbbeanumHS1')
 	
 
-	const abbeanumDoor = scene.getObjectByName('AbbeanumDoor')
+	const abbeanumDoor = scene.getObjectByName('AbbeanumDoorEntry')
 	const abbeanumDoorInteractable = 
 			window.abbeanumDoorInteractable =
 			abbeanumDoor ?
