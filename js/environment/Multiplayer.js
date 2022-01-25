@@ -37,6 +37,8 @@ function sendMultiplayerMessage(message){
 	nextMessage = message
 }
 
+var lastChatText = null
+
 function updateMultiplayer(scene, time, deltaTime, camera){
 	
 	var deltaTime = Math.abs(time - lastTime) * 1e-3
@@ -85,7 +87,10 @@ function updateMultiplayer(scene, time, deltaTime, camera){
 				// display messages
 				const messages = window.messages = data.messages
 				const chatText = messages.map(msg => '<p>['+htmlEncode(msg.sender)+'] '+htmlEncode(msg.message)+'</p>').join('')
-				document.getElementById('chat').innerHTML = chatText
+				if(chatText != lastChatText){
+					document.getElementById('chat').innerHTML = chatText
+					lastChatText = chatText
+				}
 				const playerList = data.players
 				// update / remove existing players
 				for(var i=players.children.length-1;i>=0;i--){
