@@ -37,7 +37,7 @@ http.createServer((req, res) => {
 		// they are sorted by time
 		var timedOutMessages = 0
 		while(timedOutMessages < messages.length &&
-			Math.abs(messages[timedOutMessages].time) > messageTimeout){
+			Math.abs(messages[timedOutMessages].time - time) > messageTimeout){
 			timedOutMessages++
 		}
 		if(timedOutMessages > 0){
