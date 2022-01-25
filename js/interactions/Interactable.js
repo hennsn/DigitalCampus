@@ -5,7 +5,7 @@ import { playAudioTrack } from '../UserInterface.js'
 class Interactable {
     constructor(interactableModel, position, scenes, unlocked=true) {
         this.interactableModel = interactableModel
-        this.position = position
+        this.position = this.interactableModel.position
         // as long as we don't have one interactable model for each scene,
         // we need a list of !! exactly 2 !! scenes for scene changes
         this.scenes = scenes
@@ -21,7 +21,7 @@ class Interactable {
             return false
         if(Date.now() - lastInteractionTime < this.interactionInterval)
             return false
-        if (!this.scenes.includes(currentScene)) 
+        if (!this.scenes === currentScene) 
             return false
         if (camera.position.distanceTo(this.position) > this.interactionRadius) 
             return false
@@ -36,28 +36,31 @@ class Interactable {
 }
 
 class Door extends Interactable {
-    constructor(interactableModel, position, scenes) {
-        super(interactableModel, position, scenes)
+    constructor(interactableModel, position, scenes, entryPoint) {
+        super(interactableModel, interactableModel.position, scenes)
+        // the player gets teleported to entryPoint upon interacting with this door
+        this.entryPoint = entryPoint
     }
 
-    #openDoor(currentScene){
+    #openDoor(currentScene, camera){
         //const new_scene = this.scenes.find(scn => {scn!=currentScene})
         // for some reason that (🔼 ) doesnt work?
-        const new_scene = this.scenes[0] == currentScene ? this.scenes[1] : this.scenes[0]
+        const new_scene = this.scenes[0]
         currentScene = window.scene = new_scene
         playAudioTrack('audio/door-1-open.mp3');
+        camera.position.copy(this.entryPoint)
     }
 
-    interact(currentScene){
+    interact(currentScene, camera){
         super.interact()
-        this.#openDoor(currentScene)
+        this.#openDoor(currentScene, camera)
     }
 }
 
 
 class InventoryObject extends Interactable {
     constructor(interactableModel, position, scenes) {
-        super(interactableModel, position, scenes)
+        super(interactableModel, interactableModel.position, scenes)
     }
 
     #takeObject(){
@@ -81,7 +84,7 @@ class InventoryObject extends Interactable {
 
 class InfoObject extends Interactable {
     constructor(interactableModel, position, scenes) {
-        super(interactableModel, position, scenes)
+        super(interactableModel, interactableModel.position, scenes)
     }
 
     interact(){

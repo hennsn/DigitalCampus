@@ -35,35 +35,36 @@ function fillScene(scene) {
 	.then(gltf => {
 		const model = window.abbeanum = gltf.scene
 		
-		placeLatLonObject(model, 'AbbeanumDoorEntry', 50.93411238, 11.58074817, 183.243, +15)
+		placeLatLonObject(model, 'AbbeanumDoorEntrance', 50.93411238, 11.58074817, 183.243, +15)
 		// 1.8253643247305833 1.2429999999999977 -20.141888888356544
 
 		var scale = 1.3 // a guess
 		model.scale.set(scale, scale, scale)
 		model.visible = false
 		//model.children[2].material.wireframe = true
-
-
-
 		outsideScene.add(model)
-		flurScene.add(model.clone()) // objects must be cloned, when you want to add them to multiple scenes
+		const abbeanumDoorExit = model.clone()
+		abbeanumDoorExit.name = ''
+		placeLatLonObject(abbeanumDoorExit, 'AbbeanumDoorExit', 50.93411372, 11.58075194, 183.243)
+		flurScene.add(abbeanumDoorExit) // objects must be cloned, when you want to add them to multiple scenes
 	})
 	.catch(printError)
+
 
 	glTFLoader.loadAsync('models/samples/abbeanumDoorOnly.glb', e => updateDownloadProgress('AbbeanumDoorOnly', e))
 	.then(gltf => {
 		const model = gltf.scene
 		
-		placeLatLonObject(model, 'HS1Door', 50.93424283, 11.58048785, 185.848, +15)
+		placeLatLonObject(model, 'HS1DoorEntrance', 50.93424072, 11.58049479, 185.863, -15)
 		var scale = 1.3 // a guess
 		model.scale.set(scale, scale, scale)
 		 model.visible = false
 		model.children[2].material.wireframe = true;
-
-
+		const hs1DoorExit = model.clone()
+		hs1DoorExit.name = 'HS1DoorExit'
 
 		flurScene.add(model)
-		hs1Scene.add(model.clone()) // objects must be cloned, when you want to add them to multiple scenes
+		hs1Scene.add(hs1DoorExit) // objects must be cloned, when you want to add them to multiple scenes
 	})
 	.catch(printError)
 
@@ -125,7 +126,7 @@ function fillScene(scene) {
 	glTFLoader.loadAsync('models/samples/abbeanumHS1.glb', e => updateDownloadProgress('abbeanumHS1', e))
 	.then(gltf => {
 		const model = gltf.scene
-		placeLatLonObject(model, 'AbbeanumHS1', 50.93422430, 11.58065859, 187.200, 271)
+		placeLatLonObject(model, 'AbbeanumHS1', 50.93422322, 11.58062523, 187.200, 271)
 		// model.position.set(-4.4474, 5.2, -32.578)
 		// model.rotation.set(-Math.PI, 4.7316, -Math.PI)
 		const scale = 1.4 // a guess
