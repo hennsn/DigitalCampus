@@ -19,7 +19,9 @@ const keyboard = window.keyboard = {}
 //boolean for raycasting check
 let wasClicked = false
 //boolean for inventory
-let inventoryOpen = false;
+let inventoryOpen = false
+//boolean overlay
+let overlayActive = false
 
 ///COUNTER FOR STORY (we'll see if it works that way or if it's to simple) /////
 let story = 0
@@ -33,7 +35,23 @@ let user = { height: 1.7, eyeHeight: 1.6, speed: 1.3, turnSpeed: 0.03, insideSpe
 const distanceToWalls = 1
 let lastInteractionTime = Date.now()
 function createInteractions(scene, camera, renderer, mouse){
-	
+
+	//OVERLAY//
+	const overlay = document.getElementById('overlay');
+	overlay.addEventListener('click', closeText);
+
+    function openText(){
+        //document.getElementById("info").classList.add("active");
+        document.getElementById("overlay").classList.add("active");
+		overlayActive = true
+    }
+
+    function closeText(){
+        //document.getElementById("info").classList.remove("active");
+        document.getElementById("overlay").classList.remove("active");
+		overlayActive = false
+    }
+
 	renderer.xr.enabled = true
 	document.body.appendChild(VRButton.createButton(renderer))
 	
@@ -66,6 +84,11 @@ function createInteractions(scene, camera, renderer, mouse){
 			case 'z': 
 				// a simple audio test: press z to play the audio
 				playAudioTrack('audio/springTestSound.wav');
+				if(overlayActive == false){ 
+					openText()
+				}else{
+					closeText()
+				}
 				break;
 			case 'h': 
 				// print the current camera position in world coordinates
