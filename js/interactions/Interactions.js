@@ -3,11 +3,11 @@ import * as THREE from 'https://cdn.skypack.dev/three@0.135.0'
 import { OrbitControls } from 'https://cdn.skypack.dev/three@0.135.0/examples/jsm/controls/OrbitControls.js'
 import { VRButton } from 'https://cdn.skypack.dev/three@0.135.0/examples/jsm/webxr/VRButton.js'
 import { getHeightOnTerrain } from '../environment/Terrain.js'
-import { clamp } from '../Maths.js'
+import { clamp, degToRad } from '../Maths.js'
 import { playAudioTrack } from '../UserInterface.js'
 import { xToLon, yToHeight, zToLat } from '../environment/Coordinates.js'
 import { updateSparkles } from '../environment/Sparkles.js'
-import {Door, InventoryObject, InfoObject} from './Interactable.js'
+import { Door, InventoryObject, InfoObject } from './Interactable.js'
 
 // what exactly does that do? / how does it work?
 // eher etwas für die #InteractionsGruppe
@@ -40,6 +40,9 @@ const CorridorEntryPointFromOutside = new THREE.Vector3(1.4122, 1.4596, -20.0527
 const HS1EntryPointFromCorridor = new THREE.Vector3(-15.5154, 3.8484, -35.038)
 
 function createInteractions(scene, camera, renderer, mouse){
+	
+	// change to a more intuitive rotation order
+	camera.rotation.order = 'YXZ'
 	
 	renderer.xr.enabled = true
 	document.body.appendChild(VRButton.createButton(renderer))
@@ -119,24 +122,38 @@ function createInteractions(scene, camera, renderer, mouse){
 	////////////////////
 	//MOUSE LISTENERS///
 	////////////////////
-	/*
-	//updates mouse on move, not really necessary
-	//window.addEventListener( 'mousemove', onMouseMove, false );
-	function onMouseMove(event){
-		mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-		mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-		//console.log("mouse position: (" + window.mouse.x + ", "+ window.mouse.y + ")");
-	}*/
+	
+	window.addEventListener('mousemove', (event) => {
+		mouse.x =   (event.clientX / window.innerWidth ) * 2 - 1
+		mouse.y = - (event.clientY / window.innerHeight) * 2 + 1
+		if(keyboard.rightMouseButton){
+			var mouseSpeed = 4 / window.innerHeight
+			camera.rotation.y += mouseSpeed * (event.movementX || 0)
+			camera.rotation.x  = clamp(camera.rotation.x + mouseSpeed * (event.movementY || 0), -60*degToRad, +60*degToRad)
+		}
+	}, false );
+	
+	var mouseButtonNames = ['leftMouseButton', 'middleMouseButton', 'rightMouseButton']
 	
 	//event listener mouse click//
-	window.addEventListener('mousedown', onMouseClick, false);
-
-	function onMouseClick(event){
-		wasClicked = true;
-		mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+	window.addEventListener('mousedown', (event) => {
+		if(event.button == 0) wasClicked = true // left mouse button only
+		mouse.x =   ( event.clientX / window.innerWidth  ) * 2 - 1;
 		mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
    		console.log("mouse position: (" + mouse.x + ", "+ mouse.y + ")");
-	}
+		keyboard[mouseButtonNames[event.button]] = 1
+	}, false)
+	
+	window.addEventListener('mouseup', (event) => {
+		delete keyboard[mouseButtonNames[event.button]]
+	}, false)
+	
+	// prevent the context menu to be opened on right click,
+	// so the user can turn with his mouse without being interupted
+	window.addEventListener('contextmenu', (event) => {
+		event.preventDefault()
+	})
+
 }
 
 var velocity = new THREE.Vector3(0,0,0)
