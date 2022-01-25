@@ -8,6 +8,7 @@ import { playAudioTrack } from '../UserInterface.js'
 import { xToLon, yToHeight, zToLat } from '../environment/Coordinates.js'
 import { updateSparkles } from '../environment/Sparkles.js'
 import { Door, InventoryObject, InfoObject } from './Interactable.js'
+import { sendMultiplayerMessage } from '../environment/Multiplayer.js'
 
 // what exactly does that do? / how does it work?
 // eher etwas für die #InteractionsGruppe
@@ -32,6 +33,26 @@ inventory.innerHTML += "Handy <br> USB Stick"
 let user = { height: 1.7, eyeHeight: 1.6, speed: 1.3, turnSpeed: 0.03, insideSpeed: 0.7, outsideSpeed: 1.3, isIntersecting: false, }
 const distanceToWalls = 1
 let lastInteractionTime = Date.now()
+
+var keyWasPressed = false
+
+const jumpDuration = 1
+const jumpHeight = 1
+
+var jumpTime = jumpDuration + 1
+
+function jumpCurve(time){
+	// better recommendations for jump functions are welcome xD
+	/*const fDuration = 2.5
+	const x = time * fDuration / jumpDuration - 1
+	const f = Math.sin(x+.5)*Math.exp(-x*x*4)
+	const fMax = 0.56*/
+	const fDuration = 8
+	const x = time * fDuration / jumpDuration - 2.75
+	const f = Math.sin(x+x*x/10+2)*Math.exp(-x*x/4)
+	const fMax = 0.95
+	return f / fMax * jumpHeight
+}
 
 // Entry points for the scenes
 const outsideEntryPointFromAbbeanum = new THREE.Vector3(2.8885, 1.6634, -20.2698)
@@ -70,9 +91,15 @@ function createInteractions(scene, camera, renderer, mouse){
 	}
 	
 	function keyDown(event){
+		keyWasPressed = true
 		keyboard[event.key] = event.timeStamp
 		keyboard[event.keyCode] = event.timeStamp
 		switch(event.key){
+			case ' ':// space for jumping
+				if(jumpTime <= 0.0 || jumpTime >= jumpDuration * 0.75){
+					jumpTime = 0.0
+				}
+				break;
 			case 'z': 
 				// a simple audio test: press z to play the audio
 				playAudioTrack('audio/springTestSound.wav');
@@ -97,21 +124,30 @@ function createInteractions(scene, camera, renderer, mouse){
 				);
 				break;
 			case 'q':
-				//opens inventory
+				// opens inventory
 				if(inventoryOpen == false){
 					playAudioTrack('audio/inventorySound.mp3');
 					document.getElementById("inventory").style.visibility = 'visible';
 					inventoryOpen = true
-				}else{
+				} else {
 					document.getElementById("inventory").style.visibility = 'hidden';
 					inventoryOpen = false
 				}
-				
 				break;
+			case 't':
+				var message = window.prompt('Message to send:')
+				if(message){
+					message = message.trim()
+					if(message.length > 0){
+						sendMultiplayerMessage(message)
+					}
+				}
+				break
 		}
 	}
 	
 	function keyUp(event){
+		keyWasPressed = true
 		delete keyboard[event.key]
 		delete keyboard[event.keyCode]
 	}
@@ -135,7 +171,7 @@ function createInteractions(scene, camera, renderer, mouse){
 	
 	var mouseButtonNames = ['leftMouseButton', 'middleMouseButton', 'rightMouseButton']
 	
-	//event listener mouse click//
+	// event listener mouse click
 	window.addEventListener('mousedown', (event) => {
 		if(event.button == 0) wasClicked = true // left mouse button only
 		mouse.x =   ( event.clientX / window.innerWidth  ) * 2 - 1;
@@ -254,8 +290,7 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 							trashcanInteractable, laptop2Interactable, blackboardsInteractable, cupInteractable]
 	if(scene != outsideScene){
 		user.speed = user.insideSpeed;
-	}
-	else {
+	} else {
 		user.speed = user.outsideSpeed
 	}
 
@@ -323,14 +358,12 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 	if((keyboard.e || keyboard.Enter) && 
 		currentInteractables != undefined &&
 		currentInteractables.length > 0
-	)
-	{	
+	) {	
 		// sort interactables, such that the closest element will be interacted with
 		currentInteractables.sort((e1,e2) => {
 							if(camera.position.distanceTo(e1.position) > camera.position.distanceTo(e2.position)){
-								return 1
-							}
-							else{
+								return +1
+							} else{
 								return -1
 							}
 						})
@@ -351,7 +384,8 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 	}
 	
 	// check if there is something in the way
-	if(velocity.length() > 1e-3 * user.speed){// we're in motion
+	if(velocity.length() > 1e-3 * user.speed || // we're in motion / might move camera up/down
+		keyWasPressed || (jumpTime > 0.0 && jumpTime < jumpDuration)){
 		
 		if(abbeanumFlurCollisions) abbeanumFlurCollisions.visible = true
 		
@@ -414,7 +448,9 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 			floorY = Math.max(floorY, groundY)
 		}
 		if(floorY > noneY){
-			camera.position.y = floorY + user.eyeHeight
+			// todo plus jump curve
+			const sneaking = (keyboard.Shift ? -0.4 : 0.0)
+			camera.position.y = floorY + user.eyeHeight + sneaking + jumpCurve(jumpTime)
 		} else {
 			// teleport player back in?
 			// camera.position.y = getHeightOnTerrain(camera.position.x, camera.position.z) + user.eyeHeight
@@ -423,6 +459,9 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 		if(abbeanumFlurCollisions) abbeanumFlurCollisions.visible = false
 
 	}
+	
+	jumpTime += dt
+	
 	updateSparkles(scene, camera, targetSizes, sparkleTargets, time, dt)
 
 	/*To do:
@@ -463,9 +502,8 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 			if(clickableObjects != undefined && clickableObjects.length > 0){
 				clickableObjects.sort((e1,e2) => {
 					if(camera.position.distanceTo(e1.position) > camera.position.distanceTo(e2.position)){
-						return 1
-					}
-					else{
+						return +1
+					} else {
 						return -1
 					}
 				})
@@ -483,6 +521,9 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 		if(abbeanumDoorEntrance) abbeanumDoorEntrance.visible = false;
 		wasClicked = false
 	}
+	
+	keyWasPressed = false
+	
 }
 
 
