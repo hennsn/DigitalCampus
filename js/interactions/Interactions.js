@@ -21,6 +21,8 @@ let debuggedObject
 let wasClicked = false
 //boolean for inventory
 let inventoryOpen = false;
+//boolean overlay
+let overlayActive = false
 
 ///COUNTER FOR STORY (we'll see if it works that way or if it's to simple) /////
 let story = 0
@@ -30,6 +32,7 @@ const inInventory = ["Handy", "USB Stick"]
 inventory.innerHTML += "Handy <br> USB Stick"
 
 // the user
+// block user for cutscenes 
 let user = { height: 1.7, eyeHeight: 1.6, speed: 1.3, turnSpeed: 0.03, insideSpeed: 0.7, outsideSpeed: 1.3, isIntersecting: false, }
 const distanceToWalls = 1
 let lastInteractionTime = Date.now()
@@ -62,6 +65,22 @@ const HS1EntryPointFromCorridor = new THREE.Vector3(-15.5154, 3.8484, -35.038)
 
 function createInteractions(scene, camera, renderer, mouse){
 	
+	//OVERLAY//
+	const overlay = document.getElementById('overlay');
+	overlay.addEventListener('click', closeText);
+
+    function openText(){
+        //document.getElementById("infoPicture").classList.add("active");
+        document.getElementById("overlay").classList.add("active");
+		overlayActive = true
+    }
+
+    function closeText(){
+        //document.getElementById("infoPicture").classList.remove("active");
+        document.getElementById("overlay").classList.remove("active");
+		overlayActive = false
+    }
+
 	// change to a more intuitive rotation order
 	camera.rotation.order = 'YXZ'
 	
@@ -103,6 +122,11 @@ function createInteractions(scene, camera, renderer, mouse){
 			case 'z': 
 				// a simple audio test: press z to play the audio
 				playAudioTrack('audio/springTestSound.wav');
+				if(overlayActive == false){ 
+					openText()
+				}else{
+					closeText()
+				}
 				break;
 			case 'h': 
 				// print the current camera position in world coordinates

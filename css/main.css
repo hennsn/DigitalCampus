@@ -81,3 +81,33 @@ body {
 	-ms-user-select: none; /* IE10+/Edge */
 	user-select: none; /* Standard */
 }
+
+#overlay {
+    position: fixed;
+    opacity: 0;
+    transition: 200ms ease-in-out;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+	/*(0,0,0, X) -> X passt dunkelheit des overlays an*/
+    background-color: rgba(0, 0, 0, .75);
+    pointer-events: none;
+	/*is needed?*/
+	/* cannot be selected */
+	-webkit-user-select: none; /* Safari */        
+	-moz-user-select: none; /* Firefox */
+	-ms-user-select: none; /* IE10+/Edge */
+	user-select: none; /* Standard */
+  }
+  
+#overlay.active {
+    opacity: 1;
+    pointer-events: all;
+	/*is needed?*/
+	/* cannot be selected */
+	-webkit-user-select: none; /* Safari */        
+	-moz-user-select: none; /* Firefox */
+	-ms-user-select: none; /* IE10+/Edge */
+	user-select: none; /* Standard */
+}
