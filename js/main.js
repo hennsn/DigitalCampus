@@ -2,6 +2,7 @@
 import * as THREE from 'https://cdn.skypack.dev/three@0.135.0'
 import { GLTFLoader } from 'https://cdn.skypack.dev/three@0.135.0/examples/jsm/loaders/GLTFLoader.js'
 import { DRACOLoader } from 'https://cdn.skypack.dev/three@0.135.0/examples/jsm/loaders/DRACOLoader.js'
+import { FBXLoader } from 'https://cdn.skypack.dev/three@0.135.0/examples/jsm/loaders/FBXLoader.js'
 
 
 import { OutlinePass } from 'https://cdn.skypack.dev/three@0.135.0/examples/jsm/postprocessing/OutlinePass.js'
@@ -54,6 +55,8 @@ dracoLoader.setDecoderPath('js/libs/draco/')
 dracoLoader.setDecoderConfig({ type: 'js' })
 const glTFLoader = window.glTFLoader = new GLTFLoader()
 glTFLoader.setDRACOLoader(dracoLoader)
+
+const fbxLoader = window.fbxLoader = new FBXLoader()
 
 
 ///////////
@@ -150,6 +153,10 @@ function mainLoop(){
 	if(window.envMap){
 		// normally the environment map is fixed in place automatically, but I didn't find the correct map yet (1 texture for all sides combined)
 		window.envMap.position.set(camera.position.x, camera.position.y, camera.position.z)
+	}
+	
+	if(window.mixers){
+		mixers.forEach(mixer => mixer.update(deltaTime))
 	}
 	
 	renderer.render(scene, camera)
