@@ -94,8 +94,8 @@ function updateMultiplayer(scene, time, deltaTime, camera){
 					if(data){// update it
 						player.targetPosition.set(data.x, data.y, data.z)
 						// rotation has an offset of 180°, so the players texts look at each other, when the players
-						// are looking at each other
-						player.targetRotation.set(data.rx, data.ry + Math.PI, 0)
+						// are looking at each other, similarly for rx
+						player.targetRotation.set(-data.rx, data.ry + Math.PI, 0)
 					} else {// disconnected, remove it
 						players.remove(player)
 						console.log(player.name+" left the game")
@@ -125,8 +125,8 @@ function updateMultiplayer(scene, time, deltaTime, camera){
 							mesh.position.set(data.x, data.y, data.z)
 							mesh.rotation.order = 'YXZ' // the same as for camera
 							mesh.rotation.set(data.rx, data.ry, 0)
-							mesh.targetPosition = new THREE.Vector3(data.x, data.y, data.z)
-							mesh.targetRotation = new THREE.Vector3(data.rx, data.ry + Math.PI, 0)
+							mesh.targetPosition = new THREE.Vector3( data.x, data.y, data.z)
+							mesh.targetRotation = new THREE.Vector3(-data.rx, data.ry + Math.PI, 0)
 							players.add(mesh)
 						}
 					}
