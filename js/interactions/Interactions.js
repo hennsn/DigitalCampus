@@ -41,13 +41,13 @@ function createInteractions(scene, camera, renderer, mouse){
 	overlay.addEventListener('click', closeText);
 
     function openText(){
-        //document.getElementById("info").classList.add("active");
+        //document.getElementById("infoPicture").classList.add("active");
         document.getElementById("overlay").classList.add("active");
 		overlayActive = true
     }
 
     function closeText(){
-        //document.getElementById("info").classList.remove("active");
+        //document.getElementById("infoPicture").classList.remove("active");
         document.getElementById("overlay").classList.remove("active");
 		overlayActive = false
     }
