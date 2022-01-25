@@ -158,7 +158,6 @@ function fillScene(scene) {
 		placeLatLonObject(model, 'MovingPlant', 50.93409615, 11.58045500, 185.848-1.65, 0)
 		const s = 0.2 / 100
 		model.scale.set(s,s,s)
-		console.log(model)
 		const mixer = new THREE.AnimationMixer(model)
 		mixer.clipAction(model.animations[0]).play()
 		mixers.push(mixer)
