@@ -18,7 +18,7 @@ function addMessage(sender, message, time){
 		// remove the first element
 		messages.splice(0, 1)
 	}
-	messages.push({ name: params.name, message, time })
+	messages.push({ sender, message, time })
 }
 
 http.createServer((req, res) => {
