@@ -15,7 +15,7 @@ import {Door, InventoryObject, InfoObject} from './Interactable.js'
 
 // the keyboard
 const keyboard = window.keyboard = {}
-
+let debuggedObject
 //boolean for raycasting check
 let wasClicked = false
 //boolean for inventory
@@ -70,11 +70,20 @@ function createInteractions(scene, camera, renderer, mouse){
 			case 'h': 
 				// print the current camera position in world coordinates
 				// can be used to place objects
+				console.log('player')
 				console.log(
 					camera.position,
 					formatNumber(zToLat(camera.position.z), 8) + ", " +
 					formatNumber(xToLon(camera.position.x), 8) + ", " +
 					formatNumber(yToHeight(camera.position.y), 3)
+				);
+				console.log('\n')
+				console.log('moving object')
+				console.log(
+					formatNumber(zToLat(debuggedObject.position.z), 8) + ", " +
+					formatNumber(xToLon(debuggedObject.position.x), 8) + ", " +
+					formatNumber(yToHeight(debuggedObject.position.y), 3) + "\n" +
+					debuggedObject.position.x + ' ' + debuggedObject.position.y + ' ' + debuggedObject.position.z 
 				);
 				break;
 			case 'q':
@@ -116,6 +125,7 @@ function createInteractions(scene, camera, renderer, mouse){
 	window.addEventListener('mousedown', onMouseClick, false);
 
 	function onMouseClick(event){
+		return
 		wasClicked = true;
 		mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
 		mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
@@ -164,7 +174,7 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 	const abbeanumDoorInteractable = 
 			window.abbeanumDoorInteractable =
 			abbeanumDoor ?
-			new Door(abbeanumDoor, abbeanumDoorPosition, [flurScene, outsideScene]) :
+			new Door(abbeanumDoor, abbeanumDoor.position, [flurScene, outsideScene]) :
 			undefined
 	
 	const hs1Door = scene.getObjectByName('HS1Door')
@@ -214,7 +224,7 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 	}
 
 	// set to city center so it's less likely someone notices when accidentally pressing one of the buttons :D
-	const debuggedObject = cup
+	debuggedObject = window.debuggedObject = abbeanumDoor
 
 	acceleration.set(0,0,0)
 	var dtx = clamp(dt * 10, 0, 1) // the lower this number is, the smoother is the motion

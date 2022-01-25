@@ -3,7 +3,7 @@ import * as THREE from 'https://cdn.skypack.dev/three@0.135.0'
 
 
 
-import { placeLatLonObject } from './Coordinates.js'
+import { placeLatLonObject, xToLon, yToHeight, zToLat } from './Coordinates.js'
 import { printError, updateDownloadProgress } from '../UserInterface.js'
 
 
@@ -20,6 +20,7 @@ function fillScene(scene) {
 		})
 		.catch(printError)
 	
+	// the terrain in front of the abbeanum
 	glTFLoader.loadAsync('models/samples/abbeanumGround.glb', e => updateDownloadProgress('Abbeanum', e))
 		.then(gltf => {
 			const model = window.abbeanum = gltf.scene
@@ -37,8 +38,8 @@ function fillScene(scene) {
 		placeLatLonObject(model, 'AbbeanumDoor', 50.9339769, 11.5804402, 182, +15)
 		var scale = 1.3 // a guess
 		model.scale.set(scale, scale, scale)
-		 model.visible = false
-		// model.children[2].material.wireframe = true;
+		model.visible = false
+		//model.children[2].material.wireframe = true
 
 
 
@@ -51,11 +52,11 @@ function fillScene(scene) {
 	.then(gltf => {
 		const model = window.abbeanum = gltf.scene
 		
-		placeLatLonObject(model, 'HS1Door', 50.93426111, 11.58053290, 185.848, +15)
+		placeLatLonObject(model, 'HS1Door', 50.93424283, 11.58048785, 185.848, +15)
 		var scale = 1.3 // a guess
 		model.scale.set(scale, scale, scale)
 		 model.visible = false
-		// model.children[2].material.wireframe = true;
+		model.children[2].material.wireframe = true;
 
 
 
@@ -78,7 +79,10 @@ function fillScene(scene) {
 	glTFLoader.loadAsync('models/samples/scannedAbbeanumInside.glb', e => updateDownloadProgress('scannedAbbeanumInside', e))
 	.then(gltf => {
 		const model = gltf.scene
-		placeLatLonObject(model, 'ScannedAbbeanumInside', 50.93416130, 11.58060685, 185.800)
+		model.position.set(-9.8872, 3.8, -24.3727)
+		model.rotation.set(0,0.1246,0)
+		model.name = 'ScannedAbbeanumInside'
+		//placeLatLonObject(model, 'ScannedAbbeanumInside', 50.93416130, 11.58060685, 185.800)
 		const scale = 1.4 // a guess
 		model.scale.set(scale, scale, scale)
 		flurScene.add(model)
@@ -88,7 +92,7 @@ function fillScene(scene) {
 	.then(gltf => {
 		const model = gltf.scene
 		// move the corridor approximately to the right spot
-		model.position.set(-8.0702, 3.8, -25.578)
+		model.position.set(-9.8872, 3.8, -24.3727)
 		model.name = 'AbbeanumFlurCollisions'
 		const scale = 1.4 // a guess
 		model.scale.set(scale, scale, scale)
@@ -100,7 +104,7 @@ function fillScene(scene) {
 	glTFLoader.loadAsync('models/samples/laptop2.glb', e => updateDownloadProgress('laptop2', e))
 	.then(gltf => {
 		const model = gltf.scene
-		placeLatLonObject(model, 'Laptop with Backup', 50.93432123, 11.58050823, 185.848, 280) //Laptop2 originally
+		placeLatLonObject(model, 'Laptop with Backup', 50.93432885, 11.58047634, 185.848, 280) //Laptop2 originally
 		flurScene.add(model)
 	})
 	.catch(printError)
@@ -109,7 +113,7 @@ function fillScene(scene) {
 	glTFLoader.loadAsync('models/samples/stick.glb', e => updateDownloadProgress('stick', e))
 	.then(gltf => {
 		const model = gltf.scene
-		placeLatLonObject(model, 'Stick', 50.93407069, 11.58046219, 185.848, 0)
+		placeLatLonObject(model, 'Stick', 50.93427524, 11.58043603, 185.848, 0)
 		flurScene.add(model)
 	})
 	.catch(printError)
@@ -132,7 +136,7 @@ function fillScene(scene) {
 	glTFLoader.loadAsync('models/samples/laptop.glb', e => updateDownloadProgress('laptop', e))
 	.then(gltf => {
 		const model = gltf.scene
-		placeLatLonObject(model, 'Laptop', 50.93434396, 11.58056024, 185.848, 200)
+		placeLatLonObject(model, 'Laptop', 50.93432504, 11.58052835, 185.848, 200)
 		flurScene.add(model)
 	})
 	.catch(printError)
@@ -140,7 +144,7 @@ function fillScene(scene) {
 	glTFLoader.loadAsync('models/samples/cup.glb', e => updateDownloadProgress('cup', e))
 	.then(gltf => {
 		const model = gltf.scene
-		placeLatLonObject(model, 'Cup', 50.93413354, 11.58046075, 185.848, 0)
+		placeLatLonObject(model, 'Cup', 50.93413413, 11.58042886, 185.848, 0)
 		flurScene.add(model)
 	})
 	.catch(printError)
@@ -148,7 +152,7 @@ function fillScene(scene) {
 	glTFLoader.loadAsync('models/samples/blackboards.glb', e => updateDownloadProgress('blackboards', e))
 	.then(gltf => {
 		const model = gltf.scene
-		placeLatLonObject(model, 'Blackboards', 50.93417483, 11.58046010, 185.848, 350)
+		placeLatLonObject(model, 'Blackboards', 50.93417864, 11.58042821, 185.848, 350)
 		flurScene.add(model)
 	})
 	.catch(printError)
@@ -157,7 +161,7 @@ function fillScene(scene) {
 	glTFLoader.loadAsync('models/samples/trashcan.glb', e => updateDownloadProgress('trashcan', e))
 	.then(gltf => {
 		const model = gltf.scene
-		placeLatLonObject(model, 'Trashcan', 50.93423726, 11.58046386, 185.090, 90)
+		placeLatLonObject(model, 'Trashcan', 50.93423726, 11.58043197, 185.090, 90)
 		flurScene.add(model)
 	})
 	.catch(printError)
