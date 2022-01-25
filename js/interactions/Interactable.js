@@ -3,7 +3,7 @@ import {printInventory} from './Interactions.js'
 import { playAudioTrack } from '../UserInterface.js'
 
 class Interactable {
-    constructor(interactableModel, position, scenes, unlocked=true) {
+    constructor(interactableModel, scenes, unlocked=true) {
         this.interactableModel = interactableModel
         this.position = this.interactableModel.position
         // as long as we don't have one interactable model for each scene,
@@ -36,8 +36,8 @@ class Interactable {
 }
 
 class Door extends Interactable {
-    constructor(interactableModel, position, scenes, entryPoint) {
-        super(interactableModel, interactableModel.position, scenes)
+    constructor(interactableModel, scenes, entryPoint) {
+        super(interactableModel, scenes)
         // the player gets teleported to entryPoint upon interacting with this door
         this.entryPoint = entryPoint
     }
@@ -59,8 +59,8 @@ class Door extends Interactable {
 
 
 class InventoryObject extends Interactable {
-    constructor(interactableModel, position, scenes) {
-        super(interactableModel, interactableModel.position, scenes)
+    constructor(interactableModel, scenes) {
+        super(interactableModel, scenes)
     }
 
     #takeObject(){
@@ -83,8 +83,8 @@ class InventoryObject extends Interactable {
 
 
 class InfoObject extends Interactable {
-    constructor(interactableModel, position, scenes) {
-        super(interactableModel, interactableModel.position, scenes)
+    constructor(interactableModel, scenes) {
+        super(interactableModel, scenes)
     }
 
     interact(){

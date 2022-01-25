@@ -180,22 +180,22 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 	const abbeanumDoorEntranceInteractable = 
 			window.abbeanumDoorEntranceInteractable =
 			abbeanumDoorEntrance ?
-			new Door(abbeanumDoorEntrance, abbeanumDoorEntrance.position, [flurScene], CorridorEntryPointFromOutside) :
+			new Door(abbeanumDoorEntrance, [flurScene], CorridorEntryPointFromOutside) :
 			undefined
 	
 		const abbeanumDoorExit = scene.getObjectByName('AbbeanumDoorExit')
 		const abbeanumDoorExitInteractable = 
 				window.abbeanumDoorInteractable =
 				abbeanumDoorExit ?
-				new Door(abbeanumDoorExit, abbeanumDoorExit.position, [outsideScene], outsideEntryPointFromAbbeanum) :
+				new Door(abbeanumDoorExit, [outsideScene], outsideEntryPointFromAbbeanum) :
 				undefined
 		
 
 	const hs1DoorEntrance = scene.getObjectByName('HS1DoorEntrance')
-	const hs1DoorEntranceInteractable = hs1DoorEntrance ? new Door(hs1DoorEntrance, hs1DoorEntrance.position, [hs1Scene], HS1EntryPointFromCorridor) : undefined
+	const hs1DoorEntranceInteractable = hs1DoorEntrance ? new Door(hs1DoorEntrance, [hs1Scene], HS1EntryPointFromCorridor) : undefined
 
 	const hs1DoorExit = scene.getObjectByName('HS1DoorExit')
-	const hs1DoorExitInteractable = hs1DoorExit ? new Door(hs1DoorExit, hs1DoorExit.position, [flurScene], CorridorEntryPointFromHS1) : undefined
+	const hs1DoorExitInteractable = hs1DoorExit ? new Door(hs1DoorExit, [flurScene], CorridorEntryPointFromHS1) : undefined
 
 	const cityCenter = scene.getObjectByName('City Center')
 	const terrain = scene.getObjectByName('Terrain')
@@ -203,32 +203,32 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 	const trashcan = window.trashcan = scene.getObjectByName('Trashcan')
 	// inventory object? where?
 	const trashcanInteractable = trashcan ?
-											new InventoryObject(trashcan, trashcan.position, [flurScene]) :
+											new InventoryObject(trashcan, [flurScene]) :
 											undefined
 	
 	const stick = scene.getObjectByName('Stick')
 	const stickInteractable = stick ?
-										new InventoryObject(stick, stick.position, [flurScene]) :
+										new InventoryObject(stick, [flurScene]) :
 										undefined
 
 	const laptop = scene.getObjectByName('Laptop')
 	const laptopInteractable = laptop ?
-										new InventoryObject(laptop, laptop.position, [flurScene]) :
+										new InventoryObject(laptop, [flurScene]) :
 										undefined
 	
 	const laptop2 = scene.getObjectByName('Laptop with Backup') //Laptop2 originally
 	const laptop2Interactable = laptop ? 
-										new InventoryObject(laptop2, laptop2.position, [flurScene]) :
+										new InventoryObject(laptop2, [flurScene]) :
 										undefined
 
 	const blackboards = scene.getObjectByName('Blackboards')
 	const blackboardsInteractable = blackboards ? 
-									new InventoryObject(blackboards, blackboards.position, [flurScene]) :
+									new InventoryObject(blackboards, [flurScene]) :
 									undefined
 
 	const cup = scene.getObjectByName('Cup')
 	const cupInteractable = cup ? 
-									new InventoryObject(cup, cup.position, [flurScene]) :
+									new InventoryObject(cup, [flurScene]) :
 									undefined
 								
 	const interactables = [abbeanumDoorEntranceInteractable, abbeanumDoorExitInteractable, 
