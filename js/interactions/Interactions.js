@@ -19,7 +19,7 @@ const keyboard = window.keyboard = {}
 //boolean for raycasting check
 let wasClicked = false
 //boolean for inventory
-let inventoryOpen = false
+let inventoryOpen = false;
 //boolean overlay
 let overlayActive = false
 
@@ -31,11 +31,12 @@ const inInventory = ["Handy", "USB Stick"]
 inventory.innerHTML += "Handy <br> USB Stick"
 
 // the user
+// block user for cutscenes 
 let user = { height: 1.7, eyeHeight: 1.6, speed: 1.3, turnSpeed: 0.03, insideSpeed: 0.7, outsideSpeed: 1.3, isIntersecting: false, }
 const distanceToWalls = 1
 let lastInteractionTime = Date.now()
 function createInteractions(scene, camera, renderer, mouse){
-
+	
 	//OVERLAY//
 	const overlay = document.getElementById('overlay');
 	overlay.addEventListener('click', closeText);
