@@ -6,6 +6,7 @@ import * as THREE from 'https://cdn.skypack.dev/three@0.135.0'
 import { placeLatLonObject } from './Coordinates.js'
 import { printError, updateDownloadProgress } from '../UserInterface.js'
 
+window.mixers = []
 
 function fillScene(scene) {
 	
@@ -141,6 +142,19 @@ function fillScene(scene) {
 	.then(gltf => {
 		const model = gltf.scene
 		placeLatLonObject(model, 'Cup', 50.93413354, 11.58046075, 185.848, 0)
+		flurScene.add(model)
+	})
+	.catch(printError)
+
+	fbxLoader.loadAsync('models/samples/movingPlant.fbx', e => updateDownloadProgress('movingPlant', e))
+	.then(model => {
+		placeLatLonObject(model, 'MovingPlant', 50.93409615, 11.58045500, 185.848-1.65, 0)
+		const s = 0.2 / 100
+		model.scale.set(s,s,s)
+		console.log(model)
+		const mixer = new THREE.AnimationMixer(model)
+		mixer.clipAction(model.animations[0]).play()
+		mixers.push(mixer)
 		flurScene.add(model)
 	})
 	.catch(printError)
