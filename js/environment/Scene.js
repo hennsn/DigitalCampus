@@ -164,7 +164,21 @@ function fillScene(scene) {
 		flurScene.add(model)
 	})
 	.catch(printError)
-
+	
+	fbxLoader.loadAsync('models/samples/spider.fbx', e => updateDownloadProgress('spider', e))
+	.then(model => {
+		placeLatLonObject(model, 'spider', 50.93408657, 11.58043987, 185.848-0.89, 0)
+		console.log(model)
+		const s = 0.2 / 70
+		model.rotateY(90)
+		model.scale.set(s,s,s)
+		const mixer = new THREE.AnimationMixer(model)
+		mixer.clipAction(model.animations[1]).play()
+		mixers.push(mixer)
+		flurScene.add(model)
+	})
+	.catch(printError)
+	
 	glTFLoader.loadAsync('models/samples/blackboards.glb', e => updateDownloadProgress('blackboards', e))
 	.then(gltf => {
 		const model = gltf.scene
