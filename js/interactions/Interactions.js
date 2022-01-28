@@ -9,6 +9,7 @@ import { xToLon, yToHeight, zToLat } from '../environment/Coordinates.js'
 import { updateSparkles } from '../environment/Sparkles.js'
 import { Door, InventoryObject, InfoObject } from './Interactable.js'
 import { sendMultiplayerMessage } from '../environment/Multiplayer.js'
+import { JoyStick } from '../libs/joystick/joy.min-2.js'
 
 // what exactly does that do? / how does it work?
 // eher etwas für die #InteractionsGruppe
@@ -57,6 +58,13 @@ function jumpCurve(time){
 	return f / fMax * jumpHeight
 }
 
+// https://stackoverflow.com/a/4819886/4979303
+function isTouchDevice() {
+	return (('ontouchstart' in window) ||
+		(navigator.maxTouchPoints > 0) ||
+		(navigator.msMaxTouchPoints > 0));
+}
+
 // Entry points for the scenes
 const outsideEntryPointFromAbbeanum = new THREE.Vector3(2.8885, 1.6634, -20.2698)
 const CorridorEntryPointFromHS1 = new THREE.Vector3(-16.9378, 3.8484, -34.7462)
@@ -89,11 +97,32 @@ function createInteractions(scene, camera, renderer, mouse){
 	
 	camera.position.set(7.2525284107715935, 0.949415911263972, -21.716083277168504)
 	
-	// Antonio wants to use them for debugging
-	if(localStorage.orbitControls){
-		const controls = new OrbitControls(camera, renderer.domElement)
-		controls.target.set(0, 1, 0) // orbit center
-		controls.update()// compute transform for 1st frame
+	// create joysticks,
+	// maybe only if we are on a phone
+	// todo: if we have phone controls, stuff needs to work with touch-clickes as well
+	if(isTouchDevice() || localStorage.isTouchDevice){
+		// doesn't work :/
+		// document.body.requestFullscreen()
+		const jsSize = window.innerWidth > window.innerHeight ? '30vh' : '30vw'
+		motionJoyStick.style.display = 'block'
+		motionJoyStick.style.width = jsSize
+		motionJoyStick.style.height = jsSize
+		turningJoyStick.style.display = 'block'
+		turningJoyStick.style.width = jsSize
+		turningJoyStick.style.height = jsSize
+		const joyStickColors = { 
+			internalFillColor: '#fff0',
+			internalStrokeColor: '#fff',
+			externalStrokeColor: '#fff'
+		}
+		new JoyStick('motionJoyStick', joyStickColors, data => {
+			keyboard.MotionX = data.x/100
+			keyboard.MotionY = data.y/100
+		})
+		new JoyStick('turningJoyStick', joyStickColors, data => { 
+			keyboard.TurningX = data.x/100
+			keyboard.TurningY = data.y/100
+		})
 	}
 	
 	////////////////////////////////
@@ -189,7 +218,8 @@ function createInteractions(scene, camera, renderer, mouse){
 		if(keyboard.rightMouseButton){
 			var mouseSpeed = 4 / window.innerHeight
 			camera.rotation.y += mouseSpeed * (event.movementX || 0)
-			camera.rotation.x  = clamp(camera.rotation.x + mouseSpeed * (event.movementY || 0), -60*degToRad, +60*degToRad)
+			camera.rotation.x += mouseSpeed * (event.movementY || 0)
+			clampCameraRotation()
 		}
 	}, false );
 	
@@ -214,6 +244,10 @@ function createInteractions(scene, camera, renderer, mouse){
 		event.preventDefault()
 	})
 
+}
+
+function clampCameraRotation(){
+	camera.rotation.x = clamp(camera.rotation.x, -60*degToRad, +60*degToRad)
 }
 
 var velocity = new THREE.Vector3(0,0,0)
@@ -339,6 +373,12 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 	if(keyboard.s || keyboard.ArrowDown){
 		acceleration.sub(forward)
 	}
+	
+	if(keyboard.MotionX) acceleration.x += keyboard.MotionX
+	if(keyboard.MotionY) acceleration.z -= keyboard.MotionY
+	if(keyboard.TurningX) camera.rotation.y -= keyboard.TurningX * dt
+	if(keyboard.TurningY) camera.rotation.x += keyboard.TurningY * dt
+	clampCameraRotation()
 	
 	if(keyboard.a) acceleration.sub(right)
 	if(keyboard.d) acceleration.add(right)
