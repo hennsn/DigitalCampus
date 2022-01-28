@@ -49,9 +49,5 @@ function handleKeyBoardMovementInteractionsInteraction(acceleration, debuggedObj
 	
 }
 
-// duplicate in Interactions.js, has to be resolved someday !!!!!!!!!!!!!!!!!
-function clampCameraRotation(camera){
-	camera.rotation.x = clamp(camera.rotation.x, -60*degToRad, +60*degToRad)
-}
 
 export {handleKeyBoardMovementInteractionsInteraction}

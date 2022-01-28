@@ -238,10 +238,6 @@ function createInteractions(scene, camera, renderer, mouse){
 
 }
 
-// duplicate in MovementInteractions, has to be resolved someday !!!!!!!!!!!!!!!!!
-function clampCameraRotation(){
-	camera.rotation.x = clamp(camera.rotation.x, -60*degToRad, +60*degToRad)
-}
 
 var velocity = new THREE.Vector3(0,0,0)
 var acceleration = new THREE.Vector3(0,0,0)
