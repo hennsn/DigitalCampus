@@ -4,7 +4,11 @@ import { clamp, degToRad } from '../../Maths.js'
 const forward = new THREE.Vector3(0,0,-1)
 const right   = new THREE.Vector3(1,0,0)
 
-function handleKeyBoardMovementInteractionsInteraction(acceleration, debuggedObject, user){
+function clampCameraRotation(){
+	camera.rotation.x = clamp(camera.rotation.x, -60*degToRad, +60*degToRad)
+}
+
+function handleKeyBoardMovementInteractionsInteraction(acceleration, debuggedObject, user, dt){
 	if(scene != outsideScene){
 		user.speed = user.insideSpeed;
 	} else {

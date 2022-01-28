@@ -25,7 +25,7 @@ loader.load('fonts/RobotoMono-Regular.json', f => { font = f })
 
 // https://stackoverflow.com/questions/11561595/does-javascript-have-an-equivalent-to-cs-httputility-htmlencode
 function htmlEncode(s) {
-  return s.replace(/&/g, '&amp;')
+  return (s+'').replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/'/g, '&#39;')

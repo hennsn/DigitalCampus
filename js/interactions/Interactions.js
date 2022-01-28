@@ -246,12 +246,6 @@ function clampCameraRotation(){
 var velocity = new THREE.Vector3(0,0,0)
 var acceleration = new THREE.Vector3(0,0,0)
 
-
-
-
-
-
-
 var couldInteract = false
 
 // helper functions for the animation loop
@@ -333,7 +327,7 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 	/**
 	 * Helper function for updating the camera controls in the animation loop.
 	 */
-	handleKeyBoardMovementInteractionsInteraction(acceleration, debuggedObject, user)
+	handleKeyBoardMovementInteractionsInteraction(acceleration, debuggedObject, user, dt)
 
 	// ---------------------------------------------- INTERACTION CHECKERS -------------------------------------------------
 	// we are only looking for all interactable objects in our interactable array

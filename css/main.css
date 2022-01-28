@@ -111,3 +111,10 @@ body {
 	-ms-user-select: none; /* IE10+/Edge */
 	user-select: none; /* Standard */
 }
+
+.joystick {
+	margin: 5vh;
+	position: fixed;
+	bottom: 0px;
+	display: none;
+}
