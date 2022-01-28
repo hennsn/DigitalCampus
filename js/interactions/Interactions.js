@@ -494,7 +494,14 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 					}
 				})
 				//console.log('Using: ', currentInteractables[0].interactableModel.name) //another way of adressing
-				currentInteractables[0].interact(scene, camera)
+				//console.log('check: ', clickableObjects[0].name)
+				if(clickableObjects[0].name == currentInteractables[0].interactableModel.name){
+					currentInteractables[0].interact(scene, camera)
+				}else{
+					console.log('clickableObjects: ', clickableObjects[0].name)
+					console.log('currentInteractables: ', currentInteractables[0].interactableModel.name)
+				}
+				
 			}
 		}
 
