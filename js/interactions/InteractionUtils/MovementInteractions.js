@@ -1,4 +1,5 @@
 import * as THREE from 'https://cdn.skypack.dev/three@0.135.0'
+import { clamp, degToRad } from '../../Maths.js'
 
 const forward = new THREE.Vector3(0,0,-1)
 const right   = new THREE.Vector3(1,0,0)
@@ -27,7 +28,7 @@ function handleKeyBoardMovementInteractionsInteraction(acceleration, debuggedObj
 	if(keyboard.MotionY) acceleration.z -= keyboard.MotionY
 	if(keyboard.TurningX) camera.rotation.y -= keyboard.TurningX * dt
 	if(keyboard.TurningY) camera.rotation.x += keyboard.TurningY * dt
-	clampCameraRotation()
+	clampCameraRotation(camera)
 	
 	if(keyboard.a) acceleration.sub(right)
 	if(keyboard.d) acceleration.add(right)
@@ -44,5 +45,9 @@ function handleKeyBoardMovementInteractionsInteraction(acceleration, debuggedObj
 	
 }
 
+// duplicate in Interactions.js, has to be resolved someday !!!!!!!!!!!!!!!!!
+function clampCameraRotation(camera){
+	camera.rotation.x = clamp(camera.rotation.x, -60*degToRad, +60*degToRad)
+}
 
 export {handleKeyBoardMovementInteractionsInteraction}
