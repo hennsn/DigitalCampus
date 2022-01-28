@@ -1,7 +1,12 @@
 import * as THREE from 'https://cdn.skypack.dev/three@0.135.0'
+import { clamp, degToRad } from '../../Maths.js'
 
 const forward = new THREE.Vector3(0,0,-1)
 const right   = new THREE.Vector3(1,0,0)
+
+function clampCameraRotation(){
+	camera.rotation.x = clamp(camera.rotation.x, -60*degToRad, +60*degToRad)
+}
 
 function handleKeyBoardMovementInteractionsInteraction(acceleration, debuggedObject, user){
 	if(scene != outsideScene){
