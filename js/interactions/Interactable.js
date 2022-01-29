@@ -13,7 +13,7 @@ class Interactable {
         this.interactionRadius = 3
         // in ms
         this.interactionInterval = 300
-        this.unlocked = unlocked
+        this.unlocked = unlocked  
     }
 
     canInteract(currentScene, camera, lastInteractionTime) {
@@ -30,7 +30,6 @@ class Interactable {
 
     // interact is a facade to the individual interaction implementations of inheriting classes
     interact() {
-        //console.log('YES')
         console.log('Interacting with ' + this.interactableModel.name)
     }
 }
@@ -70,6 +69,7 @@ class InventoryObject extends Interactable {
             printInventory()
             //maybe remove object instead?
             this.interactableModel.visible = false
+            this.unlocked = false // for some reason does not worrk //
         }else{
             console.log('already stored')
         }

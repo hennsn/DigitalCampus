@@ -276,6 +276,18 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 							hs1DoorEntranceInteractable, hs1DoorExitInteractable, 
 						 	laptopInteractable, stickInteractable,
 							trashcanInteractable, laptop2Interactable, blackboardsInteractable, cupInteractable]
+	
+	/////STOP INVENTORY OBJECTS INTERACTION////////////
+	//console.log ('check: ', interactables[0].unlocked)
+	for(let lock=5; lock < interactables.length; lock++){
+		
+		if(scene==flurScene){
+			interactables[lock].unlocked = false;
+		}
+	//console.log('name: ', interactables[lock].interactableModel.name)
+	//console.log('hi: ', interactables[lock].unlocked)
+	}
+	
 	if(scene != outsideScene){
 		user.speed = user.insideSpeed;
 	}
@@ -463,12 +475,16 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 		missionText.innerHTML = "Gehe zum Beameranschluss bei der Tafel"
 		story = 1
 	}
+	
 
 	/////////////////////////////
 	/////MOUSE INTERACTIONS//////
 	////////////////////////////
 	if(wasClicked == true){
 		if(abbeanumDoorEntrance) abbeanumDoorEntrance.visible = true
+		if(currentInteractables.length >= 1){
+			console.log('currentInteractables: ', currentInteractables[0].interactableModel.name)
+		}
 
 		mousecaster.setFromCamera( mouse, camera );
 
@@ -495,11 +511,14 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 				})
 				//console.log('Using: ', currentInteractables[0].interactableModel.name) //another way of adressing
 				//console.log('check: ', clickableObjects[0].name)
-				if(clickableObjects[0].name == currentInteractables[0].interactableModel.name){
+				if(currentInteractables.length >= 1 && clickableObjects[0].name == currentInteractables[0].interactableModel.name){
 					currentInteractables[0].interact(scene, camera)
+					console.log('yes')
 				}else{
-					console.log('clickableObjects: ', clickableObjects[0].name)
-					console.log('currentInteractables: ', currentInteractables[0].interactableModel.name)
+					/*console.log('clickableObjects: ', clickableObjects[0].name)
+					if(currentInteractables.length >= 1){
+						console.log('currentInteractables: ', currentInteractables[0].interactableModel.name)
+					}*/
 				}
 				
 			}
