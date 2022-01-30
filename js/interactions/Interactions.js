@@ -19,7 +19,7 @@ let debuggedObject
 //boolean for raycasting check
 let wasClicked = false
 //boolean for inventory
-let inventoryOpen = false;
+let inventoryOpen = false
 //boolean overlay
 let overlayActive = false
 
@@ -41,6 +41,9 @@ const outsideEntryPointFromAbbeanum = new THREE.Vector3(2.8885, 1.6634, -20.2698
 const CorridorEntryPointFromHS1 = new THREE.Vector3(-16.9378, 3.8484, -34.7462)
 const CorridorEntryPointFromOutside = new THREE.Vector3(1.4122, 1.4596, -20.0527)
 const HS1EntryPointFromCorridor = new THREE.Vector3(-15.5154, 3.8484, -35.038)
+
+
+/////place here for test/////
 
 function createInteractions(scene, camera, renderer, mouse){
 	
@@ -94,7 +97,8 @@ function createInteractions(scene, camera, renderer, mouse){
 		switch(event.key){
 			case 'z': 
 				// a simple audio test: press z to play the audio
-				playAudioTrack('audio/springTestSound.wav');
+				//playAudioTrack('audio/springTestSound.wav');
+				console.log(story) //test where in story we are
 				if(overlayActive == false){ 
 					openText()
 				}else{
@@ -177,7 +181,6 @@ function createInteractions(scene, camera, renderer, mouse){
 	window.addEventListener('contextmenu', (event) => {
 		event.preventDefault()
 	})
-
 }
 
 var velocity = new THREE.Vector3(0,0,0)
@@ -208,6 +211,7 @@ var couldInteract = false
 
 // helper functions for the animation loop
 function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, dt, outlinepass = null){
+	
 	
 	// get the models - maybe move to not do this every frame
 	const abbeanum = scene.getObjectByName('Abbeanum')
@@ -278,14 +282,13 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 							trashcanInteractable, laptop2Interactable, blackboardsInteractable, cupInteractable]
 	
 	/////STOP INVENTORY OBJECTS INTERACTION////////////
-	//console.log ('check: ', interactables[0].unlocked)
 	for(let lock=5; lock < interactables.length; lock++){
-		
-		if(scene==flurScene){
-			interactables[lock].unlocked = false;
-		}
-	//console.log('name: ', interactables[lock].interactableModel.name)
-	//console.log('hi: ', interactables[lock].unlocked)
+			if(scene==flurScene){
+				interactables[lock].unlocked = false;
+				//console.log(interactables[6].unlocked)
+			}
+		//console.log('name: ', interactables[lock].interactableModel.name)
+		//console.log('is lcoked?: ', interactables[lock].unlocked)
 	}
 	
 	if(scene != outsideScene){
@@ -470,11 +473,29 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 	if(scene == flurScene && story == 0){
 		missionText.innerHTML = "Gehe zum Hörsaal 1"
 		story = 1
+		//interactables[5].unlocked = true //ONLY WORKS ONCE
+		//console.log(interactables[5].unlocked)
 	}
 	if(scene == hs1Scene && story == 1){
 		missionText.innerHTML = "Gehe zum Beameranschluss bei der Tafel"
 		story = 1
+
 	}
+	/*if(scene==flurScene){ //IS TRUE BUT LAPTOP NOT INTERACTABLE
+		interactables[5].unlocked=true
+	}*/
+
+	//ALSO DOESN'T WORK: (doesn't work with boolean either)
+	/*if(story <= 1){
+		for(let lock=5; lock < interactables.length; lock++){
+			if(scene==flurScene){
+			interactables[lock].unlocked = false;
+			//console.log(interactables[6].unlocked)
+			}
+			//console.log('name: ', interactables[lock].interactableModel.name)
+			//console.log('is lcoked?: ', interactables[lock].unlocked)
+		}
+	}*/
 	
 
 	/////////////////////////////
@@ -485,6 +506,7 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 		if(currentInteractables.length >= 1){
 			console.log('currentInteractables: ', currentInteractables[0].interactableModel.name)
 		}
+		//console.log(interactables[5].unlocked) //just for debugging reasons, do not click outside
 
 		mousecaster.setFromCamera( mouse, camera );
 
@@ -513,7 +535,6 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 				//console.log('check: ', clickableObjects[0].name)
 				if(currentInteractables.length >= 1 && clickableObjects[0].name == currentInteractables[0].interactableModel.name){
 					currentInteractables[0].interact(scene, camera)
-					console.log('yes')
 				}else{
 					/*console.log('clickableObjects: ', clickableObjects[0].name)
 					if(currentInteractables.length >= 1){

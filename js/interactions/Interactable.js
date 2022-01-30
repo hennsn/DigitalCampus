@@ -3,7 +3,7 @@ import {printInventory} from './Interactions.js'
 import { playAudioTrack } from '../UserInterface.js'
 
 class Interactable {
-    constructor(interactableModel, scenes, unlocked=true) {
+    constructor(interactableModel, scenes, unlocked = true) { //tried leaving it undefined here
         this.interactableModel = interactableModel
         this.position = this.interactableModel.position
         // as long as we don't have one interactable model for each scene,
@@ -13,7 +13,7 @@ class Interactable {
         this.interactionRadius = 3
         // in ms
         this.interactionInterval = 300
-        this.unlocked = unlocked  
+        this.unlocked = unlocked //tried commenting it out and declare in subclasses, worked for doors, NOT for inventory objects 
     }
 
     canInteract(currentScene, camera, lastInteractionTime) {
@@ -39,6 +39,7 @@ class Door extends Interactable {
         super(interactableModel, scenes)
         // the player gets teleported to entryPoint upon interacting with this door
         this.entryPoint = entryPoint
+        //this.unlocked = true
     }
 
     #openDoor(currentScene, camera){
@@ -60,6 +61,7 @@ class Door extends Interactable {
 class InventoryObject extends Interactable {
     constructor(interactableModel, scenes) {
         super(interactableModel, scenes)
+        //this.unlocked=false
     }
 
     #takeObject(){
@@ -69,7 +71,7 @@ class InventoryObject extends Interactable {
             printInventory()
             //maybe remove object instead?
             this.interactableModel.visible = false
-            this.unlocked = false // for some reason does not worrk //
+            //this.unlocked = false // for some reason does not worrk //
         }else{
             console.log('already stored')
         }
