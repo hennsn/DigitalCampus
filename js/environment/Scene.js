@@ -94,11 +94,12 @@ function fillScene(scene) {
 	.catch(printError)
 	glTFLoader.loadAsync('models/samples/abbeanumCorridorCollisions.glb', e => updateDownloadProgress('abbeanumCorridorCollisions', e))
 	.then(gltf => {
+		// needs to have the exact same coordinates as scannedAbbeanumInside, as it was based on it
 		const model = gltf.scene
-		// move the corridor approximately to the right spot
 		model.position.set(-9.8872, 3.8, -24.3727)
+		model.rotation.set(0,0.1246,0)
 		model.name = 'AbbeanumFlurCollisions'
-		const scale = 1.4 // a guess
+		const scale = 1.4
 		model.scale.set(scale, scale, scale)
 		model.visible = false
 		flurScene.add(model)
@@ -124,14 +125,23 @@ function fillScene(scene) {
 
 	// ---------------------------------------------- HS1 MODELS -------------------------------------------------
 
-	glTFLoader.loadAsync('models/samples/abbeanumHS1.glb', e => updateDownloadProgress('abbeanumHS1', e))
+	glTFLoader.loadAsync('models/samples/HS1.glb', e => updateDownloadProgress('abbeanumHS1', e))
 	.then(gltf => {
 		const model = gltf.scene
-		placeLatLonObject(model, 'AbbeanumHS1', 50.93422322, 11.58062523, 187.200, 271)
-		// model.position.set(-4.4474, 5.2, -32.578)
-		// model.rotation.set(-Math.PI, 4.7316, -Math.PI)
+		placeLatLonObject(model, 'AbbeanumHS1', 50.93424364, 11.58059549, 186.333, 0)
 		const scale = 1.4 // a guess
 		model.scale.set(scale, scale, scale)
+		hs1Scene.add(model)
+	})
+	.catch(printError)
+	
+	glTFLoader.loadAsync('models/samples/HS1Collisions.glb', e => updateDownloadProgress('HS1Collisions', e))
+	.then(gltf => {
+		const model = gltf.scene
+		placeLatLonObject(model, 'HS1Collisions', 50.93424364, 11.58059549, 186.333, 0)
+		const scale = 1.4 // the same as for the visual model
+		model.scale.set(scale, scale, scale)
+		model.visible = false
 		hs1Scene.add(model)
 	})
 	.catch(printError)

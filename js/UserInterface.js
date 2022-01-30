@@ -1,5 +1,6 @@
 
-import { mix } from './Maths.js'
+import * as THREE from 'https://cdn.skypack.dev/three@0.135.0'
+import { mix, degToRad } from './Maths.js'
 
 function printError(error, printToUser){
 	console.error(error)
@@ -70,4 +71,58 @@ function playAudioTrack(srcUrl){
 	return audio
 }
 
-export { printError, handleUserInterface, updateDownloadProgress, playAudioTrack }
+var lastCorners = null
+function createCorners(obj){
+	if(lastCorners) removeCorners(lastCorners)
+	lastCorners = obj
+	if(!obj) return
+	var template = window.cornerTemplate
+	// get bounding box
+	// create 8 corners in bounding box
+	// rotation [x,y,z], position [dx,dy,dz]
+	// rotate towards?
+	var corners = [
+		[-90,90,0,+1,+1,+1],
+		[+90,+90,+90,+1,+1,-1],
+		[0,90,0,+1,-1,+1],
+		[0,180,0,+1,-1,-1],
+		[-90,0,0,-1,+1,+1],
+		[0,-90,-90,-1,+1,-1],
+		[0,0,0,-1,-1,+1],
+		[0,-90,0,-1,-1,-1],
+	]
+	var bbox = new THREE.Box3().setFromObject(obj)
+	var bmin = bbox.min
+	var bmax = bbox.max
+	// find scale for corners
+	var scale = 0.3 * Math.min(bmax.x - bmin.x, Math.min(bmax.y - bmin.y, bmax.z-bmin.z))
+	for(var i=0;i<corners.length;i++){
+		var clone = template.clone()
+		clone.name = 'Corner'
+		var c = corners[i]
+		clone.scale.set(scale, scale, scale)
+		clone.rotation.set(
+			degToRad * c[0],
+			degToRad * c[1],
+			degToRad * c[2]
+		)
+		clone.position.set(
+			mix(bmin.x, bmax.x, c[3]*.5+.5),
+			mix(bmin.y, bmax.y, c[4]*.5+.5),
+			mix(bmin.z, bmax.z, c[5]*.5+.5)
+		)
+		obj.parent.add(clone)
+	}
+}
+
+function removeCorners(obj){
+	obj = obj.parent
+	for(var i=obj.children.length-1;i>=0;i--){
+		var child = obj.children[i]
+		if(child.name == 'Corner'){
+			obj.remove(child)
+		}
+	}
+}
+
+export { printError, handleUserInterface, updateDownloadProgress, playAudioTrack, createCorners }

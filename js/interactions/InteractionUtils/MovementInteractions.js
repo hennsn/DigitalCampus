@@ -9,6 +9,7 @@ function clampCameraRotation(){
 }
 
 function handleKeyBoardMovementInteractionsInteraction(acceleration, debuggedObject, user, dt){
+	
 	if(scene != outsideScene){
 		user.speed = user.insideSpeed;
 	} else {

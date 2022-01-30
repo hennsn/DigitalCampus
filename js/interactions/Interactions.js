@@ -11,7 +11,7 @@ import { Door, InventoryObject, InfoObject } from './Interactable.js'
 import { sendMultiplayerMessage } from '../environment/Multiplayer.js'
 import { JoyStick } from '../libs/joystick/joy.min-2.js'
 import { handleKeyBoardMovementInteractionsInteraction } from './InteractionUtils/MovementInteractions.js'
-import { checkColision } from './InteractionUtils/colisionCheck.js'
+import { checkCollision } from './InteractionUtils/CollisionCheck.js'
 import { Constants } from './Constants.js'
 
 // what exactly does that do? / how does it work?
@@ -145,7 +145,7 @@ function createInteractions(scene, camera, renderer, mouse){
 				playAudioTrack('audio/springTestSound.wav');
 				if(overlayActive == false){ 
 					openText()
-				}else{
+				} else {
 					closeText()
 				}
 				break;
@@ -342,7 +342,6 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 		box.max.z - box.min.z];
 	const canInteract = (currentInteractables != undefined && currentInteractables.length > 0)
 
-	
 	if(couldInteract != canInteract){
 		couldInteract = canInteract
 		controlHints.innerHTML = canInteract ? 'WASD walk<br>LEFT/RIGHT turn<br>E interact' : 'WASD walk<br>LEFT/RIGHT turn'
@@ -355,13 +354,13 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 	) {	
 		// sort interactables, such that the closest element will be interacted with
 		currentInteractables.sort((e1,e2) => {
-							if(camera.position.distanceTo(e1.position) > camera.position.distanceTo(e2.position)){
-								return +1
-							} else{
-								return -1
-							}
-						})
-				
+			if(camera.position.distanceTo(e1.position) > camera.position.distanceTo(e2.position)){
+				return +1
+			} else{
+				return -1
+			}
+		})
+		
 		currentInteractables[0].interact(scene, camera)
 		lastInteractionTime = Date.now()
 	}
@@ -378,7 +377,7 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 		velocity.add(acceleration.multiplyScalar(dt * user.speed * frictionMultiplier))
 	}
 	
-	checkColision(velocity, user, keyWasPressed, jumpTime);
+	checkCollision(velocity, user, keyWasPressed, jumpTime, dt)
 	
 	jumpTime += dt
 	
