@@ -21,6 +21,8 @@ import { Constants } from './Constants.js'
 // the keyboard
 const keyboard = window.keyboard = {}
 let debuggedObject
+let abbeanumCorridorCollisions
+
 //boolean for raycasting check
 let wasClicked = false
 //boolean for inventory
@@ -30,7 +32,6 @@ let overlayActive = false
 
 ///COUNTER FOR STORY (we'll see if it works that way or if it's to simple) /////
 let story = 0
-
 //array für alle modelle die wir einsammeln
 const inInventory = ["Handy", "USB Stick"]
 inventory.innerHTML += "Handy <br> USB Stick"
@@ -168,6 +169,11 @@ function createInteractions(scene, camera, renderer, mouse){
 					debuggedObject.position.x + ' ' + debuggedObject.position.y + ' ' + debuggedObject.position.z 
 				);
 				break;
+			case 'v':
+				debuggedObject.visible = !debuggedObject.visible
+				console.log(debuggedObject.visible)
+				abbeanumCorridorCollisions.visible = true
+
 			case 'q':
 				// opens inventory
 				if(inventoryOpen == false){
@@ -249,8 +255,8 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 	
 	// get the models - maybe move to not do this every frame
 	//const abbeanum = scene.getObjectByName('Abbeanum')
-	const abbeanumInside = scene.getObjectByName('ScannedAbbeanumInside')
-	//const abbeanumFlurCollisions = scene.getObjectByName('AbbeanumFlurCollisions')
+	const abbeanumInside = scene.getObjectByName('AbbeanumInside')
+	/*const*/abbeanumCorridorCollisions = scene.getObjectByName('AbbeanumCorridorCollisions')
 //	const abbeanumGround = scene.getObjectByName('AbbeanumGround')
 	const abbeanumHS1 = scene.getObjectByName('AbbeanumHS1')
 	const abbeanumDoorEntrance = scene.getObjectByName('AbbeanumDoorEntrance')
@@ -315,7 +321,7 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 
 
 	// set to city center so it's less likely someone notices when accidentally pressing one of the buttons :D
-	debuggedObject = window.debuggedObject = abbeanumHS1
+	debuggedObject = window.debuggedObject = abbeanumInside
 
 	acceleration.set(0,0,0)
 	var dtx = clamp(dt * 10, 0, 1) // the lower this number is, the smoother is the motion

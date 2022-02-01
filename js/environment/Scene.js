@@ -80,12 +80,12 @@ function fillScene(scene) {
 	// ---------------------------------------------- CORRIDOR MODELS -------------------------------------------------
 	
 	// these two belong together:
-	glTFLoader.loadAsync('models/samples/scannedAbbeanumInside.glb', e => updateDownloadProgress('scannedAbbeanumInside', e))
+	glTFLoader.loadAsync('models/samples/abbeanumInside.glb', e => updateDownloadProgress('abbeanumInside', e))
 	.then(gltf => {
 		const model = gltf.scene
 		model.position.set(-9.8872, 3.8, -24.3727)
 		model.rotation.set(0,0.1246,0)
-		model.name = 'ScannedAbbeanumInside'
+		model.name = 'AbbeanumInside'
 		//placeLatLonObject(model, 'ScannedAbbeanumInside', 50.93416130, 11.58060685, 185.800)
 		const scale = 1.4 // a guess
 		model.scale.set(scale, scale, scale)
@@ -98,7 +98,7 @@ function fillScene(scene) {
 		const model = gltf.scene
 		model.position.set(-9.8872, 3.8, -24.3727)
 		model.rotation.set(0,0.1246,0)
-		model.name = 'AbbeanumFlurCollisions'
+		model.name = 'AbbeanumCorridorCollisions'
 		const scale = 1.4
 		model.scale.set(scale, scale, scale)
 		model.visible = false

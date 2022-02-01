@@ -40,7 +40,7 @@ function jumpCurve(time){
 
 function checkCollision(velocity, user, keyWasPressed, jumpTime, dt){
 	
-	const abbeanumFlurCollisions = scene.getObjectByName('AbbeanumFlurCollisions')
+	const abbeanumFlurCollisions = scene.getObjectByName('AbbeanumCorridorCollisions')
 	const abbeanumGround = scene.getObjectByName('AbbeanumGround')
 	const abbeanum = scene.getObjectByName('Abbeanum')
 	const hs1 = scene.getObjectByName('HS1Collisions')
