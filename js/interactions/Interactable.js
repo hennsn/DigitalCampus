@@ -3,12 +3,10 @@ import {printInventory} from './Interactions.js'
 import { playAudioTrack } from '../UserInterface.js'
 
 class Interactable {
-    constructor(interactableModel, scenes, unlocked=true) {
+    constructor(interactableModel, scene, unlocked=true) {
         this.interactableModel = interactableModel
-        this.position = this.interactableModel.position
-        // as long as we don't have one interactable model for each scene,
-        // we need a list of !! exactly 2 !! scenes for scene changes
-        this.scenes = scenes
+        this.position = interactableModel ? interactableModel.position : undefined
+        this.scene = scene
         // taken from interaction.js
         this.interactionRadius = 3
         // in ms
@@ -17,15 +15,34 @@ class Interactable {
     }
 
     canInteract(currentScene, camera, lastInteractionTime) {
-        if (!this.unlocked)
+        // whether the object is unlocked (next part of the story)
+        if (!this.unlocked){
             return false
-        if(Date.now() - lastInteractionTime < this.interactionInterval)
+        }
+        // check for ix cooldown
+        if(Date.now() - lastInteractionTime < this.interactionInterval){
             return false
-        if (!this.scenes === currentScene) 
+        }
+        // check if we are in the right scene / we are not a door
+        // the scene of doors is the target scene; for others it's the containing scene
+        // pls use polymorphism
+        if (this.scene !== currentScene && !this instanceof Door){
             return false
-        if (camera.position.distanceTo(this.position) > this.interactionRadius) 
+        }
+        // whether we are close enough to interact
+        if (camera.position.distanceTo(this.position) > this.interactionRadius) {
             return false
+        }
         return true
+    }
+
+    // helper function to set the interactable model of an interactable
+    // (temporarily) necessary to have persistent interactables as part of the story
+    setInteractableModel(interactableModel)
+    {
+        if (this.interactableModel) return
+        this.interactableModel = interactableModel
+        this.position = this.interactableModel.position
     }
 
     // interact is a facade to the individual interaction implementations of inheriting classes
@@ -36,17 +53,16 @@ class Interactable {
 }
 
 class Door extends Interactable {
-    constructor(interactableModel, scenes, entryPoint) {
-        super(interactableModel, scenes)
+    constructor(interactableModel, scene, entryPoint) {
+        super(interactableModel, scene)
         // the player gets teleported to entryPoint upon interacting with this door
         this.entryPoint = entryPoint
     }
 
     #openDoor(currentScene, camera){
-        //const new_scene = this.scenes.find(scn => {scn!=currentScene})
+        //const new_scene = this.scene.find(scn => {scn!=currentScene})
         // for some reason that (🔼 ) doesnt work?
-        const new_scene = this.scenes[0]
-        currentScene = window.scene = new_scene
+        currentScene = window.scene = this.scene
         playAudioTrack('audio/door-1-open.mp3');
         camera.position.copy(this.entryPoint)
     }
@@ -59,8 +75,8 @@ class Door extends Interactable {
 
 
 class InventoryObject extends Interactable {
-    constructor(interactableModel, scenes) {
-        super(interactableModel, scenes)
+    constructor(interactableModel, scene) {
+        super(interactableModel, scene)
     }
 
     #takeObject(){
@@ -83,8 +99,8 @@ class InventoryObject extends Interactable {
 
 
 class InfoObject extends Interactable {
-    constructor(interactableModel, scenes) {
-        super(interactableModel, scenes)
+    constructor(interactableModel, scene) {
+        super(interactableModel, scene)
     }
 
     interact(){
