@@ -59,10 +59,40 @@ function isTouchDevice() {
 }
 
 // Entry points for the scenes
-const outsideEntryPointFromAbbeanum = new THREE.Vector3(2.8885, 1.6634, -20.2698)
+const OutsideEntryPointFromAbbeanum = new THREE.Vector3(2.8885, 1.6634, -20.2698)
 const CorridorEntryPointFromHS1 = new THREE.Vector3(-16.9378, 3.8484, -34.7462)
 const CorridorEntryPointFromOutside = new THREE.Vector3(1.4122, 1.4596, -20.0527)
 const HS1EntryPointFromCorridor = new THREE.Vector3(-15.5154, 3.8484, -35.038)
+
+const abbeanumDoorEntranceInteractable = window.abbeanumDoorEntranceInteractable = 
+	new Door(undefined, undefined, CorridorEntryPointFromOutside)
+
+const abbeanumDoorExitInteractable = 
+	new Door(undefined, undefined, OutsideEntryPointFromAbbeanum)
+
+const hs1DoorEntranceInteractable =
+	new Door(undefined, undefined, HS1EntryPointFromCorridor)
+
+const hs1DoorExitInteractable =
+	new Door(undefined, undefined, CorridorEntryPointFromHS1)
+
+const trashcanInteractable =
+	new InventoryObject(undefined, undefined)
+
+const stickInteractable =
+	new InventoryObject(undefined, undefined)
+
+const laptopInteractable =
+	new InventoryObject(undefined, undefined)
+
+const laptop2Interactable =
+	new InventoryObject(undefined, undefined)
+
+const blackboardsInteractable = 
+	new InventoryObject(undefined, undefined)
+
+const cupInteractable =
+	new InventoryObject(undefined, undefined)
 
 function createInteractions(scene, camera, renderer, mouse){
 	
@@ -258,70 +288,79 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 	const abbeanumInside = scene.getObjectByName('AbbeanumInside')
 	/*const*/abbeanumCorridorCollisions = scene.getObjectByName('AbbeanumCorridorCollisions')
 //	const abbeanumGround = scene.getObjectByName('AbbeanumGround')
-	const abbeanumHS1 = scene.getObjectByName('AbbeanumHS1')
-	const abbeanumDoorEntrance = scene.getObjectByName('AbbeanumDoorEntrance')
-	const abbeanumDoorEntranceInteractable = 
-			window.abbeanumDoorEntranceInteractable =
-			abbeanumDoorEntrance ?
-			new Door(abbeanumDoorEntrance, [flurScene], CorridorEntryPointFromOutside) :
-			undefined
-	
-		const abbeanumDoorExit = scene.getObjectByName('AbbeanumDoorExit')
-		const abbeanumDoorExitInteractable = 
-				window.abbeanumDoorInteractable =
-				abbeanumDoorExit ?
-				new Door(abbeanumDoorExit, [outsideScene], outsideEntryPointFromAbbeanum) :
-				undefined
-		
-
-	const hs1DoorEntrance = scene.getObjectByName('HS1DoorEntrance')
-	const hs1DoorEntranceInteractable = hs1DoorEntrance ? new Door(hs1DoorEntrance, [hs1Scene], HS1EntryPointFromCorridor) : undefined
-
-	const hs1DoorExit = scene.getObjectByName('HS1DoorExit')
-	const hs1DoorExitInteractable = hs1DoorExit ? new Door(hs1DoorExit, [flurScene], CorridorEntryPointFromHS1) : undefined
-
 	const cityCenter = scene.getObjectByName('City Center')
 	const terrain = scene.getObjectByName('Terrain')
+	const abbeanumHS1 = scene.getObjectByName('AbbeanumHS1')
+	
+	const abbeanumDoorEntrance = scene.getObjectByName('AbbeanumDoorEntrance')
+	if(abbeanumDoorEntrance){
+		abbeanumDoorEntranceInteractable.setInteractableModel(abbeanumDoorEntrance)
+		abbeanumDoorEntranceInteractable.scene = flurScene
+	} 
+		
+	const abbeanumDoorExit = scene.getObjectByName('AbbeanumDoorExit')
+	if(abbeanumDoorExit) {
+		abbeanumDoorExitInteractable.setInteractableModel(abbeanumDoorExit)
+		abbeanumDoorExitInteractable.scene = outsideScene
+	}
+		
+	const hs1DoorEntrance = scene.getObjectByName('HS1DoorEntrance')
+	if(hs1DoorEntrance) {
+		hs1DoorEntranceInteractable.setInteractableModel(hs1DoorEntrance)
+		hs1DoorEntranceInteractable.scene = hs1Scene
+	}
+
+	const hs1DoorExit = scene.getObjectByName('HS1DoorExit')
+	if(hs1DoorExit) {
+		hs1DoorExitInteractable.setInteractableModel(hs1DoorExit)
+		hs1DoorExitInteractable.scene = flurScene
+	}
 
 	const trashcan = window.trashcan = scene.getObjectByName('Trashcan')
-	// inventory object? where?
-	const trashcanInteractable = trashcan ?
-											new InventoryObject(trashcan, [flurScene]) :
-											undefined
-	
-	const stick = scene.getObjectByName('Stick')
-	const stickInteractable = stick ?
-										new InventoryObject(stick, [flurScene]) :
-										undefined
+	if(trashcan){
+		trashcanInteractable.setInteractableModel(trashcan)	
+		trashcanInteractable.scene = flurScene
+	}
 
+	const stick = scene.getObjectByName('Stick')
+	if(stick){
+	stickInteractable.setInteractableModel(stick)
+	stickInteractable.scene = flurScene
+	}
+
+	// the laptops need more verbose names
 	const laptop = scene.getObjectByName('Laptop')
-	const laptopInteractable = laptop ?
-										new InventoryObject(laptop, [flurScene]) :
-										undefined
+	if(laptop){
+		laptopInteractable.setInteractableModel(laptop)
+		laptopInteractable.scene = flurScene
+	}
 	
 	const laptop2 = scene.getObjectByName('Laptop with Backup') //Laptop2 originally
-	const laptop2Interactable = laptop ? 
-										new InventoryObject(laptop2, [flurScene]) :
-										undefined
+	if(laptop2){
+		laptop2Interactable.setInteractableModel(laptop2)
+		laptop2Interactable.scene = flurScene
+	}
 
 	const blackboards = scene.getObjectByName('Blackboards')
-	const blackboardsInteractable = blackboards ? 
-									new InventoryObject(blackboards, [flurScene]) :
-									undefined
-
+	if(blackboards){
+		blackboardsInteractable.setInteractableModel(blackboards)
+		blackboardsInteractable.scene = flurScene
+	}
 	const cup = scene.getObjectByName('Cup')
-	const cupInteractable = cup ? 
-									new InventoryObject(cup, [flurScene]) :
-									undefined
+	if(cup) {
+		cupInteractable.setInteractableModel(cup)
+		cupInteractable.scene = flurScene
+	}
 								
-	const interactables = [abbeanumDoorEntranceInteractable, abbeanumDoorExitInteractable, 
+	const interactables = window.interactables = [abbeanumDoorEntranceInteractable, abbeanumDoorExitInteractable, 
 							hs1DoorEntranceInteractable, hs1DoorExitInteractable, 
 						 	laptopInteractable, stickInteractable,
 							trashcanInteractable, laptop2Interactable, blackboardsInteractable, cupInteractable]
+							.filter(interactable => interactable.interactableModel)
 
 
 	// set to city center so it's less likely someone notices when accidentally pressing one of the buttons :D
-	debuggedObject = window.debuggedObject = abbeanumInside
+	debuggedObject = window.debuggedObject = abbeanumDoorEntrance
 
 	acceleration.set(0,0,0)
 	var dtx = clamp(dt * 10, 0, 1) // the lower this number is, the smoother is the motion
@@ -336,7 +375,7 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 	// we will choose the closest for interaction.
 	// if that does not work, it might have to be changed to the closest one that we look at.
 	/////ADD A FILTER TO CHECK WHETHER 'currentInteractables[i].interactableModel.name' is already in 'inInventory' array //////
-	const currentInteractables = interactables.filter(interactable => 
+	const currentInteractables = window.currentInteractables = interactables.filter(interactable => 
 							 interactable != undefined && interactable.canInteract(scene, camera, lastInteractionTime))
 	const sparkleTargets = currentInteractables.map(o => o.position)
 	//calculate box sizes of the interactables, so we can decide on which area the particles can spawn
