@@ -94,7 +94,7 @@ function fillScene(scene) {
 	.catch(printError)
 	glTFLoader.loadAsync('models/samples/abbeanumCorridorCollisions.glb', e => updateDownloadProgress('abbeanumCorridorCollisions', e))
 	.then(gltf => {
-		// needs to have the exact same coordinates as scannedAbbeanumInside, as it was based on it
+		// needs to have the exact same coordinates as abbeanumInside, as it was based on it
 		const model = gltf.scene
 		model.position.set(-9.8872, 3.8, -24.3727)
 		model.rotation.set(0,0.1246,0)

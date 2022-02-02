@@ -3,18 +3,17 @@ import { getHeightOnTerrain } from '../../environment/Terrain.js'
 import { Constants } from '../Constants.js'
 import { mix } from '../../Maths.js'
 
-const distanceToWalls = 1
+const distanceToWalls = 0.5
 
 // left/right, up/down, forward/backward
 var rayChecks = [
-	new THREE.Vector3( 0.0,-1.0, 0.0),
 	new THREE.Vector3( 0.0, 0.0, 0.0),
 	new THREE.Vector3(+0.2, 0.0, 0.0),
 	new THREE.Vector3(-0.2, 0.0, 0.0),
-	new THREE.Vector3( 0.0,-0.2, 0.0),
-	new THREE.Vector3( 0.0,+0.2, 0.0),
-	new THREE.Vector3( 0.0, 0.0,-0.2),
 	new THREE.Vector3( 0.0, 0.0,+0.2),
+	new THREE.Vector3( 0.0,-1.0, 0.0),
+	new THREE.Vector3(+0.2,-1.0, 0.0),
+	new THREE.Vector3(-0.2,-1.0, 0.0),
 ]
 
 const up = new THREE.Vector3(0,1,0)
@@ -40,6 +39,11 @@ function jumpCurve(time){
 
 function checkCollision(velocity, user, keyWasPressed, jumpTime, dt){
 	
+	/**
+	 * Warning: this code only will work correctly (currently),
+	 * if the mesh file inheritly has no rotations.
+	 */
+	
 	const abbeanumFlurCollisions = scene.getObjectByName('AbbeanumCorridorCollisions')
 	const abbeanumGround = scene.getObjectByName('AbbeanumGround')
 	const abbeanum = scene.getObjectByName('Abbeanum')
@@ -59,37 +63,73 @@ function checkCollision(velocity, user, keyWasPressed, jumpTime, dt){
 			[]
 		).filter(model => !!model)
 		
+		const showDebugRays = true
+		function addDebugLine(p1, p2, color){
+			const lineGeometry = new THREE.BufferGeometry(),
+			lineMat = new THREE.LineBasicMaterial({ color: color, linewidth: 5 })
+			lineGeometry.setFromPoints([p1, p2])
+			const line = new THREE.Line(lineGeometry, lineMat)
+			line.name = 'line'
+			scene.add(line)
+		}
+		
+		if(scene && showDebugRays) for(var c=scene.children,i=c.length-1;i>=0;i--){
+			if(c[i].name == 'line') scene.remove(c[i])
+		}
+		
 		var isIntersecting = false
-		raycaster.near = 0 
+		raycaster.near = -0.2
 		raycaster.far  = velocity.length() + distanceToWalls
 		const cameraSpaceRight = new THREE.Vector3(-velocity.z, 0, velocity.x).normalize()
+		const position = new THREE.Vector3()
 		for(var i=0;i<rayChecks.length;i++){
 			const rayCheck = rayChecks[i]
-			const position = camera.position.clone()
+			position.copy(camera.position)
 			position.addScaledVector(cameraSpaceRight, rayCheck.x)
 			position.addScaledVector(up, rayCheck.y)
 			position.addScaledVector(velocity, rayCheck.z / velocity.length())
 			raycaster.set(position, velocity)
 			const intersections = raycaster.intersectObjects(collidables)
+			if(showDebugRays){
+				const p2 = velocity.clone(); p2.normalize(); p2.add(position)
+				addDebugLine(position, p2, intersections && intersections.length > 0 ? 'green' : 'red')
+			}
 			if(intersections && intersections.length > 0){
 				
 				isIntersecting = true
 				
-				// we can do this slowing-down for every closest intersection
-				// this will prevent clipping through edges
-				const intersection = intersections[0]
-				const object = intersection.object
-				const normal = intersection.face.normal.clone()
-				// transform normal from object space to world space
-				normal.transformDirection(object.matrixWorld)
-				// remove the projection
-				normal.multiplyScalar(velocity.dot(normal))
-				if(normal.dot(velocity) < 0){// ensure we don't get accelerated by negative walls
-					velocity.add(normal)
-				} else {
-					velocity.sub(normal)
-				}
+				for(var j=0;j<intersections.length;j++){
 				
+					// we can do this slowing-down for every closest intersection
+					// this will prevent clipping through edges
+					const intersection = intersections[j]
+					
+					// dirty hack for when the code after this isn't working correctly:
+					// inverse the velocity completely, and add heavy friction,
+					// when the user is inside a wall
+					/*if(intersection.distance < raycaster.far * 0.5){
+						velocity.multiplyScalar(-1 + Math.min(10*dt, 0.9))
+						break
+					}*/
+					
+					const object = intersection.object
+					const normal = intersection.face.normal.clone()
+					// transform normal from object space to world space
+					normal.transformDirection(object.matrixWorld)
+					normal.normalize()
+					if(showDebugRays){
+						const p1 = intersection.point.clone()
+						const p2 = normal.clone(); p2.normalize(); p2.add(p1)
+						addDebugLine(p1, p2, 'white')
+					}
+					// remove the projection
+					normal.multiplyScalar(velocity.dot(normal))
+					if(normal.dot(velocity) < 0){// ensure we don't get accelerated by negative walls
+						velocity.add(normal)
+					} else {
+						velocity.sub(normal)
+					}
+				}
 			}
 		}
 
