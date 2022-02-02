@@ -3,7 +3,7 @@ import { getHeightOnTerrain } from '../../environment/Terrain.js'
 import { Constants } from '../Constants.js'
 import { mix } from '../../Maths.js'
 
-const distanceToWalls = 0.5
+const distanceToWalls = 0.3
 
 // left/right, up/down, forward/backward
 var rayChecks = [
@@ -12,8 +12,6 @@ var rayChecks = [
 	new THREE.Vector3(-0.2, 0.0, 0.0),
 	new THREE.Vector3( 0.0, 0.0,+0.2),
 	new THREE.Vector3( 0.0,-1.0, 0.0),
-	new THREE.Vector3(+0.2,-1.0, 0.0),
-	new THREE.Vector3(-0.2,-1.0, 0.0),
 ]
 
 const up = new THREE.Vector3(0,1,0)

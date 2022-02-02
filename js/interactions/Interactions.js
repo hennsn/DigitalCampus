@@ -49,6 +49,9 @@ const jumpHeight = Constants.jumpHeight
 
 var jumpTime = Constants.jumpTime
 
+function clampCameraRotation(){
+	camera.rotation.x = clamp(camera.rotation.x, -60*degToRad, +60*degToRad)
+}
 
 
 // https://stackoverflow.com/a/4819886/4979303
