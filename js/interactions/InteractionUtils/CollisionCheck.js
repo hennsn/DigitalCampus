@@ -63,7 +63,7 @@ function checkCollision(velocity, user, keyWasPressed, jumpTime, dt){
 			[]
 		).filter(model => !!model)
 		
-		const showDebugRays = true
+		const showDebugRays = false
 		function addDebugLine(p1, p2, color){
 			const lineGeometry = new THREE.BufferGeometry(),
 			lineMat = new THREE.LineBasicMaterial({ color: color, linewidth: 5 })
