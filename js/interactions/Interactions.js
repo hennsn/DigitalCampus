@@ -21,7 +21,6 @@ import { Constants } from './Constants.js'
 // the keyboard
 const keyboard = window.keyboard = {}
 let debuggedObject
-let abbeanumCorridorCollisions
 
 //boolean for raycasting check
 let wasClicked = false
@@ -67,7 +66,7 @@ const CorridorEntryPointFromHS1 = new THREE.Vector3(-16.9378, 3.8484, -34.7462)
 const CorridorEntryPointFromOutside = new THREE.Vector3(1.4122, 1.4596, -20.0527)
 const HS1EntryPointFromCorridor = new THREE.Vector3(-15.5154, 3.8484, -35.038)
 
-const abbeanumDoorEntranceInteractable = window.abbeanumDoorEntranceInteractable = 
+const abbeanumDoorEntranceInteractable = 
 	new Door(undefined, undefined, CorridorEntryPointFromOutside)
 
 const abbeanumDoorExitInteractable = 
@@ -95,6 +94,9 @@ const blackboardsInteractable =
 	new InventoryObject(undefined, undefined)
 
 const cupInteractable =
+	new InventoryObject(undefined, undefined)
+
+const beamerInteractable = window.beamerInteractable = 
 	new InventoryObject(undefined, undefined)
 
 function createInteractions(scene, camera, renderer, mouse){
@@ -194,7 +196,7 @@ function createInteractions(scene, camera, renderer, mouse){
 					formatNumber(yToHeight(camera.position.y), 3)
 				);
 				console.log('\n')
-				console.log('moving object')
+				console.log(debuggedObject.name)
 				console.log(
 					formatNumber(zToLat(debuggedObject.position.z), 8) + ", " +
 					formatNumber(xToLon(debuggedObject.position.x), 8) + ", " +
@@ -202,11 +204,6 @@ function createInteractions(scene, camera, renderer, mouse){
 					debuggedObject.position.x + ' ' + debuggedObject.position.y + ' ' + debuggedObject.position.z 
 				);
 				break;
-			case 'v':
-				debuggedObject.visible = !debuggedObject.visible
-				console.log(debuggedObject.visible)
-				abbeanumCorridorCollisions.visible = true
-
 			case 'q':
 				// opens inventory
 				if(inventoryOpen == false){
@@ -289,7 +286,7 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 	// get the models - maybe move to not do this every frame
 	//const abbeanum = scene.getObjectByName('Abbeanum')
 	const abbeanumInside = scene.getObjectByName('AbbeanumInside')
-	/*const*/abbeanumCorridorCollisions = scene.getObjectByName('AbbeanumCorridorCollisions')
+	const constabbeanumCorridorCollisions = scene.getObjectByName('AbbeanumCorridorCollisions')
 //	const abbeanumGround = scene.getObjectByName('AbbeanumGround')
 	const cityCenter = scene.getObjectByName('City Center')
 	const terrain = scene.getObjectByName('Terrain')
@@ -335,7 +332,7 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 	const laptop = scene.getObjectByName('Laptop')
 	if(laptop){
 		laptopInteractable.setInteractableModel(laptop)
-		laptopInteractable.scene = flurScene
+		laptopInteractable.scene = hs1Scene
 	}
 	
 	const laptop2 = scene.getObjectByName('Laptop with Backup') //Laptop2 originally
@@ -347,7 +344,7 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 	const blackboards = scene.getObjectByName('Blackboards')
 	if(blackboards){
 		blackboardsInteractable.setInteractableModel(blackboards)
-		blackboardsInteractable.scene = flurScene
+		blackboardsInteractable.scene = hs1Scene
 	}
 	const cup = scene.getObjectByName('Cup')
 	if(cup) {
@@ -355,6 +352,14 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 		cupInteractable.scene = flurScene
 	}
 								
+	const beamer = scene.getObjectByName('Beamer')
+	if(beamer){
+		beamerInteractable.setInteractableModel(beamer)
+		beamerInteractable.scene = hs1Scene
+		// vertically below the beamer, so we can interact from the ground
+		beamerInteractable.position = new THREE.Vector3(-7.065151656086955, 3.1155215629228477, -35.33847308541997)
+
+	}
 	const interactables = window.interactables = [abbeanumDoorEntranceInteractable, abbeanumDoorExitInteractable, 
 							hs1DoorEntranceInteractable, hs1DoorExitInteractable, 
 						 	laptopInteractable, stickInteractable,
@@ -363,7 +368,7 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 
 
 	// set to city center so it's less likely someone notices when accidentally pressing one of the buttons :D
-	debuggedObject = window.debuggedObject = abbeanumDoorEntrance
+	debuggedObject = window.debuggedObject = beamer
 
 	acceleration.set(0,0,0)
 	var dtx = clamp(dt * 10, 0, 1) // the lower this number is, the smoother is the motion

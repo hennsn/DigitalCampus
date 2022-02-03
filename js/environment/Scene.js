@@ -123,6 +123,33 @@ function fillScene(scene) {
 	})
 	.catch(printError)
 
+	fbxLoader.loadAsync('models/samples/movingPlant.fbx', e => updateDownloadProgress('movingPlant', e))
+	.then(model => {
+		placeLatLonObject(model, 'MovingPlant', 50.93409615, 11.58045500, 185.848-1.65, 0)
+		const s = 0.2 / 100
+		model.scale.set(s,s,s)
+		const mixer = new THREE.AnimationMixer(model)
+		mixer.clipAction(model.animations[0]).play()
+		mixers.push(mixer)
+		flurScene.add(model)
+	})
+	.catch(printError)
+	
+	fbxLoader.loadAsync('models/samples/spider.fbx', e => updateDownloadProgress('spider', e))
+	.then(model => {
+		placeLatLonObject(model, 'spider', 50.93408657, 11.58043987, 185.848-0.89, 0)
+		console.log(model)
+		const s = 0.2 / 70
+		model.rotateY(90)
+		model.scale.set(s,s,s)
+		const mixer = new THREE.AnimationMixer(model)
+		mixer.clipAction(model.animations[1]).play()
+		mixers.push(mixer)
+		flurScene.add(model)
+	})
+	.catch(printError)
+
+
 	// ---------------------------------------------- HS1 MODELS -------------------------------------------------
 
 	glTFLoader.loadAsync('models/samples/HS1.glb', e => updateDownloadProgress('abbeanumHS1', e))
@@ -150,50 +177,37 @@ function fillScene(scene) {
 	glTFLoader.loadAsync('models/samples/laptop.glb', e => updateDownloadProgress('laptop', e))
 	.then(gltf => {
 		const model = gltf.scene
-		placeLatLonObject(model, 'Laptop', 50.93432504, 11.58052835, 185.848, 200)
-		flurScene.add(model)
+		placeLatLonObject(model, 'Laptop', 50.93424693, 11.58070168, 184.232, -90)
+		hs1Scene.add(model)
 	})
 	.catch(printError)
 
 	glTFLoader.loadAsync('models/samples/cup.glb', e => updateDownloadProgress('cup', e))
 	.then(gltf => {
 		const model = gltf.scene
-		placeLatLonObject(model, 'Cup', 50.93413413, 11.58042886, 185.848, 0)
+		placeLatLonObject(model, 'Cup', 50.93413413, 11.58069789, 185.848, 0)
 		flurScene.add(model)
 	})
 	.catch(printError)
 
-	fbxLoader.loadAsync('models/samples/movingPlant.fbx', e => updateDownloadProgress('movingPlant', e))
-	.then(model => {
-		placeLatLonObject(model, 'MovingPlant', 50.93409615, 11.58045500, 185.848-1.65, 0)
-		const s = 0.2 / 100
-		model.scale.set(s,s,s)
-		const mixer = new THREE.AnimationMixer(model)
-		mixer.clipAction(model.animations[0]).play()
-		mixers.push(mixer)
-		flurScene.add(model)
+	glTFLoader.loadAsync('models/samples/beamer.glb', e => updateDownloadProgress('beamer', e))
+	.then(gltf => {
+		const model = gltf.scene
+		placeLatLonObject(model, 'Beamer', 50.93425396, 11.58063980, 189.048, 180)
+		hs1Scene.add(model)
 	})
 	.catch(printError)
-	
-	fbxLoader.loadAsync('models/samples/spider.fbx', e => updateDownloadProgress('spider', e))
-	.then(model => {
-		placeLatLonObject(model, 'spider', 50.93408657, 11.58043987, 185.848-0.89, 0)
-		console.log(model)
-		const s = 0.2 / 70
-		model.rotateY(90)
-		model.scale.set(s,s,s)
-		const mixer = new THREE.AnimationMixer(model)
-		mixer.clipAction(model.animations[1]).play()
-		mixers.push(mixer)
-		flurScene.add(model)
-	})
-	.catch(printError)
-	
+
+
+	// they are not really at the right spot but this is an interaction dummy
 	glTFLoader.loadAsync('models/samples/blackboards.glb', e => updateDownloadProgress('blackboards', e))
 	.then(gltf => {
 		const model = gltf.scene
-		placeLatLonObject(model, 'Blackboards', 50.93417864, 11.58042821, 185.848, 350)
-		flurScene.add(model)
+		const s = 2
+		model.scale.set(s,s,s)
+		placeLatLonObject(model, 'Blackboards', 50.93423977, 11.58071961, 185.869, 0)
+		model.visible = false
+		hs1Scene.add(model)
 	})
 	.catch(printError)
 
