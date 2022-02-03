@@ -26,7 +26,7 @@ class Interactable {
         // check if we are in the right scene / we are not a door
         // the scene of doors is the target scene; for others it's the containing scene
         // pls use polymorphism
-        if (this.scene !== currentScene && !this instanceof Door){
+        if ((this.scene !== currentScene && !this instanceof Door) || (this.scene === currentScene && this instanceof Door)){
             return false
         }
         // whether we are close enough to interact
