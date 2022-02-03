@@ -96,8 +96,11 @@ const blackboardsInteractable =
 const cupInteractable =
 	new InventoryObject(undefined, undefined)
 
-const beamerInteractable = window.beamerInteractable = 
+const beamerInteractable =
 	new InventoryObject(undefined, undefined)
+
+const abbeanumInfoBoardInteractable = window.abbeanumInfoBoardInteractable = 
+	new InfoObject(undefined, undefined)
 
 function createInteractions(scene, camera, renderer, mouse){
 	
@@ -325,7 +328,7 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 	const stick = scene.getObjectByName('Stick')
 	if(stick){
 	stickInteractable.setInteractableModel(stick)
-	stickInteractable.scene = flurScene
+	stickInteractable.scene = outsideScene
 	}
 
 	// the laptops need more verbose names
@@ -349,7 +352,7 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 	const cup = scene.getObjectByName('Cup')
 	if(cup) {
 		cupInteractable.setInteractableModel(cup)
-		cupInteractable.scene = flurScene
+		cupInteractable.scene = hs1Scene
 	}
 								
 	const beamer = scene.getObjectByName('Beamer')
@@ -358,17 +361,23 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 		beamerInteractable.scene = hs1Scene
 		// vertically below the beamer, so we can interact from the ground
 		beamerInteractable.position = new THREE.Vector3(-7.065151656086955, 3.1155215629228477, -35.33847308541997)
-
 	}
+	const abbeanumInfoBoard = scene.getObjectByName('64Tafel')
+	if(beamer){
+		beamerInteractable.setInteractableModel(abbeanumInfoBoard)
+		beamerInteractable.scene = outsideScene
+	}
+
 	const interactables = window.interactables = [abbeanumDoorEntranceInteractable, abbeanumDoorExitInteractable, 
 							hs1DoorEntranceInteractable, hs1DoorExitInteractable, 
 						 	laptopInteractable, stickInteractable,
-							trashcanInteractable, laptop2Interactable, blackboardsInteractable, cupInteractable]
+							trashcanInteractable, laptop2Interactable, blackboardsInteractable, cupInteractable,
+							beamerInteractable]
 							.filter(interactable => interactable.interactableModel)
 
 
 	// set to city center so it's less likely someone notices when accidentally pressing one of the buttons :D
-	debuggedObject = window.debuggedObject = beamer
+	debuggedObject = window.debuggedObject = abbeanumInfoBoard
 
 	acceleration.set(0,0,0)
 	var dtx = clamp(dt * 10, 0, 1) // the lower this number is, the smoother is the motion
@@ -462,8 +471,8 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 		//////Array of clickable objects
 		const clickableObjects = (
 			scene == outsideScene ? [abbeanumDoorEntrance] :
-			scene == flurScene ? [abbeanumDoorExit, laptop, stick, trashcan, laptop2, blackboards, cup, hs1DoorEntrance] :
-			scene == hs1Scene ? [hs1DoorExit] :
+			scene == flurScene ? [abbeanumDoorExit, trashcan, , hs1DoorEntrance] :
+			scene == hs1Scene ? [hs1DoorExit, laptop, stick, laptop2, blackboards, cup, beamer] :
 			[]
 		).filter(model => !!model)
 
