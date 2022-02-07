@@ -117,6 +117,9 @@ const bathroomDoorDummyBasementInteractable =
 const bathroomDoorDummyUpstairsInteractable =
 	new InventoryObject(undefined, undefined)
 
+const coffeeMachineInteractable =
+	new InventoryObject(undefined, undefined)
+
 function createInteractions(scene, camera, renderer, mouse){
 	
 	//OVERLAY//
@@ -213,6 +216,8 @@ function createInteractions(scene, camera, renderer, mouse){
 					formatNumber(xToLon(camera.position.x), 8) + ", " +
 					formatNumber(yToHeight(camera.position.y), 3)
 				);
+				if(debuggedObject)
+				{
 				console.log('\n')
 				console.log(debuggedObject.name)
 				console.log(
@@ -220,7 +225,8 @@ function createInteractions(scene, camera, renderer, mouse){
 					formatNumber(xToLon(debuggedObject.position.x), 8) + ", " +
 					formatNumber(yToHeight(debuggedObject.position.y), 3) + "\n" +
 					debuggedObject.position.x + ' ' + debuggedObject.position.y + ' ' + debuggedObject.position.z 
-				);
+				)
+				}
 				break;
 			case 'q':
 				// opens inventory
@@ -309,6 +315,7 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 	const cityCenter = scene.getObjectByName('City Center')
 	const terrain = scene.getObjectByName('Terrain')
 	const abbeanumHS1 = scene.getObjectByName('AbbeanumHS1')
+	const wetFloor = scene.getObjectByName('WetFloorSign')
 	
 	const abbeanumDoorEntrance = scene.getObjectByName('AbbeanumDoorEntrance')
 	if(abbeanumDoorEntrance){
@@ -414,22 +421,27 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 		bathroomDoorDummyUpstairsInteractable.setInteractableModel(bathroomDoorDummyUpstairs)
 		bathroomDoorDummyUpstairsInteractable.scene = flurScene
 	}
-	
+	const coffeeMachine = scene.getObjectByName('CoffeeMachine')
+	if(coffeeMachine){
+		coffeeMachineInteractable.setInteractableModel(coffeeMachine)
+		coffeeMachineInteractable.scene = flurScene
+	}
 
-
+	const dumpsterGreen = scene.getObjectByName('DumpsterGreen')
 
 	const interactables = window.interactables = [abbeanumDoorEntranceInteractable, abbeanumDoorExitInteractable, 
 							hs1DoorEntranceInteractable, hs1DoorExitInteractable, 
 						 	laptopInteractable, stickInteractable,
 							trashcanInteractable, laptop2Interactable, blackboardsInteractable, cupInteractable,
 							beamerInteractable, tvCuboidInteractable, HS2DoorDummyInteractable,
-						preproomDoorDummyInteractable, bathroomDoorDummyBasementInteractable,
-						bathroomDoorDummyUpstairsInteractable, abbeanumInfoBoardInteractable]
+							preproomDoorDummyInteractable, bathroomDoorDummyBasementInteractable,
+							bathroomDoorDummyUpstairsInteractable, abbeanumInfoBoardInteractable,
+							coffeeMachineInteractable]
 							.filter(interactable => interactable.interactableModel)
 
 
 	// set to city center so it's less likely someone notices when accidentally pressing one of the buttons :D
-	debuggedObject = window.debuggedObject = bathroomDoorDummyUpstairs
+	debuggedObject = window.debuggedObject = dumpsterGreen 
 
 	acceleration.set(0,0,0)
 	var dtx = clamp(dt * 10, 0, 1) // the lower this number is, the smoother is the motion

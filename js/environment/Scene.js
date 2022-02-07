@@ -101,6 +101,37 @@ function fillScene(scene) {
 	.catch(printError)
 
 
+	glTFLoader.loadAsync('models/samples/DumpsterGreen.glb', e => updateDownloadProgress('DumpsterGreen', e))
+	.then(gltf => {
+		const model = window.abbeanum = gltf.scene
+		placeLatLonObject(model, 'DumpsterGreen', 50.93408419, 11.58079937, 182.381, 195)
+		var scale = 0.3
+		model.scale.set(scale, scale, scale)
+		outsideScene.add(model)
+	})
+	.catch(printError)
+
+	glTFLoader.loadAsync('models/samples/DumpsterYellow.glb', e => updateDownloadProgress('DumpsterYellow', e))
+	.then(gltf => {
+		const model = window.abbeanum = gltf.scene
+		placeLatLonObject(model, 'DumpsterYellow', 50.93407340, 11.58080768, 182.381, 195)
+		var scale = 0.3
+		model.scale.set(scale, scale, scale)
+		outsideScene.add(model)
+	})
+	.catch(printError)
+
+	glTFLoader.loadAsync('models/samples/DumpsterBlue.glb', e => updateDownloadProgress('DumpsterBlue', e))
+	.then(gltf => {
+		const model = window.abbeanum = gltf.scene
+		placeLatLonObject(model, 'DumpsterBlue', 50.93409359, 11.58079671, 182.381, 195)
+		var scale = 0.3
+		model.scale.set(scale, scale, scale)
+		outsideScene.add(model)
+	})
+	.catch(printError)
+
+
 	glTFLoader.loadAsync('models/samples/InteractionCuboid.glb', e => updateDownloadProgress('HS1Entrance', e))
 	.then(gltf => {
 		const model = gltf.scene
@@ -141,6 +172,8 @@ function fillScene(scene) {
 		flurScene.add(model)
 	})
 	.catch(printError)
+
+
 	glTFLoader.loadAsync('models/samples/abbeanumCorridorCollisions.glb', e => updateDownloadProgress('abbeanumCorridorCollisions', e))
 	.then(gltf => {
 		// needs to have the exact same coordinates as abbeanumInside, as it was based on it
@@ -168,6 +201,7 @@ function fillScene(scene) {
 	})
 	.catch(printError)
 	
+
 	fbxLoader.loadAsync('models/samples/spider.fbx', e => updateDownloadProgress('spider', e))
 	.then(model => {
 		placeLatLonObject(model, 'spider', 50.93408657, 11.58043987, 185.848-0.89, 0)
@@ -178,6 +212,29 @@ function fillScene(scene) {
 		const mixer = new THREE.AnimationMixer(model)
 		mixer.clipAction(model.animations[1]).play()
 		mixers.push(mixer)
+		flurScene.add(model)
+	})
+	.catch(printError)
+
+
+	glTFLoader.loadAsync('models/samples/coffeeMachine.glb', e => updateDownloadProgress('coffeeMachine', e))
+	.then(gltf => {
+		const model = gltf.scene
+		placeLatLonObject(model, 'CoffeeMachine' , 50.93416101, 11.58047837, 185.895, 270)
+
+		const scale = 1.4
+		model.scale.set(scale, scale, scale)
+		flurScene.add(model)
+	})
+	.catch(printError)
+
+
+	glTFLoader.loadAsync('models/samples/WetFloor.glb', e => updateDownloadProgress('wetFloorSign', e))
+	.then(gltf => {
+		const model = gltf.scene
+		placeLatLonObject(model, 'WetFloorSign' , 50.93398735, 11.58047673, 184.520, 10)
+		// make it wide
+		model.scale.set(3.5, 1.5, 2)
 		flurScene.add(model)
 	})
 	.catch(printError)

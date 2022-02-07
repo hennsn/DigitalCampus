@@ -38,16 +38,17 @@ function handleKeyBoardMovementInteractionsInteraction(acceleration, debuggedObj
 	if(keyboard.a) acceleration.sub(right)
 	if(keyboard.d) acceleration.add(right)
 
-	// placing a debug object
-	if(keyboard.l) debuggedObject.position.z -= dt // model front
-	if(keyboard.i) debuggedObject.position.x -= dt // model left
-	if(keyboard.j) debuggedObject.position.z += dt // model back
-	if(keyboard.k) debuggedObject.position.x += dt // model right
-	if(keyboard.o) debuggedObject.rotation.y += dt * 5 * user.turnSpeed // model rot left
-	if(keyboard.u) debuggedObject.rotation.y -= dt * 5 * user.turnSpeed // model rot right
-	if(keyboard.n) debuggedObject.position.y -= dt // model down
-	if(keyboard.m) debuggedObject.position.y += dt // model up
-	
+	if(debuggedObject)
+	{	// placing a debug object
+		if(keyboard.l) debuggedObject.position.z -= dt // model front
+		if(keyboard.i) debuggedObject.position.x -= dt // model left
+		if(keyboard.j) debuggedObject.position.z += dt // model back
+		if(keyboard.k) debuggedObject.position.x += dt // model right
+		if(keyboard.o) debuggedObject.rotation.y += dt * 5 * user.turnSpeed // model rot left
+		if(keyboard.u) debuggedObject.rotation.y -= dt * 5 * user.turnSpeed // model rot right
+		if(keyboard.n) debuggedObject.position.y -= dt // model down
+		if(keyboard.m) debuggedObject.position.y += dt // model up
+	}	
 }
 
 
