@@ -20,7 +20,8 @@ function updateDownloadProgress(name, progressEvent){
 }
 
 function updateDownloadBar(dt){
-	
+	var progressBar = document.getElementById("progressBar")
+	var loadingOverlay = document.getElementById("loadingOverlay")
 	var loaded = 0
 	var total = 0
 	
@@ -55,10 +56,19 @@ function updateDownloadBar(dt){
 	width = targetWidth > width ? mix(width, targetWidth, mixSpeed) : targetWidth
 	opacity = mix(opacity, targetOpacity, mixSpeed)
 	if(opacity * 256 > 1){
+		loadingOverlay.style.display = ''
 		progressBar.style.width = (0.1 + 0.9 * width) + '%' // 10% are shown at least, so that the bar is always visible when loading
 		progressBar.style.backgroundColor = 'rgba(158,100,255,'+opacity+')'
 		progressBar.style.display = ''
-	} else progressBar.style.display = 'none' // invisible
+	} else {
+
+		progressBar.style.display = 'none'
+
+		// hide the overlay but smoothly
+		loadingOverlay.style.animation = 'fadeOut ease 1s forwards'
+		//loadingOverlay.style.display = 'none'
+
+	} // invisible
 }
 
 function handleUserInterface(dt){
