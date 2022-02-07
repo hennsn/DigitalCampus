@@ -1,6 +1,6 @@
 import {inInventory} from './Interactions.js'
 import {printInventory} from './Interactions.js'
-import { playAudioTrack } from '../UserInterface.js'
+import { playAudioTrack, showLoadinOverlay } from '../UserInterface.js'
 
 class Interactable {
     constructor(interactableModel, scene, unlocked=true) {
@@ -64,6 +64,8 @@ class Door extends Interactable {
         // for some reason that (🔼 ) doesnt work?
         currentScene = window.scene = this.scene
         playAudioTrack('audio/door-1-open.mp3');
+        showLoadinOverlay(150)
+
         camera.position.copy(this.entryPoint)
     }
 

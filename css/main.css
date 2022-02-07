@@ -22,7 +22,7 @@ body {
 
 #logo{
 	max-width: 20%;
-	position: fixed;
+	position: absolute;
 	display: block;
 	top: 50%;
 	left: 50%;

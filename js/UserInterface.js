@@ -8,10 +8,13 @@ function printError(error, printToUser){
 }
 
 const inProgress = window.inProgress = {}
+showOverlay = window.showOverlay =  false
 var timeFinished = 0
 var wasFinished = false
 var opacity = 1
 var width = 0
+var progressBar = document.getElementById("progressBar")
+var loadingOverlay = document.getElementById("loadingOverlay")
 function updateDownloadProgress(name, progressEvent){
 	if(progressEvent.total){
 		progressEvent.lastUpdate = new Date().getTime()
@@ -19,9 +22,15 @@ function updateDownloadProgress(name, progressEvent){
 	}
 }
 
+function showLoadinOverlay(milliseconds){
+	//loadingOverlay.style.removeProperty('animation')
+	showOverlay = true
+	loadingOverlay.style.animation = ""
+	setTimeout(() => {showOverlay = false}, milliseconds)
+}
+
 function updateDownloadBar(dt){
-	var progressBar = document.getElementById("progressBar")
-	var loadingOverlay = document.getElementById("loadingOverlay")
+
 	var loaded = 0
 	var total = 0
 	
@@ -65,7 +74,9 @@ function updateDownloadBar(dt){
 		progressBar.style.display = 'none'
 
 		// hide the overlay but smoothly
-		loadingOverlay.style.animation = 'fadeOut ease 1s forwards'
+		if (!showOverlay){
+			loadingOverlay.style.animation = 'fadeOut ease 1s forwards'
+		}
 		//loadingOverlay.style.display = 'none'
 
 	} // invisible
@@ -135,4 +146,4 @@ function removeCorners(obj){
 	}
 }
 
-export { printError, handleUserInterface, updateDownloadProgress, playAudioTrack, createCorners }
+export { printError, handleUserInterface, updateDownloadProgress, playAudioTrack, createCorners, showLoadinOverlay }
