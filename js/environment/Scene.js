@@ -32,7 +32,10 @@ function fillScene(scene) {
 		})
 		.catch(printError)
 	
-	glTFLoader.loadAsync('models/samples/abbeanumDoorOnly.glb', e => updateDownloadProgress('AbbeanumDoorOnly', e))
+	
+	// Formerly AbbeanumDoorOnly -> renamed to InteractionRectanguloid so it can be resized and reused for any
+	// interactable surface
+	glTFLoader.loadAsync('models/samples/InteractionCuboid.glb', e => updateDownloadProgress('InteractionCuboid', e))
 	.then(gltf => {
 		const model = window.abbeanum = gltf.scene
 		
@@ -48,6 +51,35 @@ function fillScene(scene) {
 		abbeanumDoorExit.name = ''
 		placeLatLonObject(abbeanumDoorExit, 'AbbeanumDoorExit', 50.93411372, 11.58075194, 183.243)
 		flurScene.add(abbeanumDoorExit) // objects must be cloned, when you want to add them to multiple scenes
+
+		const tvCuboid = model.clone()
+		tvCuboid.name = ''
+		tvCuboid.scale.set(1.3,0.7,1.3)
+		placeLatLonObject(tvCuboid, 'TvCuboid', 50.93409346, 11.58043388, 186.776, 10)
+		flurScene.add(tvCuboid)
+		
+		const HS2DoorDummy = model.clone()
+		placeLatLonObject(HS2DoorDummy, 'HS2DoorDummy', 50.93406258, 11.58054770, 186.776, 10)
+		flurScene.add(HS2DoorDummy)
+
+		const bathroomDoorDummyBasement = model.clone()
+		placeLatLonObject(bathroomDoorDummyBasement, 'BathroomDoorDummyBasement', 50.93403072, 11.58052132, 182.666, 10)
+		bathroomDoorDummyBasement.scale.set(1,1.7,1.2)
+
+		flurScene.add(bathroomDoorDummyBasement)
+
+
+		const bathroomDoorDummyUpstairs = model.clone()
+		placeLatLonObject(bathroomDoorDummyUpstairs, 'BathroomDoorDummyUpstairs', 50.93434830, 11.58048668, 185.792, 69) // if you know what i'm saying
+		bathroomDoorDummyUpstairs.scale.set(1,1.7,1.2)
+
+		flurScene.add(bathroomDoorDummyUpstairs)
+
+		const preproomDoorDummy = model.clone()
+		placeLatLonObject(preproomDoorDummy, 'PreproomDoorDummy',  50.93413028, 11.58053525, 185.693, 10)
+		preproomDoorDummy.scale.set(1,1.8,1.3)
+		flurScene.add(preproomDoorDummy)
+		
 	})
 	.catch(printError)
 
@@ -69,7 +101,7 @@ function fillScene(scene) {
 	.catch(printError)
 
 
-	glTFLoader.loadAsync('models/samples/abbeanumDoorOnly.glb', e => updateDownloadProgress('AbbeanumDoorOnly', e))
+	glTFLoader.loadAsync('models/samples/InteractionCuboid.glb', e => updateDownloadProgress('HS1Entrance', e))
 	.then(gltf => {
 		const model = gltf.scene
 		

@@ -99,8 +99,23 @@ const cupInteractable =
 const beamerInteractable =
 	new InventoryObject(undefined, undefined)
 
-const abbeanumInfoBoardInteractable = window.abbeanumInfoBoardInteractable = 
+const abbeanumInfoBoardInteractable =
 	new InfoObject(undefined, undefined)
+
+const tvCuboidInteractable =
+	new InventoryObject(undefined, undefined)
+
+const HS2DoorDummyInteractable =
+	new InventoryObject(undefined, undefined)
+
+const preproomDoorDummyInteractable = 
+	new InventoryObject(undefined, undefined)
+
+const bathroomDoorDummyBasementInteractable =
+	new InventoryObject(undefined, undefined)
+
+const bathroomDoorDummyUpstairsInteractable =
+	new InventoryObject(undefined, undefined)
 
 function createInteractions(scene, camera, renderer, mouse){
 	
@@ -368,16 +383,53 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 		beamerInteractable.scene = outsideScene
 	}
 
+	const tvCuboid = scene.getObjectByName('TvCuboid')
+	if(tvCuboid){
+		tvCuboidInteractable.setInteractableModel(tvCuboid)
+		tvCuboidInteractable.scene = flurScene
+	}
+
+	const HS2DoorDummy = scene.getObjectByName('HS2DoorDummy')
+	if(HS2DoorDummy){
+		HS2DoorDummyInteractable.setInteractableModel(HS2DoorDummy)
+		HS2DoorDummyInteractable.scene = flurScene
+	}
+
+	const preproomDoorDummy = scene.getObjectByName('PreproomDoorDummy')
+	if(preproomDoorDummy){
+		preproomDoorDummyInteractable.setInteractableModel(HS2DoorDummy)
+		preproomDoorDummyInteractable.scene = flurScene
+	}
+
+
+	const bathroomDoorDummyBasement = scene.getObjectByName('BathroomDoorDummyBasement')
+	if(bathroomDoorDummyBasement){
+		bathroomDoorDummyBasementInteractable.setInteractableModel(bathroomDoorDummyBasement)
+		bathroomDoorDummyBasementInteractable.scene = flurScene
+	}
+
+	
+	const bathroomDoorDummyUpstairs = scene.getObjectByName('BathroomDoorDummyUpstairs')
+	if(bathroomDoorDummyUpstairs){
+		bathroomDoorDummyUpstairsInteractable.setInteractableModel(bathroomDoorDummyUpstairs)
+		bathroomDoorDummyUpstairsInteractable.scene = flurScene
+	}
+	
+
+
+
 	const interactables = window.interactables = [abbeanumDoorEntranceInteractable, abbeanumDoorExitInteractable, 
 							hs1DoorEntranceInteractable, hs1DoorExitInteractable, 
 						 	laptopInteractable, stickInteractable,
 							trashcanInteractable, laptop2Interactable, blackboardsInteractable, cupInteractable,
-							beamerInteractable]
+							beamerInteractable, tvCuboidInteractable, HS2DoorDummyInteractable,
+						preproomDoorDummyInteractable, bathroomDoorDummyBasementInteractable,
+						bathroomDoorDummyUpstairsInteractable, abbeanumInfoBoardInteractable]
 							.filter(interactable => interactable.interactableModel)
 
 
 	// set to city center so it's less likely someone notices when accidentally pressing one of the buttons :D
-	debuggedObject = window.debuggedObject = abbeanumInfoBoard
+	debuggedObject = window.debuggedObject = bathroomDoorDummyUpstairs
 
 	acceleration.set(0,0,0)
 	var dtx = clamp(dt * 10, 0, 1) // the lower this number is, the smoother is the motion
