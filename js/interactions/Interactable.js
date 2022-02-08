@@ -115,4 +115,18 @@ class InfoObject extends Interactable {
     }
 }
 
-export {Interactable, Door, InfoObject, InventoryObject}
+
+class CustomInteractable extends Interactable {
+    constructor(interactableModel, scene, interactionFunction){
+        super(interactableModel, scene)
+        // custom interaction function
+        this.interactionFunction = interactionFunction
+    }
+
+    interact(){
+        super.interact()
+        this.interactionFunction()
+    }
+}
+
+export {Interactable, Door, InfoObject, InventoryObject, CustomInteractable}

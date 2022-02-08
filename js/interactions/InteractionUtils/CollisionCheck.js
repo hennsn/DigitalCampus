@@ -46,6 +46,8 @@ function checkCollision(velocity, user, keyWasPressed, jumpTime, dt){
 	const abbeanumGround = scene.getObjectByName('AbbeanumGround')
 	const abbeanum = scene.getObjectByName('Abbeanum')
 	const hs1 = scene.getObjectByName('HS1Collisions')
+	const wetFloor = scene.getObjectByName('WetFloorSign')
+	const coffeeMachine = scene.getObjectByName('CoffeeMachine')
 
 
 	if(velocity.length() > 1e-3 * user.speed || // we're in motion / might move camera up/down
@@ -56,7 +58,7 @@ function checkCollision(velocity, user, keyWasPressed, jumpTime, dt){
 		// we cant check whole scene (too big) maybe copy the important objects from scene then do raycasting collision check
 		const collidables = ( 
 			scene == outsideScene ? [abbeanum, abbeanumGround] :
-			scene == flurScene ? [abbeanumFlurCollisions] :
+			scene == flurScene ? [abbeanumFlurCollisions, wetFloor, coffeeMachine] :
 			scene == hs1Scene ? [hs1] :
 			[]
 		).filter(model => !!model)

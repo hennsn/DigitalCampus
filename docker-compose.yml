@@ -1,0 +1,11 @@
+version: '3.7'
+services:
+  app:
+    image: httpd:2.4
+    ports:
+      - "80:80"
+    volumes: 
+    - .:/usr/local/apache2/htdocs/
+    working_dir: /usr/app
+    #command: python -m http.server
+    restart: unless-stopped

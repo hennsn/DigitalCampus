@@ -22,10 +22,10 @@ function handleKeyBoardMovementInteractionsInteraction(acceleration, debuggedObj
 	if(keyboard.ArrowRight){
 		camera.rotation.y -= user.turnSpeed
 	}
-	if(keyboard.w || keyboard.ArrowUp){
+	if(keyboard.W || keyboard.w || keyboard.ArrowUp){
 		acceleration.add(forward)
 	}
-	if(keyboard.s || keyboard.ArrowDown){
+	if(keyboard.S ||keyboard.s || keyboard.ArrowDown){
 		acceleration.sub(forward)
 	}
 	
@@ -35,11 +35,11 @@ function handleKeyBoardMovementInteractionsInteraction(acceleration, debuggedObj
 	if(keyboard.TurningY) camera.rotation.x += keyboard.TurningY * dt
 	clampCameraRotation(camera)
 	
-	if(keyboard.a) acceleration.sub(right)
-	if(keyboard.d) acceleration.add(right)
+	if(keyboard.a || keyboard.A) acceleration.sub(right)
+	if(keyboard.d || keyboard.D) acceleration.add(right)
 
-	// placing a debug object
-	if(debuggedObject){
+	if(debuggedObject)
+	{	// placing a debug object
 		if(keyboard.l) debuggedObject.position.z -= dt // model front
 		if(keyboard.i) debuggedObject.position.x -= dt // model left
 		if(keyboard.j) debuggedObject.position.z += dt // model back
@@ -49,7 +49,6 @@ function handleKeyBoardMovementInteractionsInteraction(acceleration, debuggedObj
 		if(keyboard.n) debuggedObject.position.y -= dt // model down
 		if(keyboard.m) debuggedObject.position.y += dt // model up
 	}
-	
 }
 
 
