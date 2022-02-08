@@ -204,20 +204,22 @@ function fillScene(scene) {
 
 	fbxLoader.loadAsync('models/samples/spider.fbx', e => updateDownloadProgress('spider', e))
 	.then(model => {
-		placeLatLonObject(model, 'spider', 50.93408137, 11.58043973, 187.5, 0)
+		placeLatLonObject(model, 'spider', 50.93408137-0.0000015, 11.58043973-0.000005, 187.6, 0)
 		console.log(model)
-		const s = 0.9 / 70
+		const s = 0.3 / 70
 		model.rotateY(-0.05869048965668795)
 		model.rotateX(-2.519544938372642)
 		model.rotateZ(-0.8419399335047579)
 		
 		model.scale.set(s,s,s)
 		const mixer = new THREE.AnimationMixer(model)
-		mixer.clipAction(model.animations[1]).play()
+		mixer.clipAction(model.animations[3]).play()
 		mixers.push(mixer)
 		flurScene.add(model)
 	})
 	.catch(printError)
+
+
 
 
 	glTFLoader.loadAsync('models/samples/coffeeMachine.glb', e => updateDownloadProgress('coffeeMachine', e))
