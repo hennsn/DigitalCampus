@@ -1,11 +1,11 @@
 version: '3.7'
 services:
   app:
-    image: python:3.9-alpine
+    image: httpd:2.4
     ports:
-      - "80:8000"
+      - "80:80"
     volumes: 
-    - .:/usr/app/
+    - .:/usr/local/apache2/htdocs/
     working_dir: /usr/app
-    command: python -m http.server
+    #command: python -m http.server
     restart: unless-stopped
