@@ -7,7 +7,7 @@ import { clamp, degToRad } from '../Maths.js'
 import { playAudioTrack } from '../UserInterface.js'
 import { xToLon, yToHeight, zToLat } from '../environment/Coordinates.js'
 import { updateSparkles } from '../environment/Sparkles.js'
-import { Door, InventoryObject, InfoObject } from './Interactable.js'
+import { Door, InventoryObject, InfoObject, CustomInteractable } from './Interactable.js'
 import { sendMultiplayerMessage } from '../environment/Multiplayer.js'
 import { JoyStick } from '../libs/joystick/joy.min-2.js'
 import { handleKeyBoardMovementInteractionsInteraction } from './InteractionUtils/MovementInteractions.js'
@@ -85,7 +85,7 @@ const stickInteractable =
 	new InventoryObject(undefined, undefined)
 
 const laptopInteractable =
-	new InventoryObject(undefined, undefined)
+	new CustomInteractable(undefined, undefined, undefined)
 
 const laptop2Interactable =
 	new InventoryObject(undefined, undefined)
@@ -97,7 +97,7 @@ const cupInteractable =
 	new InventoryObject(undefined, undefined)
 
 const beamerInteractable =
-	new InventoryObject(undefined, undefined)
+	new CustomInteractable(undefined, undefined, undefined)
 
 const abbeanumInfoBoardInteractable =
 	new InfoObject(undefined, undefined)
@@ -106,19 +106,19 @@ const tvCuboidInteractable =
 	new InventoryObject(undefined, undefined)
 
 const HS2DoorDummyInteractable =
-	new InventoryObject(undefined, undefined)
+	new CustomInteractable(undefined, undefined)
 
 const preproomDoorDummyInteractable = 
-	new InventoryObject(undefined, undefined)
+	new CustomInteractable(undefined, undefined)
 
 const bathroomDoorDummyBasementInteractable =
-	new InventoryObject(undefined, undefined)
+	new CustomInteractable(undefined, undefined)
 
 const bathroomDoorDummyUpstairsInteractable =
-	new InventoryObject(undefined, undefined)
+	new CustomInteractable(undefined, undefined)
 
 const coffeeMachineInteractable =
-	new InventoryObject(undefined, undefined)
+	new CustomInteractable(undefined, undefined)
 
 function createInteractions(scene, camera, renderer, mouse){
 	
