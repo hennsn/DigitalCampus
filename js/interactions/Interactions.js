@@ -106,7 +106,6 @@ const tvCuboidInteractable =
 	new CustomInteractable(undefined, undefined, () => {
 		scene.getObjectByName('AbbeanumInside').getObjectByName('Fernseher_aus').visible = true
 		scene.getObjectByName('AbbeanumInside').getObjectByName('Fernseher_an').visible = false
-		
 	})
 
 const HS2DoorDummyInteractable =
