@@ -100,33 +100,48 @@ function fillScene(scene) {
 	})
 	.catch(printError)
 
-
-	glTFLoader.loadAsync('models/samples/DumpsterGreen.glb', e => updateDownloadProgress('DumpsterGreen', e))
+	glTFLoader.loadAsync('models/samples/DumpsterUniversal.glb', e => updateDownloadProgress('DumpsterUniversal', e))
 	.then(gltf => {
-		const model = window.abbeanum = gltf.scene
-		placeLatLonObject(model, 'DumpsterGreen', 50.93408419, 11.58079937, 182.381, 195)
-		var scale = 0.3
+		var scale = 0.4
+		var model = window.dumpster = gltf.scene
 		model.scale.set(scale, scale, scale)
+		placeLatLonObject(model, 'DumpsterBlue', 50.93409359, 11.58079671, 182.33, 195)
+		outsideScene.add(model)
+		model = model.clone()
+		model.traverse(obj => {// color it yellow
+			if(obj.name == 'Cube001' || obj.name == 'Cube002'){
+				obj.material = obj.material.clone()
+				obj.material.color.setHex(0xd6c214)
+			}
+		})
+		placeLatLonObject(model, 'DumpsterYellow', 50.93408028, 11.58080344, 182.32, 190)
+		outsideScene.add(model)
+		model = model.clone()
+		model.traverse(obj => {// color it green
+			if(obj.name == 'Cube001' || obj.name == 'Cube002'){
+				obj.material = obj.material.clone()
+				obj.material.color.setHex(0x1b5b0b)
+			}
+		})
+		placeLatLonObject(model, 'DumpsterGreen', 50.93406753, 11.58080270, 182.245, 180)
 		outsideScene.add(model)
 	})
 	.catch(printError)
-
-	glTFLoader.loadAsync('models/samples/DumpsterYellow.glb', e => updateDownloadProgress('DumpsterYellow', e))
-	.then(gltf => {
-		const model = window.abbeanum = gltf.scene
-		placeLatLonObject(model, 'DumpsterYellow', 50.93407340, 11.58080768, 182.381, 195)
-		var scale = 0.3
+	
+	
+	glTFLoader.loadAsync('models/samples/DumpsterCollision.glb', e => updateDownloadProgress('DumpsterCollision', e))
+	.then(gltf => {// these coordinates need to be the same as above!
+		var scale = 0.4
+		var model = gltf.scene
+		model.visibility = false
 		model.scale.set(scale, scale, scale)
+		placeLatLonObject(model, 'DumpsterBlueCollision', 50.93409359, 11.58079671, 182.33, 195)
 		outsideScene.add(model)
-	})
-	.catch(printError)
-
-	glTFLoader.loadAsync('models/samples/DumpsterBlue.glb', e => updateDownloadProgress('DumpsterBlue', e))
-	.then(gltf => {
-		const model = window.abbeanum = gltf.scene
-		placeLatLonObject(model, 'DumpsterBlue', 50.93409359, 11.58079671, 182.381, 195)
-		var scale = 0.3
-		model.scale.set(scale, scale, scale)
+		model = model.clone()
+		placeLatLonObject(model, 'DumpsterYellowCollision', 50.93408028, 11.58080344, 182.32, 190)
+		outsideScene.add(model)
+		model = model.clone()
+		placeLatLonObject(model, 'DumpsterGreenCollision', 50.93406753, 11.58080270, 182.245, 180)
 		outsideScene.add(model)
 	})
 	.catch(printError)

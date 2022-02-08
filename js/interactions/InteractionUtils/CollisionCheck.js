@@ -48,16 +48,21 @@ function checkCollision(velocity, user, keyWasPressed, jumpTime, dt){
 	const hs1 = scene.getObjectByName('HS1Collisions')
 	const wetFloor = scene.getObjectByName('WetFloorSign')
 	const coffeeMachine = scene.getObjectByName('CoffeeMachine')
-
+	const dumpster0 = scene.getObjectByName('DumpsterBlueCollision')
+	const dumpster1 = scene.getObjectByName('DumpsterYellowCollision')
+	const dumpster2 = scene.getObjectByName('DumpsterGreenCollision')
 
 	if(velocity.length() > 1e-3 * user.speed || // we're in motion / might move camera up/down
 	keyWasPressed || (jumpTime > 0.0 && jumpTime < jumpDuration)){
 	
-	if(abbeanumFlurCollisions) abbeanumFlurCollisions.visible = true
+		if(abbeanumFlurCollisions) abbeanumFlurCollisions.visible = true
+		if(dumpster0) dumpster0.visible = true
+		if(dumpster1) dumpster1.visible = true
+		if(dumpster2) dumpster2.visible = true
 		
 		// we cant check whole scene (too big) maybe copy the important objects from scene then do raycasting collision check
 		const collidables = ( 
-			scene == outsideScene ? [abbeanum, abbeanumGround] :
+			scene == outsideScene ? [abbeanum, abbeanumGround, dumpster0, dumpster1, dumpster2] :
 			scene == flurScene ? [abbeanumFlurCollisions, wetFloor, coffeeMachine] :
 			scene == hs1Scene ? [hs1] :
 			[]
@@ -160,6 +165,9 @@ function checkCollision(velocity, user, keyWasPressed, jumpTime, dt){
 		}
 		
 		if(abbeanumFlurCollisions) abbeanumFlurCollisions.visible = false
+		if(dumpster0) dumpster0.visible = false
+		if(dumpster1) dumpster1.visible = false
+		if(dumpster2) dumpster2.visible = false
 
 	}
 }

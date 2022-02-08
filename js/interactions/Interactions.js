@@ -431,7 +431,9 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 		coffeeMachineInteractable.scene = flurScene
 	}
 
-	const dumpsterGreen = scene.getObjectByName('DumpsterGreen')
+	const dumpsterGreen  = scene.getObjectByName('DumpsterGreen')
+	const dumpsterBlue   = scene.getObjectByName('DumpsterBlue')
+	const dumpsterYellow = scene.getObjectByName('DumpsterYellow')
 
 	const interactables = window.interactables = [abbeanumDoorEntranceInteractable, abbeanumDoorExitInteractable, 
 							hs1DoorEntranceInteractable, hs1DoorExitInteractable, 
@@ -454,6 +456,16 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 	 * Helper function for updating the camera controls in the animation loop.
 	 */
 	handleKeyBoardMovementInteractionsInteraction(acceleration, debuggedObject, user, dt)
+	
+	/* Dumpster interactions ^^ */
+	const dumpsters = [dumpsterGreen, dumpsterBlue, dumpsterYellow]
+	var pos = new THREE.Vector3() // temporary variable
+	dumpsters.forEach(dumpster => {// Cube002.parent is the rotatable part of the mesh
+		if(dumpster){
+			var dist = dumpster.getWorldPosition(pos).distanceTo(camera.position)
+			dumpster.getObjectByName('Cube002').parent.rotation.set(0, 0, -clamp(3-dist, 0, 1)*15*degToRad)
+		}
+	})
 
 	// ---------------------------------------------- INTERACTION CHECKERS -------------------------------------------------
 	// we are only looking for all interactable objects in our interactable array
