@@ -103,7 +103,11 @@ const abbeanumInfoBoardInteractable =
 	new InfoObject(undefined, undefined)
 
 const tvCuboidInteractable =
-	new InventoryObject(undefined, undefined)
+	new CustomInteractable(undefined, undefined, () => {
+		scene.getObjectByName('AbbeanumInside').getObjectByName('Fernseher_aus').visible = true
+		scene.getObjectByName('AbbeanumInside').getObjectByName('Fernseher_an').visible = false
+		
+	})
 
 const HS2DoorDummyInteractable =
 	new CustomInteractable(undefined, undefined)
@@ -121,6 +125,7 @@ const coffeeMachineInteractable =
 	new CustomInteractable(undefined, undefined)
 
 function createInteractions(scene, camera, renderer, mouse){
+
 	
 	//OVERLAY//
 	const overlay = document.getElementById('overlay');
