@@ -206,7 +206,7 @@ function fillScene(scene) {
 
 	fbxLoader.loadAsync('models/samples/movingPlant.fbx', e => updateDownloadProgress('movingPlant', e))
 	.then(model => {
-		placeLatLonObject(model, 'MovingPlant', 50.93409615, 11.58045500, 185.848-1.65, 0)
+		placeLatLonObject(model, 'MovingPlant', 50.93410364, 11.58043476, 184.518, 0)
 		const s = 0.2 / 100
 		model.scale.set(s,s,s)
 		const mixer = new THREE.AnimationMixer(model)

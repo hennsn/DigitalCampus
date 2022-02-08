@@ -22,6 +22,9 @@ const jumpHeight = Constants.jumpHeight
 
 var jumpTime = Constants.jumpTime
 
+const cameraSpaceRight = new THREE.Vector3()
+const position = new THREE.Vector3()
+
 function jumpCurve(time){
 	// better recommendations for jump functions are welcome xD
 	/*const fDuration = 2.5
@@ -33,6 +36,22 @@ function jumpCurve(time){
 	const f = Math.sin(x+x*x/10+2)*Math.exp(-x*x/4)
 	const fMax = 0.95
 	return f / fMax * jumpHeight
+}
+
+const showDebugRays = false
+function addDebugLine(p1, p2, color){
+	const lineGeometry = new THREE.BufferGeometry(),
+	lineMat = new THREE.LineBasicMaterial({ color: color, linewidth: 5 })
+	lineGeometry.setFromPoints([p1, p2])
+	const line = new THREE.Line(lineGeometry, lineMat)
+	line.name = 'line'
+	scene.add(line)
+}
+
+function deleteOldDebugLines(){
+	for(var c=scene.children,i=c.length-1;i>=0;i--){
+		if(c[i].name == 'line') scene.remove(c[i])
+	}
 }
 
 function checkCollision(velocity, user, keyWasPressed, jumpTime, dt){
@@ -53,8 +72,8 @@ function checkCollision(velocity, user, keyWasPressed, jumpTime, dt){
 	const dumpster2 = scene.getObjectByName('DumpsterGreenCollision')
 
 	if(velocity.length() > 1e-3 * user.speed || // we're in motion / might move camera up/down
-	keyWasPressed || (jumpTime > 0.0 && jumpTime < jumpDuration)){
-	
+		keyWasPressed || (jumpTime > 0.0 && jumpTime < jumpDuration)){
+		
 		if(abbeanumFlurCollisions) abbeanumFlurCollisions.visible = true
 		if(dumpster0) dumpster0.visible = true
 		if(dumpster1) dumpster1.visible = true
@@ -68,25 +87,21 @@ function checkCollision(velocity, user, keyWasPressed, jumpTime, dt){
 			[]
 		).filter(model => !!model)
 		
-		const showDebugRays = false
-		function addDebugLine(p1, p2, color){
-			const lineGeometry = new THREE.BufferGeometry(),
-			lineMat = new THREE.LineBasicMaterial({ color: color, linewidth: 5 })
-			lineGeometry.setFromPoints([p1, p2])
-			const line = new THREE.Line(lineGeometry, lineMat)
-			line.name = 'line'
-			scene.add(line)
-		}
-		
-		if(scene && showDebugRays) for(var c=scene.children,i=c.length-1;i>=0;i--){
-			if(c[i].name == 'line') scene.remove(c[i])
+		if(scene && showDebugRays) deleteOldDebugLines()
+			
+		if(abbeanumFlurCollisions && camera.position.y - user.eyeHeight > abbeanumFlurCollisions.position.y - 0.86 &&
+			camera.position.x < -17.1 && camera.position.z > -12.61){
+			// player is above the normal height, in the sliding region, so he will be sliding down the slippery "stairs"
+			// stair direction: (0,0,+1)
+			var slidingAcceleration = 0.1
+			velocity.x += slidingAcceleration * dt * Math.sin(abbeanumFlurCollisions.rotation.y)
+			velocity.z += slidingAcceleration * dt * Math.cos(abbeanumFlurCollisions.rotation.y)
 		}
 		
 		var isIntersecting = false
 		raycaster.near = -0.2
 		raycaster.far  = velocity.length() + distanceToWalls
-		const cameraSpaceRight = new THREE.Vector3(-velocity.z, 0, velocity.x).normalize()
-		const position = new THREE.Vector3()
+		cameraSpaceRight.set(-velocity.z, 0, velocity.x).normalize()
 		for(var i=0;i<rayChecks.length;i++){
 			const rayCheck = rayChecks[i]
 			position.copy(camera.position)
