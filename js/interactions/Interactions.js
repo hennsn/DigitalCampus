@@ -20,7 +20,6 @@ import { Constants } from './Constants.js'
 
 // the keyboard
 const keyboard = window.keyboard = {}
-let debuggedObject
 
 //boolean for raycasting check
 let wasClicked = false
@@ -47,6 +46,8 @@ const jumpDuration = Constants.jumpDuration
 const jumpHeight = Constants.jumpHeight
 
 var jumpTime = Constants.jumpTime
+
+var lastTimeWWasPressed = 0
 
 function clampCameraRotation(){
 	camera.rotation.x = clamp(camera.rotation.x, -60*degToRad, +60*degToRad)
@@ -196,12 +197,21 @@ function createInteractions(scene, camera, renderer, mouse){
 		keyboard[event.key] = event.timeStamp
 		keyboard[event.keyCode] = event.timeStamp
 		switch(event.key){
+			case 'w':
+			case 'W':// tap w twice to run
+				user.isRunning = event.timeStamp - lastTimeWWasPressed < 300
+				break;
+			case 's':
+			case 'S':
+				user.isRunning = false
+				break;
 			case ' ':// space for jumping
 				if(jumpTime <= 0.0 || jumpTime >= jumpDuration * 0.75){
 					jumpTime = 0.0
 				}
 				break;
-			case 'z': 
+			case 'z':
+			case 'Z':
 				// a simple audio test: press z to play the audio
 				playAudioTrack('audio/springTestSound.wav');
 				if(overlayActive == false){ 
@@ -211,6 +221,7 @@ function createInteractions(scene, camera, renderer, mouse){
 				}
 				break;
 			case 'h': 
+			case 'H':
 				// print the current camera position in world coordinates
 				// can be used to place objects
 				console.log('player')
@@ -220,7 +231,7 @@ function createInteractions(scene, camera, renderer, mouse){
 					formatNumber(xToLon(camera.position.x), 8) + ", " +
 					formatNumber(yToHeight(camera.position.y), 3)
 				);
-				if(debuggedObject)
+				if(window.debuggedObject)
 				{
 				console.log('\n')
 				console.log(debuggedObject.name)
@@ -233,6 +244,7 @@ function createInteractions(scene, camera, renderer, mouse){
 				}
 				break;
 			case 'q':
+			case 'Q':
 				// opens inventory
 				if(inventoryOpen == false){
 					playAudioTrack('audio/inventorySound.mp3');
@@ -244,6 +256,7 @@ function createInteractions(scene, camera, renderer, mouse){
 				}
 				break;
 			case 't':
+			case 'T':
 				var message = window.prompt('Message to send:')
 				if(message){
 					message = message.trim()
@@ -257,6 +270,12 @@ function createInteractions(scene, camera, renderer, mouse){
 	
 	function keyUp(event){
 		keyWasPressed = true
+		switch(event.key){
+			case 'w':
+			case 'W':
+				lastTimeWWasPressed = keyboard[event.key]
+				break
+		}
 		delete keyboard[event.key]
 		delete keyboard[event.keyCode]
 	}
@@ -307,6 +326,8 @@ var velocity = new THREE.Vector3(0,0,0)
 var acceleration = new THREE.Vector3(0,0,0)
 
 var couldInteract = false
+
+const dumpsterTmpPos = new THREE.Vector3() // temporary variable
 
 // helper functions for the animation loop
 function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, dt, outlinepass = null){
@@ -445,24 +466,19 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 							coffeeMachineInteractable]
 							.filter(interactable => interactable.interactableModel)
 
-
-	// set to city center so it's less likely someone notices when accidentally pressing one of the buttons :D
-	debuggedObject = window.debuggedObject = dumpsterGreen 
-
 	acceleration.set(0,0,0)
 	var dtx = clamp(dt * 10, 0, 1) // the lower this number is, the smoother is the motion
 	
 	/**
 	 * Helper function for updating the camera controls in the animation loop.
 	 */
-	handleKeyBoardMovementInteractionsInteraction(acceleration, debuggedObject, user, dt)
+	handleKeyBoardMovementInteractionsInteraction(acceleration, window.debuggedObject, user, dt)
 	
 	/* Dumpster interactions ^^ */
 	const dumpsters = [dumpsterGreen, dumpsterBlue, dumpsterYellow]
-	var pos = new THREE.Vector3() // temporary variable
 	dumpsters.forEach(dumpster => {// Cube002.parent is the rotatable part of the mesh
 		if(dumpster){
-			var dist = dumpster.getWorldPosition(pos).distanceTo(camera.position)
+			var dist = dumpster.getWorldPosition(dumpsterTmpPos).distanceTo(camera.position)
 			dumpster.getObjectByName('Cube002').parent.rotation.set(0, 0, -clamp(3-dist, 0, 1)*15*degToRad)
 		}
 	})
@@ -477,7 +493,7 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 	const sparkleTargets = currentInteractables.map(o => o.interactableModel.position)
 	//calculate box sizes of the interactables, so we can decide on which area the particles can spawn
 	var box = new THREE.Box3()
-	const sparkleTarget = currentInteractables.map(o=> box=new  THREE.Box3().setFromObject(o.interactableModel)) 
+	const sparkleTarget = currentInteractables.map(o => box = new THREE.Box3().setFromObject(o.interactableModel)) 
 	var targetSizes=[
 		box.max.x - box.min.x,
 		box.max.y - box.min.y,

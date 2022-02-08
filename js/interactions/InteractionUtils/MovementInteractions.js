@@ -10,33 +10,33 @@ function clampCameraRotation(){
 
 function handleKeyBoardMovementInteractionsInteraction(acceleration, debuggedObject, user, dt){
 	
+	const speedMultiplier = user.isRunning ? 2.0 : 1.0
 	if(scene != outsideScene){
-		user.speed = user.insideSpeed;
+		user.speed = speedMultiplier * user.insideSpeed
 	} else {
-		user.speed = user.outsideSpeed
+		user.speed = speedMultiplier * user.outsideSpeed
 	}
 	
-	if(keyboard.ArrowLeft){
-		camera.rotation.y += user.turnSpeed
-	}
-	if(keyboard.ArrowRight){
-		camera.rotation.y -= user.turnSpeed
-	}
-	if(keyboard.W || keyboard.w || keyboard.ArrowUp){
-		acceleration.add(forward)
-	}
-	if(keyboard.S ||keyboard.s || keyboard.ArrowDown){
-		acceleration.sub(forward)
-	}
+	if(keyboard.ArrowLeft)  camera.rotation.y += user.turnSpeed
+	if(keyboard.ArrowRight) camera.rotation.y -= user.turnSpeed
+	if(keyboard.ArrowUp)    camera.rotation.x += user.turnSpeed
+	if(keyboard.ArrowDown)  camera.rotation.x -= user.turnSpeed
+	
+	if(keyboard.W || keyboard.w) acceleration.add(forward)
+	if(keyboard.S || keyboard.s) acceleration.sub(forward)
+	if(keyboard.A || keyboard.a) acceleration.sub(right)
+	if(keyboard.D || keyboard.d) acceleration.add(right)
 	
 	if(keyboard.MotionX) acceleration.x += keyboard.MotionX
 	if(keyboard.MotionY) acceleration.z -= keyboard.MotionY
+	
+	if(acceleration.length() > 1){
+		acceleration.normalize()
+	}
+	
 	if(keyboard.TurningX) camera.rotation.y -= keyboard.TurningX * dt
 	if(keyboard.TurningY) camera.rotation.x += keyboard.TurningY * dt
 	clampCameraRotation(camera)
-	
-	if(keyboard.a || keyboard.A) acceleration.sub(right)
-	if(keyboard.d || keyboard.D) acceleration.add(right)
 
 	if(debuggedObject)
 	{	// placing a debug object
