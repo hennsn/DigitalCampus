@@ -2,12 +2,17 @@
 import * as THREE from 'https://cdn.skypack.dev/three@0.135.0'
 import { OrbitControls } from 'https://cdn.skypack.dev/three@0.135.0/examples/jsm/controls/OrbitControls.js'
 import { VRButton } from 'https://cdn.skypack.dev/three@0.135.0/examples/jsm/webxr/VRButton.js'
-import { getHeightOnTerrain } from '../environment/Terrain.js'
+
 import { clamp, degToRad } from '../Maths.js'
 import { playAudioTrack } from '../UserInterface.js'
 import { xToLon, yToHeight, zToLat } from '../environment/Coordinates.js'
 import { updateSparkles } from '../environment/Sparkles.js'
-import { Door, InventoryObject, InfoObject } from './Interactable.js'
+import { Door, InventoryObject, InfoObject, CustomInteractable } from './Interactable.js'
+import { sendMultiplayerMessage } from '../environment/Multiplayer.js'
+import { JoyStick } from '../libs/joystick/joy.min-2.js'
+import { handleKeyBoardMovementInteractionsInteraction } from './InteractionUtils/MovementInteractions.js'
+import { checkCollision } from './InteractionUtils/CollisionCheck.js'
+import { Constants } from './Constants.js'
 
 // what exactly does that do? / how does it work?
 // eher etwas für die #InteractionsGruppe
@@ -15,7 +20,7 @@ import { Door, InventoryObject, InfoObject } from './Interactable.js'
 
 // the keyboard
 const keyboard = window.keyboard = {}
-let debuggedObject
+
 //boolean for raycasting check
 let wasClicked = false
 //boolean for inventory
@@ -25,7 +30,6 @@ let overlayActive = false
 
 ///COUNTER FOR STORY (we'll see if it works that way or if it's to simple) /////
 let story = 0
-
 //array für alle modelle die wir einsammeln
 const inInventory = ["Handy", "USB Stick"]
 inventory.innerHTML += "Handy <br> USB Stick"
@@ -33,19 +37,95 @@ inventory.innerHTML += "Handy <br> USB Stick"
 // the user
 // block user for cutscenes 
 let user = { height: 1.7, eyeHeight: 1.6, speed: 1.3, turnSpeed: 0.03, insideSpeed: 0.7, outsideSpeed: 1.3, isIntersecting: false, }
-const distanceToWalls = 1
+//const distanceToWalls = 1
 let lastInteractionTime = Date.now()
 
+var keyWasPressed = false
+
+const jumpDuration = Constants.jumpDuration
+const jumpHeight = Constants.jumpHeight
+
+var jumpTime = Constants.jumpTime
+
+var lastTimeWWasPressed = 0
+
+function clampCameraRotation(){
+	camera.rotation.x = clamp(camera.rotation.x, -60*degToRad, +60*degToRad)
+}
+
+
+// https://stackoverflow.com/a/4819886/4979303
+function isTouchDevice() {
+	return (('ontouchstart' in window) ||
+		(navigator.maxTouchPoints > 0) ||
+		(navigator.msMaxTouchPoints > 0));
+}
+
 // Entry points for the scenes
-const outsideEntryPointFromAbbeanum = new THREE.Vector3(2.8885, 1.6634, -20.2698)
+const OutsideEntryPointFromAbbeanum = new THREE.Vector3(2.8885, 1.6634, -20.2698)
 const CorridorEntryPointFromHS1 = new THREE.Vector3(-16.9378, 3.8484, -34.7462)
 const CorridorEntryPointFromOutside = new THREE.Vector3(1.4122, 1.4596, -20.0527)
 const HS1EntryPointFromCorridor = new THREE.Vector3(-15.5154, 3.8484, -35.038)
 
+const abbeanumDoorEntranceInteractable = 
+	new Door(undefined, undefined, CorridorEntryPointFromOutside)
 
-/////place here for test/////
+const abbeanumDoorExitInteractable = 
+	new Door(undefined, undefined, OutsideEntryPointFromAbbeanum)
+
+const hs1DoorEntranceInteractable =
+	new Door(undefined, undefined, HS1EntryPointFromCorridor)
+
+const hs1DoorExitInteractable =
+	new Door(undefined, undefined, CorridorEntryPointFromHS1)
+
+const trashcanInteractable =
+	new InventoryObject(undefined, undefined)
+
+const stickInteractable =
+	new InventoryObject(undefined, undefined)
+
+const laptopInteractable =
+	new CustomInteractable(undefined, undefined, undefined)
+
+const laptop2Interactable =
+	new InventoryObject(undefined, undefined)
+
+const blackboardsInteractable = 
+	new InventoryObject(undefined, undefined)
+
+const cupInteractable =
+	new InventoryObject(undefined, undefined)
+
+const beamerInteractable =
+	new CustomInteractable(undefined, undefined, undefined)
+
+const abbeanumInfoBoardInteractable =
+	new InfoObject(undefined, undefined)
+
+const tvCuboidInteractable =
+	new CustomInteractable(undefined, undefined, () => {
+		scene.getObjectByName('AbbeanumInside').getObjectByName('Fernseher_aus').visible = true
+		scene.getObjectByName('AbbeanumInside').getObjectByName('Fernseher_an').visible = false
+	})
+
+const HS2DoorDummyInteractable =
+	new CustomInteractable(undefined, undefined)
+
+const preproomDoorDummyInteractable = 
+	new CustomInteractable(undefined, undefined)
+
+const bathroomDoorDummyBasementInteractable =
+	new CustomInteractable(undefined, undefined)
+
+const bathroomDoorDummyUpstairsInteractable =
+	new CustomInteractable(undefined, undefined)
+
+const coffeeMachineInteractable =
+	new CustomInteractable(undefined, undefined)
 
 function createInteractions(scene, camera, renderer, mouse){
+
 	
 	//OVERLAY//
 	const overlay = document.getElementById('overlay');
@@ -71,11 +151,32 @@ function createInteractions(scene, camera, renderer, mouse){
 	
 	camera.position.set(7.2525284107715935, 0.949415911263972, -21.716083277168504)
 	
-	// Antonio wants to use them for debugging
-	if(localStorage.orbitControls){
-		const controls = new OrbitControls(camera, renderer.domElement)
-		controls.target.set(0, 1, 0) // orbit center
-		controls.update()// compute transform for 1st frame
+	// create joysticks,
+	// maybe only if we are on a phone
+	// todo: if we have phone controls, stuff needs to work with touch-clickes as well
+	if(isTouchDevice() || localStorage.isTouchDevice){
+		// doesn't work :/
+		// document.body.requestFullscreen()
+		const jsSize = window.innerWidth > window.innerHeight ? '30vh' : '30vw'
+		motionJoyStick.style.display = 'block'
+		motionJoyStick.style.width = jsSize
+		motionJoyStick.style.height = jsSize
+		turningJoyStick.style.display = 'block'
+		turningJoyStick.style.width = jsSize
+		turningJoyStick.style.height = jsSize
+		const joyStickColors = { 
+			internalFillColor: '#fff0',
+			internalStrokeColor: '#fff',
+			externalStrokeColor: '#fff'
+		}
+		new JoyStick('motionJoyStick', joyStickColors, data => {
+			keyboard.MotionX = data.x/100
+			keyboard.MotionY = data.y/100
+		})
+		new JoyStick('turningJoyStick', joyStickColors, data => { 
+			keyboard.TurningX = data.x/100
+			keyboard.TurningY = data.y/100
+		})
 	}
 	
 	////////////////////////////////
@@ -92,20 +193,36 @@ function createInteractions(scene, camera, renderer, mouse){
 	}
 	
 	function keyDown(event){
+		keyWasPressed = true
 		keyboard[event.key] = event.timeStamp
 		keyboard[event.keyCode] = event.timeStamp
 		switch(event.key){
-			case 'z': 
+			case 'w':
+			case 'W':// tap w twice to run
+				user.isRunning = event.timeStamp - lastTimeWWasPressed < 300
+				break;
+			case 's':
+			case 'S':
+				user.isRunning = false
+				break;
+			case ' ':// space for jumping
+				if(jumpTime <= 0.0 || jumpTime >= jumpDuration * 0.75){
+					jumpTime = 0.0
+				}
+				break;
+			case 'z':
+			case 'Z':
 				// a simple audio test: press z to play the audio
 				//playAudioTrack('audio/springTestSound.wav');
 				console.log(story) //test where in story we are
 				if(overlayActive == false){ 
 					openText()
-				}else{
+				} else {
 					closeText()
 				}
 				break;
 			case 'h': 
+			case 'H':
 				// print the current camera position in world coordinates
 				// can be used to place objects
 				console.log('player')
@@ -115,31 +232,51 @@ function createInteractions(scene, camera, renderer, mouse){
 					formatNumber(xToLon(camera.position.x), 8) + ", " +
 					formatNumber(yToHeight(camera.position.y), 3)
 				);
+				if(window.debuggedObject)
+				{
 				console.log('\n')
-				console.log('moving object')
+				console.log(debuggedObject.name)
 				console.log(
 					formatNumber(zToLat(debuggedObject.position.z), 8) + ", " +
 					formatNumber(xToLon(debuggedObject.position.x), 8) + ", " +
 					formatNumber(yToHeight(debuggedObject.position.y), 3) + "\n" +
 					debuggedObject.position.x + ' ' + debuggedObject.position.y + ' ' + debuggedObject.position.z 
-				);
+				)
+				}
 				break;
 			case 'q':
-				//opens inventory
+			case 'Q':
+				// opens inventory
 				if(inventoryOpen == false){
 					playAudioTrack('audio/inventorySound.mp3');
 					document.getElementById("inventory").style.visibility = 'visible';
 					inventoryOpen = true
-				}else{
+				} else {
 					document.getElementById("inventory").style.visibility = 'hidden';
 					inventoryOpen = false
 				}
-				
 				break;
+			case 't':
+			case 'T':
+				var message = window.prompt('Message to send:')
+				if(message){
+					message = message.trim()
+					if(message.length > 0){
+						sendMultiplayerMessage(message)
+					}
+				}
+				break
 		}
 	}
 	
 	function keyUp(event){
+		keyWasPressed = true
+		switch(event.key){
+			case 'w':
+			case 'W':
+				lastTimeWWasPressed = keyboard[event.key]
+				break
+		}
 		delete keyboard[event.key]
 		delete keyboard[event.keyCode]
 	}
@@ -157,13 +294,14 @@ function createInteractions(scene, camera, renderer, mouse){
 		if(keyboard.rightMouseButton){
 			var mouseSpeed = 4 / window.innerHeight
 			camera.rotation.y += mouseSpeed * (event.movementX || 0)
-			camera.rotation.x  = clamp(camera.rotation.x + mouseSpeed * (event.movementY || 0), -60*degToRad, +60*degToRad)
+			camera.rotation.x += mouseSpeed * (event.movementY || 0)
+			clampCameraRotation()
 		}
 	}, false );
 	
 	var mouseButtonNames = ['leftMouseButton', 'middleMouseButton', 'rightMouseButton']
 	
-	//event listener mouse click//
+	// event listener mouse click
 	window.addEventListener('mousedown', (event) => {
 		if(event.button == 0) wasClicked = true // left mouse button only
 		mouse.x =   ( event.clientX / window.innerWidth  ) * 2 - 1;
@@ -183,176 +321,197 @@ function createInteractions(scene, camera, renderer, mouse){
 	})
 }
 
+
 var velocity = new THREE.Vector3(0,0,0)
 var acceleration = new THREE.Vector3(0,0,0)
 
-const forward = new THREE.Vector3(0,0,-1)
-const right = new THREE.Vector3(1,0,0)
-
-const up = new THREE.Vector3(0,1,0)
-const down = new THREE.Vector3(0,-1,0)
-
-// left/right, up/down, forward/backward
-var rayChecks = [
-	new THREE.Vector3( 0.0, 0.0, 0.0),
-	new THREE.Vector3(+0.2, 0.0, 0.0),
-	new THREE.Vector3(-0.2, 0.0, 0.0),
-	new THREE.Vector3( 0.0,-0.2, 0.0),
-	new THREE.Vector3( 0.0,+0.2, 0.0),
-	new THREE.Vector3( 0.0, 0.0,-0.2),
-	new THREE.Vector3( 0.0, 0.0,+0.2),
-]
-
-const hs1DoorPosition  = new THREE.Vector3(-14.2, 3.8, -36.4)
-const abbeanumDoorPosition = new THREE.Vector3(2.84, 1.67, -20.35)
-const doorInteractionRadius = 3
-
 var couldInteract = false
+
+const dumpsterTmpPos = new THREE.Vector3() // temporary variable
 
 // helper functions for the animation loop
 function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, dt, outlinepass = null){
 	
 	
 	// get the models - maybe move to not do this every frame
-	const abbeanum = scene.getObjectByName('Abbeanum')
-	const abbeanumInside = scene.getObjectByName('ScannedAbbeanumInside')
-	const abbeanumFlurCollisions = scene.getObjectByName('AbbeanumFlurCollisions')
-	const abbeanumGround = scene.getObjectByName('AbbeanumGround')
-	const abbeanumHS1 = scene.getObjectByName('AbbeanumHS1')
-	
-
-	const abbeanumDoorEntrance = scene.getObjectByName('AbbeanumDoorEntrance')
-	const abbeanumDoorEntranceInteractable = 
-			window.abbeanumDoorEntranceInteractable =
-			abbeanumDoorEntrance ?
-			new Door(abbeanumDoorEntrance, [flurScene], CorridorEntryPointFromOutside) :
-			undefined
-	
-		const abbeanumDoorExit = scene.getObjectByName('AbbeanumDoorExit')
-		const abbeanumDoorExitInteractable = 
-				window.abbeanumDoorInteractable =
-				abbeanumDoorExit ?
-				new Door(abbeanumDoorExit, [outsideScene], outsideEntryPointFromAbbeanum) :
-				undefined
-		
-
-	const hs1DoorEntrance = scene.getObjectByName('HS1DoorEntrance')
-	const hs1DoorEntranceInteractable = hs1DoorEntrance ? new Door(hs1DoorEntrance, [hs1Scene], HS1EntryPointFromCorridor) : undefined
-
-	const hs1DoorExit = scene.getObjectByName('HS1DoorExit')
-	const hs1DoorExitInteractable = hs1DoorExit ? new Door(hs1DoorExit, [flurScene], CorridorEntryPointFromHS1) : undefined
-
+	//const abbeanum = scene.getObjectByName('Abbeanum')
+	const abbeanumInside = scene.getObjectByName('AbbeanumInside')
+	const constabbeanumCorridorCollisions = scene.getObjectByName('AbbeanumCorridorCollisions')
+//	const abbeanumGround = scene.getObjectByName('AbbeanumGround')
 	const cityCenter = scene.getObjectByName('City Center')
 	const terrain = scene.getObjectByName('Terrain')
+	const abbeanumHS1 = scene.getObjectByName('AbbeanumHS1')
+	const wetFloor = scene.getObjectByName('WetFloorSign')
+	
+	const abbeanumDoorEntrance = scene.getObjectByName('AbbeanumDoorEntrance')
+	if(abbeanumDoorEntrance){
+		abbeanumDoorEntranceInteractable.setInteractableModel(abbeanumDoorEntrance)
+		abbeanumDoorEntranceInteractable.scene = flurScene
+	} 
+		
+	const abbeanumDoorExit = scene.getObjectByName('AbbeanumDoorExit')
+	if(abbeanumDoorExit) {
+		abbeanumDoorExitInteractable.setInteractableModel(abbeanumDoorExit)
+		abbeanumDoorExitInteractable.scene = outsideScene
+	}
+		
+	const hs1DoorEntrance = scene.getObjectByName('HS1DoorEntrance')
+	if(hs1DoorEntrance) {
+		hs1DoorEntranceInteractable.setInteractableModel(hs1DoorEntrance)
+		hs1DoorEntranceInteractable.scene = hs1Scene
+	}
+
+	const hs1DoorExit = scene.getObjectByName('HS1DoorExit')
+	if(hs1DoorExit) {
+		hs1DoorExitInteractable.setInteractableModel(hs1DoorExit)
+		hs1DoorExitInteractable.scene = flurScene
+	}
 
 	const trashcan = window.trashcan = scene.getObjectByName('Trashcan')
-	// inventory object? where?
-	const trashcanInteractable = trashcan ?
-											new InventoryObject(trashcan, [flurScene]) :
-											undefined
-	
-	const stick = scene.getObjectByName('Stick')
-	const stickInteractable = stick ?
-										new InventoryObject(stick, [flurScene]) :
-										undefined
+	if(trashcan){
+		trashcanInteractable.setInteractableModel(trashcan)	
+		trashcanInteractable.scene = flurScene
+	}
 
+	const stick = scene.getObjectByName('Stick')
+	if(stick){
+	stickInteractable.setInteractableModel(stick)
+	stickInteractable.scene = outsideScene
+	}
+
+	// the laptops need more verbose names
 	const laptop = scene.getObjectByName('Laptop')
-	const laptopInteractable = laptop ?
-										new InventoryObject(laptop, [flurScene]) :
-										undefined
+	if(laptop){
+		laptopInteractable.setInteractableModel(laptop)
+		laptopInteractable.scene = hs1Scene
+	}
 	
 	const laptop2 = scene.getObjectByName('Laptop with Backup') //Laptop2 originally
-	const laptop2Interactable = laptop ? 
-										new InventoryObject(laptop2, [flurScene]) :
-										undefined
+	if(laptop2){
+		laptop2Interactable.setInteractableModel(laptop2)
+		laptop2Interactable.scene = flurScene
+	}
 
 	const blackboards = scene.getObjectByName('Blackboards')
-	const blackboardsInteractable = blackboards ? 
-									new InventoryObject(blackboards, [flurScene]) :
-									undefined
-
+	if(blackboards){
+		blackboardsInteractable.setInteractableModel(blackboards)
+		blackboardsInteractable.scene = hs1Scene
+	}
 	const cup = scene.getObjectByName('Cup')
-	const cupInteractable = cup ? 
-									new InventoryObject(cup, [flurScene]) :
-									undefined
-								
-	const interactables = [abbeanumDoorEntranceInteractable, abbeanumDoorExitInteractable, 
+	if(cup) {
+		cupInteractable.setInteractableModel(cup)
+		cupInteractable.scene = hs1Scene
+	}
+
+	const beamer = scene.getObjectByName('Beamer')
+	if(beamer){
+		beamerInteractable.setInteractableModel(beamer)
+		beamerInteractable.scene = hs1Scene
+		// vertically below the beamer, so we can interact from the ground
+		beamerInteractable.position = new THREE.Vector3(-7.065151656086955, 3.1155215629228477, -35.33847308541997)
+	}
+	const abbeanumInfoBoard = scene.getObjectByName('64Tafel')
+	if(beamer){
+		beamerInteractable.setInteractableModel(abbeanumInfoBoard)
+		beamerInteractable.scene = outsideScene
+	}
+
+	const tvCuboid = scene.getObjectByName('TvCuboid')
+	if(tvCuboid){
+		tvCuboidInteractable.setInteractableModel(tvCuboid)
+		tvCuboidInteractable.scene = flurScene
+	}
+
+	const HS2DoorDummy = scene.getObjectByName('HS2DoorDummy')
+	if(HS2DoorDummy){
+		HS2DoorDummyInteractable.setInteractableModel(HS2DoorDummy)
+		HS2DoorDummyInteractable.scene = flurScene
+	}
+
+	const preproomDoorDummy = scene.getObjectByName('PreproomDoorDummy')
+	if(preproomDoorDummy){
+		preproomDoorDummyInteractable.setInteractableModel(HS2DoorDummy)
+		preproomDoorDummyInteractable.scene = flurScene
+	}
+
+
+	const bathroomDoorDummyBasement = scene.getObjectByName('BathroomDoorDummyBasement')
+	if(bathroomDoorDummyBasement){
+		bathroomDoorDummyBasementInteractable.setInteractableModel(bathroomDoorDummyBasement)
+		bathroomDoorDummyBasementInteractable.scene = flurScene
+	}
+
+	
+	const bathroomDoorDummyUpstairs = scene.getObjectByName('BathroomDoorDummyUpstairs')
+	if(bathroomDoorDummyUpstairs){
+		bathroomDoorDummyUpstairsInteractable.setInteractableModel(bathroomDoorDummyUpstairs)
+		bathroomDoorDummyUpstairsInteractable.scene = flurScene
+	}
+	const coffeeMachine = scene.getObjectByName('CoffeeMachine')
+	if(coffeeMachine){
+		coffeeMachineInteractable.setInteractableModel(coffeeMachine)
+		coffeeMachineInteractable.scene = flurScene
+	}
+
+	const dumpsterGreen  = scene.getObjectByName('DumpsterGreen')
+	const dumpsterBlue   = scene.getObjectByName('DumpsterBlue')
+	const dumpsterYellow = scene.getObjectByName('DumpsterYellow')
+
+	const interactables = window.interactables = [abbeanumDoorEntranceInteractable, abbeanumDoorExitInteractable, 
 							hs1DoorEntranceInteractable, hs1DoorExitInteractable, 
 						 	laptopInteractable, stickInteractable,
-							trashcanInteractable, laptop2Interactable, blackboardsInteractable, cupInteractable]
-	
+							trashcanInteractable, laptop2Interactable, blackboardsInteractable, cupInteractable,
+							beamerInteractable, tvCuboidInteractable, HS2DoorDummyInteractable,
+							preproomDoorDummyInteractable, bathroomDoorDummyBasementInteractable,
+							bathroomDoorDummyUpstairsInteractable, abbeanumInfoBoardInteractable,
+							coffeeMachineInteractable]
+							.filter(interactable => interactable.interactableModel)
+
 	/////STOP INVENTORY OBJECTS INTERACTION////////////
+	/*
 	for(let lock=5; lock < interactables.length; lock++){
-			if(scene==flurScene){
-				interactables[lock].unlocked = false;
-				//console.log(interactables[6].unlocked)
-			}
-		//console.log('name: ', interactables[lock].interactableModel.name)
-		//console.log('is lcoked?: ', interactables[lock].unlocked)
-	}
+		if(scene==flurScene){
+			interactables[lock].unlocked = false;
+			//console.log(interactables[6].unlocked)
+		}
+	//console.log('name: ', interactables[lock].interactableModel.name)
+	//console.log('is lcoked?: ', interactables[lock].unlocked)
+	}*/
 	
-	if(scene != outsideScene){
-		user.speed = user.insideSpeed;
-	}
-	else {
-		user.speed = user.outsideSpeed
-	}
-
-	// set to city center so it's less likely someone notices when accidentally pressing one of the buttons :D
-	debuggedObject = window.debuggedObject = abbeanumHS1
-
 	acceleration.set(0,0,0)
 	var dtx = clamp(dt * 10, 0, 1) // the lower this number is, the smoother is the motion
 	
 	/**
 	 * Helper function for updating the camera controls in the animation loop.
 	 */
-	if(keyboard.ArrowLeft){
-		camera.rotation.y += user.turnSpeed
-	}
-	if(keyboard.ArrowRight){
-		camera.rotation.y -= user.turnSpeed
-	}
-	if(keyboard.w || keyboard.ArrowUp){
-		acceleration.add(forward)
-	}
-	if(keyboard.s || keyboard.ArrowDown){
-		acceleration.sub(forward)
-	}
+	handleKeyBoardMovementInteractionsInteraction(acceleration, window.debuggedObject, user, dt)
 	
-	if(keyboard.a) acceleration.sub(right)
-	if(keyboard.d) acceleration.add(right)
-
-	// placing a debug object
-	if(keyboard.l) debuggedObject.position.z -= dt // model front
-	if(keyboard.i) debuggedObject.position.x -= dt // model left
-	if(keyboard.j) debuggedObject.position.z += dt // model back
-	if(keyboard.k) debuggedObject.position.x += dt // model right
-	if(keyboard.o) debuggedObject.rotation.y += dt * 5 * user.turnSpeed // model rot left
-	if(keyboard.u) debuggedObject.rotation.y -= dt * 5 * user.turnSpeed // model rot right
-	if(keyboard.n) debuggedObject.position.y -= dt // model down
-	if(keyboard.m) debuggedObject.position.y += dt // model up
-	
-
+	/* Dumpster interactions ^^ */
+	const dumpsters = [dumpsterGreen, dumpsterBlue, dumpsterYellow]
+	dumpsters.forEach(dumpster => {// Cube002.parent is the rotatable part of the mesh
+		if(dumpster){
+			var dist = dumpster.getWorldPosition(dumpsterTmpPos).distanceTo(camera.position)
+			dumpster.getObjectByName('Cube002').parent.rotation.set(0, 0, -clamp(3-dist, 0, 1)*15*degToRad)
+		}
+	})
 
 	// ---------------------------------------------- INTERACTION CHECKERS -------------------------------------------------
 	// we are only looking for all interactable objects in our interactable array
 	// we will choose the closest for interaction.
 	// if that does not work, it might have to be changed to the closest one that we look at.
 	/////ADD A FILTER TO CHECK WHETHER 'currentInteractables[i].interactableModel.name' is already in 'inInventory' array //////
-	const currentInteractables = interactables.filter(interactable => 
+	const currentInteractables = window.currentInteractables = interactables.filter(interactable => 
 							 interactable != undefined && interactable.canInteract(scene, camera, lastInteractionTime))
-	const sparkleTargets = currentInteractables.map(o => o.position)
+	const sparkleTargets = currentInteractables.map(o => o.interactableModel.position)
 	//calculate box sizes of the interactables, so we can decide on which area the particles can spawn
 	var box = new THREE.Box3()
-	const sparkleTarget = currentInteractables.map(o=> box=new  THREE.Box3().setFromObject(o.interactableModel)) 
+	const sparkleTarget = currentInteractables.map(o => box = new THREE.Box3().setFromObject(o.interactableModel)) 
 	var targetSizes=[
 		box.max.x - box.min.x,
 		box.max.y - box.min.y,
 		box.max.z - box.min.z];
 	const canInteract = (currentInteractables != undefined && currentInteractables.length > 0)
 
-	
 	if(couldInteract != canInteract){
 		couldInteract = canInteract
 		controlHints.innerHTML = canInteract ? 'WASD walk<br>LEFT/RIGHT turn<br>E interact' : 'WASD walk<br>LEFT/RIGHT turn'
@@ -362,24 +521,23 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 	if((keyboard.e || keyboard.Enter) && 
 		currentInteractables != undefined &&
 		currentInteractables.length > 0
-	)
-	{	
+	) {	
 		// sort interactables, such that the closest element will be interacted with
 		currentInteractables.sort((e1,e2) => {
-							if(camera.position.distanceTo(e1.position) > camera.position.distanceTo(e2.position)){
-								return 1
-							}
-							else{
-								return -1
-							}
-						})
-				
+			if(camera.position.distanceTo(e1.position) > camera.position.distanceTo(e2.position)){
+				return +1
+			} else{
+				return -1
+			}
+		})
+		
 		currentInteractables[0].interact(scene, camera)
 		lastInteractionTime = Date.now()
 	}
 	
 	velocity.multiplyScalar(1-dtx)
 	
+
 	// transform the input from camera space into world space
 	var accelerationLength = acceleration.length()
 	if(accelerationLength > 0){
@@ -389,79 +547,10 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 		velocity.add(acceleration.multiplyScalar(dt * user.speed * frictionMultiplier))
 	}
 	
-	// check if there is something in the way
-	if(velocity.length() > 1e-3 * user.speed){// we're in motion
-		
-		if(abbeanumFlurCollisions) abbeanumFlurCollisions.visible = true
-		
-		// we cant check whole scene (too big) maybe copy the important objects from scene then do raycasting collision check
-		const collidables = ( 
-			scene == outsideScene ? [abbeanum, abbeanumGround] :
-			scene == flurScene ? [abbeanumFlurCollisions] :
-			scene == hs1Scene ? [] :
-			[]
-		).filter(model => !!model)
-		
-		var isIntersecting = false
-		raycaster.near = 0 
-		raycaster.far  = velocity.length() + distanceToWalls
-		const cameraSpaceRight = new THREE.Vector3(-velocity.z, 0, velocity.x).normalize()
-		for(var i=0;i<rayChecks.length;i++){
-			const rayCheck = rayChecks[i]
-			const position = camera.position.clone()
-			position.addScaledVector(cameraSpaceRight, rayCheck.x)
-			position.addScaledVector(up, rayCheck.y)
-			position.addScaledVector(velocity, rayCheck.z / velocity.length())
-			raycaster.set(position, velocity)
-			const intersections = raycaster.intersectObjects(collidables)
-			if(intersections && intersections.length > 0){
-				
-				isIntersecting = true
-				
-				// we can do this slowing-down for every closest intersection
-				// this will prevent clipping through edges
-				const intersection = intersections[0]
-				const object = intersection.object
-				const normal = intersection.face.normal.clone()
-				// transform normal from object space to world space
-				normal.transformDirection(object.matrixWorld)
-				// remove the projection
-				normal.multiplyScalar(velocity.dot(normal))
-				if(normal.dot(velocity) < 0){// ensure we don't get accelerated by negative walls
-					velocity.add(normal)
-				} else {
-					velocity.sub(normal)
-				}
-				
-			}
-		}
-		
-		user.isIntersecting = isIntersecting
-		
-		// theoretisch müsste es addScaledVector(velocity, dt) sein, aber damit klippe ich irgendwie immer durch die Wand
-		camera.position.add(velocity)
-		
-		raycaster.set(camera.position, down)
-		raycaster.near = 0
-		raycaster.far  = user.eyeHeight + 2
-		var noneY = -123
-		var intersection = raycaster.intersectObjects(collidables)
-		var floorY = intersection && intersection.length > 0 ? intersection[0].point.y : noneY
-		if(scene == outsideScene){
-			// add terrain as intersection
-			var groundY = getHeightOnTerrain(camera.position.x, camera.position.z)
-			floorY = Math.max(floorY, groundY)
-		}
-		if(floorY > noneY){
-			camera.position.y = floorY + user.eyeHeight
-		} else {
-			// teleport player back in?
-			// camera.position.y = getHeightOnTerrain(camera.position.x, camera.position.z) + user.eyeHeight
-		}
-		
-		if(abbeanumFlurCollisions) abbeanumFlurCollisions.visible = false
-
-	}
+	checkCollision(velocity, user, keyWasPressed, jumpTime, dt)
+	
+	jumpTime += dt
+	
 	updateSparkles(scene, camera, targetSizes, sparkleTargets, time, dt)
 
 	/*To do:
@@ -513,8 +602,8 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 		//////Array of clickable objects
 		const clickableObjects = (
 			scene == outsideScene ? [abbeanumDoorEntrance] :
-			scene == flurScene ? [abbeanumDoorExit, laptop, stick, trashcan, laptop2, blackboards, cup, hs1DoorEntrance] :
-			scene == hs1Scene ? [hs1DoorExit] :
+			scene == flurScene ? [abbeanumDoorExit, trashcan, , hs1DoorEntrance] :
+			scene == hs1Scene ? [hs1DoorExit, laptop, stick, laptop2, blackboards, cup, beamer] :
 			[]
 		).filter(model => !!model)
 
@@ -525,9 +614,8 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 			if(clickableObjects != undefined && clickableObjects.length > 0){
 				clickableObjects.sort((e1,e2) => {
 					if(camera.position.distanceTo(e1.position) > camera.position.distanceTo(e2.position)){
-						return 1
-					}
-					else{
+						return +1
+					} else {
 						return -1
 					}
 				})
@@ -554,6 +642,9 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 		if(abbeanumDoorEntrance) abbeanumDoorEntrance.visible = false;
 		wasClicked = false
 	}
+	
+	keyWasPressed = false
+	
 }
 
 

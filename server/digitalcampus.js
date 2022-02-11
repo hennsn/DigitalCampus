@@ -29,7 +29,8 @@ http.createServer((req, res) => {
 		for(key in players){
 			const player = players[key]
 			if(Math.abs(player.lastTime - time) > timeout){
-				addMessage('-', params.name, time)
+				addMessage('-', key, player.lastTime)
+				// todo: sort the messages, because lastTime might be older than the other messages
 				delete players[key]
 			}
 		}
@@ -37,7 +38,7 @@ http.createServer((req, res) => {
 		// they are sorted by time
 		var timedOutMessages = 0
 		while(timedOutMessages < messages.length &&
-			Math.abs(messages[timedOutMessages].time) > messageTimeout){
+			Math.abs(messages[timedOutMessages].time - time) > messageTimeout){
 			timedOutMessages++
 		}
 		if(timedOutMessages > 0){

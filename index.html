@@ -13,14 +13,26 @@
 	<!-- names of the members from the team working on this project -->
 	<meta name="author" content="Amos Nyerembe, Antonio Noack, Aron Gaden, Celine Lünse, Daniel Lenhardt, Konrad Leibrock, Marie Kairies, Marten Schröder, Rebecca Preßler, Steven Richter, Toni Böswetter"/>
 </head><body>
-	<div id="progressBar"></div>
+	<div id="loadingOverlay">
+		<div id="logoContainer">
+			<img src="images/2000px-Uni-Jena-logo.svg.png" id="logo" class="fade-in">
+		</div>
+		<div id="progressBar"></div>
+	</div>
+	
 	<!-- hier die id für textbox und overlay -->
 	<div id="missionText">Geh zum Abbeanum</div>
-	<div id="controlHints">
-		WASD walk<br>
-		LEFT/RIGHT turn
+	<div id="bottomLeft">
+		<div id="chat"></div>
+		<div id="controlHints">
+			WASD walk<br>
+			LEFT/RIGHT turn
+		</div>
 	</div>
 	<div id="inventory"></div>
 	<div id="overlay"></div>
+	<!-- die Grä-->
+	<div id="motionJoyStick" class="joystick" style="left:0px"></div>
+	<div id="turningJoyStick" class="joystick" style="right:0px"></div>
 	<script type="module" src="js/main.js"></script>
 </body></html>

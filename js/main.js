@@ -6,9 +6,9 @@ import { FBXLoader } from 'https://cdn.skypack.dev/three@0.135.0/examples/jsm/lo
 
 
 import { OutlinePass } from 'https://cdn.skypack.dev/three@0.135.0/examples/jsm/postprocessing/OutlinePass.js'
-import { EffectComposer } from 'https://cdn.skypack.dev/three@0.135.0/examples/jsm/postprocessing/EffectComposer.js';
-import { RenderPass } from 'https://cdn.skypack.dev/three@0.135.0/examples/jsm/postprocessing/RenderPass.js';
-
+import { EffectComposer } from 'https://cdn.skypack.dev/three@0.135.0/examples/jsm/postprocessing/EffectComposer.js'
+import { RenderPass } from 'https://cdn.skypack.dev/three@0.135.0/examples/jsm/postprocessing/RenderPass.js'
+import { SAOPass } from 'https://cdn.skypack.dev/three@0.135.0/examples/jsm/postprocessing/SAOPass.js'
 
 import { HDRCubeTextureLoader } from 'https://cdn.skypack.dev/three@0.135.0/examples/jsm/loaders/HDRCubeTextureLoader.js';
 import { RGBELoader } from "https://cdn.skypack.dev/three@0.135.0/examples/jsm/loaders/RGBELoader.js";
@@ -72,11 +72,13 @@ outsideScene.name = 'outside'
 
 // ----------------------------- OUTLINE PASS AND RENDERPASS FOR EFFECTIVE OUTLINE -------------------------------
 // NOT WORKING YET, SO NOT NEEDED, but when deleting please mind, that the outlinepass is given to the handle interactions funcion
- var composer = new EffectComposer( renderer );
- const renderPass = new RenderPass( outsideScene, camera );
- 				composer.addPass( renderPass );
- var outlinePass = new OutlinePass(new THREE.Vector2(window.innerWidth, window.innerHeight), outsideScene, camera);
- composer.addPass( outlinePass );
+var composer = window.composer = new EffectComposer(renderer)
+const renderPass = new RenderPass(outsideScene, camera)
+composer.addPass(renderPass)
+var outlinePass = new OutlinePass(new THREE.Vector2(window.innerWidth, window.innerHeight), outsideScene, camera);
+composer.addPass(outlinePass)
+var saoPass = window.saoPass = new SAOPass(outsideScene, camera, false, true)
+composer.addPass(saoPass) // screen space ambient occlusion
 
 
 
@@ -120,6 +122,7 @@ window.addEventListener('resize', (event) => {
 	camera.aspect = window.innerWidth / window.innerHeight
 	camera.updateProjectionMatrix()
 	renderer.setSize(window.innerWidth, window.innerHeight)
+	composer.setSize(window.innerWidth, window.innerHeight)
 })
 
 // define interactions
@@ -161,6 +164,5 @@ function mainLoop(){
 	
 	renderer.render(scene, camera)
 }
-console.log("henlo");
 
 renderer.setAnimationLoop(mainLoop) // requestAnimationFrame funktioniert nicht für WebXR, aber die hier funktioniert für mit und ohne :)

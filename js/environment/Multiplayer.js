@@ -12,6 +12,8 @@ var selfName = null
 
 var font = null
 
+var nextMessage = null
+
 const material = new THREE.MeshBasicMaterial({
 	color: 'white',
 	transparent: true,
@@ -21,10 +23,24 @@ const material = new THREE.MeshBasicMaterial({
 const loader = new FontLoader()
 loader.load('fonts/RobotoMono-Regular.json', f => { font = f })
 
+// https://stackoverflow.com/questions/11561595/does-javascript-have-an-equivalent-to-cs-httputility-htmlencode
+function htmlEncode(s) {
+  return (s+'').replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/'/g, '&#39;')
+    .replace(/"/g, '&#34;');
+}
+
+function sendMultiplayerMessage(message){
+	// can be sent with the t-key currently
+	nextMessage = message
+}
+
+var lastChatText = null
+
 function updateMultiplayer(scene, time, deltaTime, camera){
 	
-	// todo press t to open chat, send messages there, and then send them here
-
 	var deltaTime = Math.abs(time - lastTime) * 1e-3
 	
 	var players = scene.getObjectByName('players')
@@ -39,6 +55,7 @@ function updateMultiplayer(scene, time, deltaTime, camera){
 		// ask for the name, when the user is ready and sees the first stuff
 		// we also could prevent duplicate names just by asking our api
 		selfName = window.prompt("Your Multiplayer Name:", localStorage.playerName || '') || ""
+		selfName = selfName.trim()
 		localStorage.playerName = selfName
 	}
 	
@@ -49,20 +66,32 @@ function updateMultiplayer(scene, time, deltaTime, camera){
 		lastTime = time
 		state = 'waiting'
 		const x = new XMLHttpRequest()
-		x.open("GET", "https://anionoa.uber.space/digitalcampus?"+
+		var requestURL = "https://anionoa.uber.space/digitalcampus?"+
 			"name="+encodeURIComponent(selfName)+
 			"&x="+(camera.position.x*1)+
 			"&y="+(camera.position.y*1)+
 			"&z="+(camera.position.z*1)+
 			"&rx="+(camera.rotation.x*1)+
-			"&ry="+(camera.rotation.y*1))
+			"&ry="+(camera.rotation.y*1)
+		if(nextMessage){
+			requestURL += "&message=" + encodeURIComponent(nextMessage)
+			console.log('sent message', nextMessage)
+			nextMessage = null
+		}
+		x.open("GET", requestURL)
 		x.setRequestHeader("Content-type", "application/x-www-form-urlencoded")
 		x.onreadystatechange = function(){
 			if(x.readyState == 4) state = 'ready'
 			if(x.readyState == 4 && x.status == 200){
-				// todo display messages
-				var multiplayerData = JSON.parse(x.responseText)
-				var playerList = multiplayerData.players
+				var data = JSON.parse(x.responseText)
+				// display messages
+				const messages = window.messages = data.messages
+				const chatText = messages.map(msg => '<p>['+htmlEncode(msg.sender)+'] '+htmlEncode(msg.message)+'</p>').join('')
+				if(chatText != lastChatText){
+					document.getElementById('chat').innerHTML = chatText
+					lastChatText = chatText
+				}
+				const playerList = data.players
 				// update / remove existing players
 				for(var i=players.children.length-1;i>=0;i--){
 					var player = players.children[i]
@@ -70,8 +99,8 @@ function updateMultiplayer(scene, time, deltaTime, camera){
 					if(data){// update it
 						player.targetPosition.set(data.x, data.y, data.z)
 						// rotation has an offset of 180°, so the players texts look at each other, when the players
-						// are looking at each other
-						player.targetRotation.set(data.rx, data.ry + Math.PI, 0)
+						// are looking at each other, similarly for rx
+						player.targetRotation.set(-data.rx, data.ry + Math.PI, 0)
 					} else {// disconnected, remove it
 						players.remove(player)
 						console.log(player.name+" left the game")
@@ -101,8 +130,8 @@ function updateMultiplayer(scene, time, deltaTime, camera){
 							mesh.position.set(data.x, data.y, data.z)
 							mesh.rotation.order = 'YXZ' // the same as for camera
 							mesh.rotation.set(data.rx, data.ry, 0)
-							mesh.targetPosition = new THREE.Vector3(data.x, data.y, data.z)
-							mesh.targetRotation = new THREE.Vector3(data.rx, data.ry + Math.PI, 0)
+							mesh.targetPosition = new THREE.Vector3( data.x, data.y, data.z)
+							mesh.targetRotation = new THREE.Vector3(-data.rx, data.ry + Math.PI, 0)
 							players.add(mesh)
 						}
 					}
@@ -130,4 +159,4 @@ function updateMultiplayer(scene, time, deltaTime, camera){
 	
 }
 
-export { updateMultiplayer }
+export { updateMultiplayer, sendMultiplayerMessage }
