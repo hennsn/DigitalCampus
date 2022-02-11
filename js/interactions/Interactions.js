@@ -601,9 +601,9 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 
 		//////Array of clickable objects
 		const clickableObjects = (
-			scene == outsideScene ? [abbeanumDoorEntrance] :
-			scene == flurScene ? [abbeanumDoorExit, trashcan, , hs1DoorEntrance] :
-			scene == hs1Scene ? [hs1DoorExit, laptop, stick, laptop2, blackboards, cup, beamer] :
+			scene == outsideScene ? [abbeanumDoorEntrance, stick] :
+			scene == flurScene ? [abbeanumDoorExit, trashcan, hs1DoorEntrance] :
+			scene == hs1Scene ? [hs1DoorExit, laptop, laptop2, blackboards, cup, beamer] :
 			[]
 		).filter(model => !!model)
 
