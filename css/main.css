@@ -31,10 +31,6 @@ body {
 	transform: translate(-50%, -50%)
 }
 
-
-
-
-
 .fade-in {
 	animation: fadeIn ease 1.5s infinite;
   }
@@ -155,6 +151,41 @@ body {
     opacity: 1;
     pointer-events: all;
 	/*is needed?*/
+	/* cannot be selected */
+	-webkit-user-select: none; /* Safari */        
+	-moz-user-select: none; /* Firefox */
+	-ms-user-select: none; /* IE10+/Edge */
+	user-select: none; /* Standard */
+}
+
+#button{
+	position: fixed;
+    opacity: 0;
+	top: 20%;
+	right: 5%;
+	border-radius: 40%;
+	/* cannot be selected */
+	-webkit-user-select: none; /* Safari */        
+	-moz-user-select: none; /* Firefox */
+	-ms-user-select: none; /* IE10+/Edge */
+	user-select: none; /* Standard */
+}
+
+#button.active{
+	position: fixed;
+    opacity: 95;
+	top: 20%;
+	right: 5%;
+	border-radius: 40%;
+	background-color: rgb(228, 201, 155);
+	/*text*/
+	padding: 0.5em; /*abstand textbox rand*/
+	color: #000;
+	font-size: 1.2em;
+	text-align: center;
+	/* Kapitälchen */
+	font-variant: small-caps;
+	font-weight: bold;
 	/* cannot be selected */
 	-webkit-user-select: none; /* Safari */        
 	-moz-user-select: none; /* Firefox */

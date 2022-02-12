@@ -296,7 +296,7 @@ function fillScene(scene) {
 	glTFLoader.loadAsync('models/samples/laptop_2.glb', e => updateDownloadProgress('laptop2', e))
 	.then(gltf => {
 		const model = gltf.scene
-		placeLatLonObject(model, 'Laptop with Backup', 50.93424693, 11.58070168, 184.212, -90) //Laptop2 originally
+		placeLatLonObject(model, 'Laptop2', 50.93424693, 11.58070168, 184.212, -90) //rename no longer needed
 		hs1Scene.add(model)
 		model.visible = false
 	})

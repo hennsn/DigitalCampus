@@ -2,6 +2,10 @@
 import * as THREE from 'https://cdn.skypack.dev/three@0.135.0'
 import { mix, degToRad } from './Maths.js'
 
+//boolean to check if audio is playing
+let isPlaying = false
+let audio
+
 function printError(error, printToUser){
 	console.error(error)
 	// todo print to user, if not 0
@@ -87,9 +91,19 @@ function handleUserInterface(dt){
 }
 
 function playAudioTrack(srcUrl){
-	var audio = new Audio(srcUrl)
+	audio = new Audio(srcUrl) //var audio
 	audio.play()
+	if(audio.ended){ //audio.currentTime && !audio.paused 
+		isPlaying = false
+	}else{
+		isPlaying = true
+	}
 	return audio
+}
+
+function stopAudioTrack(audio) {
+    audio.pause();
+    audio.currentTime = 0;
 }
 
 var lastCorners = null
@@ -146,4 +160,4 @@ function removeCorners(obj){
 	}
 }
 
-export { printError, handleUserInterface, updateDownloadProgress, playAudioTrack, createCorners, showLoadinOverlay }
+export { printError, handleUserInterface, updateDownloadProgress, playAudioTrack, stopAudioTrack, createCorners, showLoadinOverlay, isPlaying, audio }

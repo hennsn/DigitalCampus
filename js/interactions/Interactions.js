@@ -4,7 +4,7 @@ import { OrbitControls } from 'https://cdn.skypack.dev/three@0.135.0/examples/js
 import { VRButton } from 'https://cdn.skypack.dev/three@0.135.0/examples/jsm/webxr/VRButton.js'
 
 import { clamp, degToRad } from '../Maths.js'
-import { playAudioTrack } from '../UserInterface.js'
+import { audio, isPlaying, playAudioTrack, stopAudioTrack } from '../UserInterface.js'
 import { xToLon, yToHeight, zToLat } from '../environment/Coordinates.js'
 import { updateSparkles } from '../environment/Sparkles.js'
 import { Door, InventoryObject, InfoObject, CustomInteractable } from './Interactable.js'
@@ -30,6 +30,7 @@ let overlayActive = false
 
 ///COUNTER FOR STORY (we'll see if it works that way or if it's to simple) /////
 let story = 0
+let once = 0
 //array für alle modelle die wir einsammeln
 const inInventory = ["Handy", "USB Stick"]
 inventory.innerHTML += "Handy <br> USB Stick"
@@ -67,6 +68,7 @@ const CorridorEntryPointFromHS1 = new THREE.Vector3(-16.9378, 3.8484, -34.7462)
 const CorridorEntryPointFromOutside = new THREE.Vector3(1.4122, 1.4596, -20.0527)
 const HS1EntryPointFromCorridor = new THREE.Vector3(-15.5154, 3.8484, -35.038)
 
+//DOORS//
 const abbeanumDoorEntranceInteractable = 
 	new Door(undefined, undefined, CorridorEntryPointFromOutside)
 
@@ -79,26 +81,47 @@ const hs1DoorEntranceInteractable =
 const hs1DoorExitInteractable =
 	new Door(undefined, undefined, CorridorEntryPointFromHS1)
 
-const trashcanInteractable =
-	new InventoryObject(undefined, undefined)
-
+//INVENTORY ONBJECTS//
 const stickInteractable =
-	new InventoryObject(undefined, undefined)
-
-const laptopInteractable =
-	new CustomInteractable(undefined, undefined, undefined)
-
-const laptop2Interactable =
-	new InventoryObject(undefined, undefined)
-
-const blackboardsInteractable = 
 	new InventoryObject(undefined, undefined)
 
 const cupInteractable =
 	new InventoryObject(undefined, undefined)
 
+//NOT REALLY NEEDED//
+const blackboardsInteractable = 
+	new InventoryObject(undefined, undefined)
+
+const trashcanInteractable =
+	new InventoryObject(undefined, undefined)
+
+//CUSTOMS//
+const laptopInteractable =
+	new CustomInteractable(undefined, undefined, () => {
+		console.log('laptop1 was clicked')
+		if(once == 2){
+			playAudioTrack('audio/003_Falscher_Stick.mp3');
+			once = 1
+			story = 2
+		}
+		interactables[4].unlocked = false
+		inventory.innerHTML = "Handy <br> *falscher* USB Stick"
+	})
+
+const laptop2Interactable =
+	new CustomInteractable(undefined, undefined, () => {
+		console.log('laptopt2 was clicked')
+	})
+
+const coffeeMachineInteractable =
+	new CustomInteractable(undefined, undefined, () => {
+		console.log('coffee machine was clicked')
+	})
+
 const beamerInteractable =
-	new CustomInteractable(undefined, undefined, undefined)
+	new CustomInteractable(undefined, undefined, () => {
+		console.log('beamer was clicked')
+	})
 
 const abbeanumInfoBoardInteractable =
 	new InfoObject(undefined, undefined)
@@ -110,19 +133,26 @@ const tvCuboidInteractable =
 	})
 
 const HS2DoorDummyInteractable =
-	new CustomInteractable(undefined, undefined)
+	new CustomInteractable(undefined, undefined, () => {
+		console.log('hs2door was clicked')
+	})
 
 const preproomDoorDummyInteractable = 
-	new CustomInteractable(undefined, undefined)
+	new CustomInteractable(undefined, undefined, () => {
+		console.log('preproom was clicked')
+	})
+
 
 const bathroomDoorDummyBasementInteractable =
-	new CustomInteractable(undefined, undefined)
+	new CustomInteractable(undefined, undefined, () => {
+		console.log('bathroom basement was clicked')
+	})
 
 const bathroomDoorDummyUpstairsInteractable =
-	new CustomInteractable(undefined, undefined)
+	new CustomInteractable(undefined, undefined, () => {
+		console.log('bathroom upstairs was clicked')
+	})
 
-const coffeeMachineInteractable =
-	new CustomInteractable(undefined, undefined)
 
 function createInteractions(scene, camera, renderer, mouse){
 
@@ -214,7 +244,8 @@ function createInteractions(scene, camera, renderer, mouse){
 			case 'Z':
 				// a simple audio test: press z to play the audio
 				//playAudioTrack('audio/springTestSound.wav');
-				console.log(story) //test where in story we are
+				console.log('story: ', story) //test where in story we are
+				console.log('once: ', once) //teste once variable 
 				if(overlayActive == false){ 
 					openText()
 				} else {
@@ -337,7 +368,7 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 	//const abbeanum = scene.getObjectByName('Abbeanum')
 	const abbeanumInside = scene.getObjectByName('AbbeanumInside')
 	const constabbeanumCorridorCollisions = scene.getObjectByName('AbbeanumCorridorCollisions')
-//	const abbeanumGround = scene.getObjectByName('AbbeanumGround')
+	//const abbeanumGround = scene.getObjectByName('AbbeanumGround')
 	const cityCenter = scene.getObjectByName('City Center')
 	const terrain = scene.getObjectByName('Terrain')
 	const abbeanumHS1 = scene.getObjectByName('AbbeanumHS1')
@@ -465,19 +496,7 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 							preproomDoorDummyInteractable, bathroomDoorDummyBasementInteractable,
 							bathroomDoorDummyUpstairsInteractable, abbeanumInfoBoardInteractable,
 							coffeeMachineInteractable]
-							.filter(interactable => interactable.interactableModel)
-
-	/////STOP INVENTORY OBJECTS INTERACTION////////////
-	/*
-	for(let lock=5; lock < interactables.length; lock++){
-		if(scene==flurScene){
-			interactables[lock].unlocked = false;
-			//console.log(interactables[6].unlocked)
-		}
-	//console.log('name: ', interactables[lock].interactableModel.name)
-	//console.log('is lcoked?: ', interactables[lock].unlocked)
-	}*/
-	
+							.filter(interactable => interactable.interactableModel)	
 	acceleration.set(0,0,0)
 	var dtx = clamp(dt * 10, 0, 1) // the lower this number is, the smoother is the motion
 	
@@ -555,46 +574,53 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 
 	/*To do:
 	Find out how to completely disable keyboard input during voice lines*/
-
+	
 	////////////////////////
 	/// MISSION TEXT BOX ///
 	///////////////////////
+	if(scene == outsideScene && story == 0 && keyWasPressed == true || wasClicked == true){
+		if(once == 0){
+			playAudioTrack('audio/001_Einleitung_Spawn.mp3')
+			once = 1
+		}
+	}
 	if(scene == flurScene && story == 0){
 		missionText.innerHTML = "Gehe zum Hörsaal 1"
 		story = 1
-		//interactables[5].unlocked = true //ONLY WORKS ONCE
-		//console.log(interactables[5].unlocked)
 	}
 	if(scene == hs1Scene && story == 1){
-		missionText.innerHTML = "Gehe zum Beameranschluss bei der Tafel"
-		story = 1
-
-	}
-	/*if(scene==flurScene){ //IS TRUE BUT LAPTOP NOT INTERACTABLE
-		interactables[5].unlocked=true
-	}*/
-
-	//ALSO DOESN'T WORK: (doesn't work with boolean either)
-	/*if(story <= 1){
-		for(let lock=5; lock < interactables.length; lock++){
-			if(scene==flurScene){
-			interactables[lock].unlocked = false;
-			//console.log(interactables[6].unlocked)
-			}
-			//console.log('name: ', interactables[lock].interactableModel.name)
-			//console.log('is lcoked?: ', interactables[lock].unlocked)
+		missionText.innerHTML = "Gehe zum Laptop und teste deine Powerpoint"
+		if(once == 1){
+			//HIER NOCH BILD ÖFFNEN
+			playAudioTrack('audio/002_Hier_Laptop.mp3')
+			once = 2
 		}
-	}*/
+		interactables[4].unlocked = true
+	}
+	if(scene == hs1Scene && story == 2 ){
+		missionText.innerHTML = "Ruf Lisa an"
+		document.getElementById("button").classList.add("active")
+		button.addEventListener('click', () =>{
+			if(once == 1){
+				playAudioTrack("audio/004_Telefonat.mp3")
+				once = 2
+			}
+		})
+		if(once == 2){
+			document.getElementById("button").classList.remove("active")
+			story = 3
+		}
+	}
+	if(story == 3){
+		missionText.innerHTML = "Gehe Kai, Henrik und Jan um einen Laptop anflehen"
+		interactables[12].unlocked = true
+	}
 	
-
 	/////////////////////////////
 	/////MOUSE INTERACTIONS//////
 	////////////////////////////
 	if(wasClicked == true){
 		if(abbeanumDoorEntrance) abbeanumDoorEntrance.visible = true
-		if(currentInteractables.length >= 1){
-			console.log('currentInteractables: ', currentInteractables[0].interactableModel.name)
-		}
 		//console.log(interactables[5].unlocked) //just for debugging reasons, do not click outside
 
 		mousecaster.setFromCamera( mouse, camera );
@@ -602,15 +628,15 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 		//////Array of clickable objects
 		const clickableObjects = (
 			scene == outsideScene ? [abbeanumDoorEntrance, stick] :
-			scene == flurScene ? [abbeanumDoorExit, trashcan, hs1DoorEntrance] :
-			scene == hs1Scene ? [hs1DoorExit, laptop, laptop2, blackboards, cup, beamer] :
+			scene == flurScene ? [abbeanumDoorExit, trashcan, hs1DoorEntrance, coffeeMachine, HS2DoorDummy] :
+			scene == hs1Scene ? [hs1DoorExit, laptop, laptop2, cup, beamer] :
 			[]
 		).filter(model => !!model)
 
 		const mouseIntersects = mousecaster.intersectObjects(clickableObjects);
 		for ( let i = 0; i < mouseIntersects.length; i ++ ) {
 		
-			//mainly needed for debugging
+			//ordnet clickableObjects
 			if(clickableObjects != undefined && clickableObjects.length > 0){
 				clickableObjects.sort((e1,e2) => {
 					if(camera.position.distanceTo(e1.position) > camera.position.distanceTo(e2.position)){
@@ -619,19 +645,23 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 						return -1
 					}
 				})
-				//console.log('Using: ', currentInteractables[0].interactableModel.name) //another way of adressing
-				//console.log('check: ', clickableObjects[0].name)
-				if(currentInteractables.length >= 1 && clickableObjects[0].name == currentInteractables[0].interactableModel.name){
+				if(currentInteractables.length > 0 && clickableObjects[0].name == currentInteractables[0].interactableModel.name){
 					currentInteractables[0].interact(scene, camera)
 				}else{
-					/*console.log('clickableObjects: ', clickableObjects[0].name)
-					if(currentInteractables.length >= 1){
-						console.log('currentInteractables: ', currentInteractables[0].interactableModel.name)
-					}*/
-				}
-				
+					
+				}	
 			}
 		}
+
+		//DEBUGGING
+		/*
+		if(currentInteractables.length >= 1 && clickableObjects.length > 0){
+			console.log('currentInteractables: ', currentInteractables[0].interactableModel.name)
+			console.log('clicakable: ', clickableObjects[0].name)
+			console.log('all clickable: ', clickableObjects)
+			
+		}*/
+		
 
 		/*Just checks one object
 		const mouseIntersects = mousecaster.intersectObject(abbeanumDoor);

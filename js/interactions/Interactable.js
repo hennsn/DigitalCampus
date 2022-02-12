@@ -3,7 +3,7 @@ import {printInventory} from './Interactions.js'
 import { playAudioTrack, showLoadinOverlay } from '../UserInterface.js'
 
 class Interactable {
-    constructor(interactableModel, scene, unlocked=true) { //merge changed scenes to scene
+    constructor(interactableModel, scene, unlocked) { //merge changed scenes to scene //unlocked=true
         this.interactableModel = interactableModel
         this.position = interactableModel ? interactableModel.position : undefined
         this.scene = scene
@@ -11,7 +11,7 @@ class Interactable {
         this.interactionRadius = 3
         // in ms
         this.interactionInterval = 300
-        this.unlocked = unlocked //tried commenting it out and declare in subclasses, worked for doors, NOT for inventory objects 
+        //this.unlocked = unlocked //tried commenting it out and declare in subclasses, worked for doors, NOT for inventory objects 
     }
 
     canInteract(currentScene, camera, lastInteractionTime) {
@@ -56,7 +56,7 @@ class Door extends Interactable {
         super(interactableModel, scene)
         // the player gets teleported to entryPoint upon interacting with this door
         this.entryPoint = entryPoint
-        //this.unlocked = true
+        this.unlocked = true
     }
 
     #openDoor(currentScene, camera){
@@ -79,6 +79,7 @@ class Door extends Interactable {
 class InventoryObject extends Interactable {
     constructor(interactableModel, scene) {
         super(interactableModel, scene)
+        this.unlocked = false
     }
 
     #takeObject(){
@@ -104,6 +105,7 @@ class InventoryObject extends Interactable {
 class InfoObject extends Interactable {
     constructor(interactableModel, scene) {
         super(interactableModel, scene)
+        this.unlocked = true
     }
 
     interact(){
@@ -122,6 +124,7 @@ class CustomInteractable extends Interactable {
         super(interactableModel, scene)
         // custom interaction function
         this.interactionFunction = interactionFunction
+        this.unlocked = false
     }
 
     interact(){
