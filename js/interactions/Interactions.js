@@ -4,7 +4,7 @@ import { OrbitControls } from 'https://cdn.skypack.dev/three@0.135.0/examples/js
 import { VRButton } from 'https://cdn.skypack.dev/three@0.135.0/examples/jsm/webxr/VRButton.js'
 
 import { clamp, degToRad } from '../Maths.js'
-import { audio, isPlaying, playAudioTrack, stopAudioTrack } from '../UserInterface.js'
+import { audio, audioStory, isPlaying, playAudioTrack, playStoryTrack, stopAudioTrack } from '../UserInterface.js'
 import { xToLon, yToHeight, zToLat } from '../environment/Coordinates.js'
 import { updateSparkles } from '../environment/Sparkles.js'
 import { Door, InventoryObject, InfoObject, CustomInteractable } from './Interactable.js'
@@ -34,6 +34,23 @@ let once = 0
 //array für alle modelle die wir einsammeln
 const inInventory = ["Handy", "USB Stick"]
 inventory.innerHTML += "Handy <br> USB Stick"
+
+//overlay//
+const overlay = document.getElementById('overlay');
+overlay.addEventListener('click', closeText);
+
+function openText(){
+	//document.getElementById("infoPicture").classList.add("active");
+	document.getElementById("overlay").classList.add("active");
+	overlayActive = true
+}
+
+function closeText(){
+	//document.getElementById("infoPicture").classList.remove("active");
+	document.getElementById("overlay").classList.remove("active");
+	overlayActive = false
+}
+
 
 // the user
 // block user for cutscenes 
@@ -100,7 +117,7 @@ const laptopInteractable =
 	new CustomInteractable(undefined, undefined, () => {
 		console.log('laptop1 was clicked')
 		if(once == 2){
-			playAudioTrack('audio/003_Falscher_Stick.mp3');
+			playStoryTrack('audio/003_Falscher_Stick.mp3');
 			once = 1
 			story = 2
 		}
@@ -135,6 +152,18 @@ const tvCuboidInteractable =
 const HS2DoorDummyInteractable =
 	new CustomInteractable(undefined, undefined, () => {
 		console.log('hs2door was clicked')
+		if(story == 3 && isPlaying == false){
+			if(once == 2){
+				playStoryTrack('audio/creaking-door-2.mp3') //just dummy placeholder
+				while(isPlaying == true){
+					openText() //opens overlay
+				}
+				story = 4
+				once = 1
+			}	
+			interactables[11].unlocked = false //locks hs2 door
+			inventory.innerHTML = "Handy <br> *falscher* USB Stick "
+		}
 	})
 
 const preproomDoorDummyInteractable = 
@@ -155,23 +184,6 @@ const bathroomDoorDummyUpstairsInteractable =
 
 
 function createInteractions(scene, camera, renderer, mouse){
-
-	
-	//OVERLAY//
-	const overlay = document.getElementById('overlay');
-	overlay.addEventListener('click', closeText);
-
-    function openText(){
-        //document.getElementById("infoPicture").classList.add("active");
-        document.getElementById("overlay").classList.add("active");
-		overlayActive = true
-    }
-
-    function closeText(){
-        //document.getElementById("infoPicture").classList.remove("active");
-        document.getElementById("overlay").classList.remove("active");
-		overlayActive = false
-    }
 
 	// change to a more intuitive rotation order
 	camera.rotation.order = 'YXZ'
@@ -242,15 +254,15 @@ function createInteractions(scene, camera, renderer, mouse){
 				break;
 			case 'z':
 			case 'Z':
-				// a simple audio test: press z to play the audio
-				//playAudioTrack('audio/springTestSound.wav');
+				// MAI'S DEBUGGING KEY
 				console.log('story: ', story) //test where in story we are
 				console.log('once: ', once) //teste once variable 
-				if(overlayActive == false){ 
+				console.log('isPlaying: ', isPlaying)
+				/*if(overlayActive == false){ 
 					openText()
 				} else {
 					closeText()
-				}
+				}*/
 				break;
 			case 'h': 
 			case 'H':
@@ -295,6 +307,18 @@ function createInteractions(scene, camera, renderer, mouse){
 					if(message.length > 0){
 						sendMultiplayerMessage(message)
 					}
+				}
+				break
+			case 'ö':
+				story ++
+				break
+			case 'ä':
+				story --
+			case 'ü':
+				if(once == 1){
+					once =2
+				}else{
+					once = 1 
 				}
 				break
 		}
@@ -461,7 +485,7 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 
 	const preproomDoorDummy = scene.getObjectByName('PreproomDoorDummy')
 	if(preproomDoorDummy){
-		preproomDoorDummyInteractable.setInteractableModel(HS2DoorDummy)
+		preproomDoorDummyInteractable.setInteractableModel(preproomDoorDummy)
 		preproomDoorDummyInteractable.scene = flurScene
 	}
 
@@ -580,9 +604,14 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 	///////////////////////
 	if(scene == outsideScene && story == 0 && keyWasPressed == true || wasClicked == true){
 		if(once == 0){
-			playAudioTrack('audio/001_Einleitung_Spawn.mp3')
+			playStoryTrack('audio/001_Einleitung_Spawn.mp3')
 			once = 1
 		}
+		//block Abbeanum door?
+	}
+	if(once == 1 && scene == outsideScene && isPlaying == false){
+		missionText.innerHTML = "Gehe ins Abbeanum"
+		//unlock abbeanum door?
 	}
 	if(scene == flurScene && story == 0){
 		missionText.innerHTML = "Gehe zum Hörsaal 1"
@@ -592,28 +621,32 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 		missionText.innerHTML = "Gehe zum Laptop und teste deine Powerpoint"
 		if(once == 1){
 			//HIER NOCH BILD ÖFFNEN
-			playAudioTrack('audio/002_Hier_Laptop.mp3')
+			playStoryTrack('audio/002_Hier_Laptop.mp3')
 			once = 2
 		}
-		interactables[4].unlocked = true
+		interactables[3].unlocked = false //locks player in hs1
+		interactables[4].unlocked = true //unlocks laptop
 	}
-	if(scene == hs1Scene && story == 2 ){
+	if(scene == hs1Scene && story == 2 && isPlaying == false){
 		missionText.innerHTML = "Ruf Lisa an"
 		document.getElementById("button").classList.add("active")
 		button.addEventListener('click', () =>{
 			if(once == 1){
-				playAudioTrack("audio/004_Telefonat.mp3")
+				playStoryTrack("audio/004_Telefonat.mp3")
+				missionText.innerHTML = ""
+				document.getElementById("button").classList.remove("active")
 				once = 2
 			}
 		})
 		if(once == 2){
-			document.getElementById("button").classList.remove("active")
 			story = 3
+			document.getElementById("button").classList.remove("active")
+			interactables[3].unlocked = true //unlocks hs1 exit
 		}
 	}
 	if(story == 3){
 		missionText.innerHTML = "Gehe Kai, Henrik und Jan um einen Laptop anflehen"
-		interactables[12].unlocked = true
+		interactables[11].unlocked = true
 	}
 	
 	/////////////////////////////

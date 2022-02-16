@@ -4,6 +4,7 @@ import { mix, degToRad } from './Maths.js'
 
 //boolean to check if audio is playing
 let isPlaying = false
+let audioStory
 let audio
 
 function printError(error, printToUser){
@@ -93,13 +94,21 @@ function handleUserInterface(dt){
 function playAudioTrack(srcUrl){
 	audio = new Audio(srcUrl) //var audio
 	audio.play()
-	if(audio.ended){ //audio.currentTime && !audio.paused 
-		isPlaying = false
-	}else{
-		isPlaying = true
-	}
 	return audio
 }
+
+function playStoryTrack(srcUrl){
+	isPlaying = true
+	audioStory = new Audio(srcUrl) 
+	audioStory.play()
+	audioStory.addEventListener("ended", function(){
+		console.log('story audio ended')
+		isPlaying = false
+	})
+	return audioStory
+}
+
+
 
 function stopAudioTrack(audio) {
     audio.pause();
@@ -160,4 +169,4 @@ function removeCorners(obj){
 	}
 }
 
-export { printError, handleUserInterface, updateDownloadProgress, playAudioTrack, stopAudioTrack, createCorners, showLoadinOverlay, isPlaying, audio }
+export { printError, handleUserInterface, updateDownloadProgress, playAudioTrack, playStoryTrack, stopAudioTrack, createCorners, showLoadinOverlay, isPlaying, audio, audioStory}
