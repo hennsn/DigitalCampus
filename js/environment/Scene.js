@@ -284,7 +284,7 @@ function fillScene(scene) {
 	.catch(printError)
 	
 	//TODO: place in the right scene (hs1) when models finished
-	glTFLoader.loadAsync('models/samples/laptop.glb', e => updateDownloadProgress('laptop', e))
+	glTFLoader.loadAsync('models/samples/laptop1.glb', e => updateDownloadProgress('laptop', e))
 	.then(gltf => {
 		const model = gltf.scene
 		placeLatLonObject(model, 'Laptop', 50.93424693, 11.58070168, 184.212, -90)
@@ -293,7 +293,7 @@ function fillScene(scene) {
 	.catch(printError)
 
 
-	glTFLoader.loadAsync('models/samples/laptop_2.glb', e => updateDownloadProgress('laptop2', e))
+	glTFLoader.loadAsync('models/samples/laptop2.glb', e => updateDownloadProgress('laptop2', e))
 	.then(gltf => {
 		const model = gltf.scene
 		placeLatLonObject(model, 'Laptop2', 50.93424693, 11.58070168, 184.212, -90) //rename no longer needed
