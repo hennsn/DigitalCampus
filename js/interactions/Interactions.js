@@ -141,6 +141,7 @@ const tvCuboidInteractable =
 				if(!inInventory.includes('brandneues HDMI-Kabel')){
 					inInventory.push('brandneues HDMI-Kabel')
 				}
+				missionText.innerHTML = "Schnell weg - du warst nie hier!"
 				printInventory()
 			}, 5000)
 			updateStory() //to 6
