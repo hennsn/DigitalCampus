@@ -22,8 +22,11 @@ import { fillScene } from './environment/Scene.js'
 import { createTerrain } from './environment/Terrain.js'
 import { handleUserInterface } from './UserInterface.js'
 import { createInteractions, handleInteractions } from './interactions/Interactions.js'
+import {startStory} from './interactions/Story.js'
 import { updateMultiplayer } from './environment/Multiplayer.js'
 
+
+//const scene = outsideScene
 ////////////
 // camera //
 ////////////
@@ -146,6 +149,7 @@ function mainLoop(){
 	const deltaTime = clamp((time-lastTime)/1e3, 1e-3, 1.0)
 	lastTime = time
 
+	startStory(scene)
 	// animation / physics stuff goes here
 	handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, deltaTime, outlinePass)
 	handleUserInterface(deltaTime)
@@ -166,3 +170,5 @@ function mainLoop(){
 }
 
 renderer.setAnimationLoop(mainLoop) // requestAnimationFrame funktioniert nicht für WebXR, aber die hier funktioniert für mit und ohne :)
+
+//export {scene}

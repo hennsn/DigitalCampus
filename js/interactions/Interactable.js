@@ -1,6 +1,7 @@
 import {inInventory} from './Interactions.js'
 import {printInventory} from './Interactions.js'
-import { playAudioTrack, showLoadinOverlay } from '../UserInterface.js'
+import { audio, audioStory, doNow, isPlaying, playAudioTrack, playStoryTrack, stopStoryTrack, showLoadinOverlay } from '../UserInterface.js'
+import { updateOnce, updateStory, once, story } from './Story.js'
 
 class Interactable {
     constructor(interactableModel, scene, unlocked) { //merge changed scenes to scene //unlocked=true
@@ -84,12 +85,17 @@ class InventoryObject extends Interactable {
 
     #takeObject(){
         //console.log('Inventory: ', inInventory)
+        if(once == 7 && this.interactableModel.name == 'Cup'){
+            updateOnce() //to 8
+            missionText.innerHTML = "Auf zur Kaffeemaschine"
+            playStoryTrack('audio/008_Kaffeetasse.mp3')
+        }
         if(!inInventory.includes(this.interactableModel.name)){
+            //maybe remove object instead?
+            this.unlocked = false // for some reason does not worrk //
+            this.interactableModel.visible = false
             inInventory.push(this.interactableModel.name)
             printInventory()
-            //maybe remove object instead?
-            this.interactableModel.visible = false
-            //this.unlocked = false // for some reason does not worrk //
         }else{
             console.log('already stored')
         }

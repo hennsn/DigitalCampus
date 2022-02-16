@@ -6,6 +6,8 @@ import { mix, degToRad } from './Maths.js'
 let isPlaying = false
 let audioStory
 let audio
+let setback
+let doNow = false
 
 function printError(error, printToUser){
 	console.error(error)
@@ -101,6 +103,9 @@ function playStoryTrack(srcUrl){
 	isPlaying = true
 	audioStory = new Audio(srcUrl) 
 	audioStory.play()
+	audioStory.onloadedmetadata = function(){
+		console.log(audioStory.duration)
+	}
 	audioStory.addEventListener("ended", function(){
 		console.log('story audio ended')
 		isPlaying = false
@@ -108,11 +113,18 @@ function playStoryTrack(srcUrl){
 	return audioStory
 }
 
+function stopStoryTrack(audioStory) {
+    audioStory.pause();
+    audioStory.currentTime = 0;
+}
 
-
-function stopAudioTrack(audio) {
-    audio.pause();
-    audio.currentTime = 0;
+//doesn't work
+function queueAudioEvent(setback){
+	console.log('setback: ', setback)
+	audioStory.onloadedmetadata = function(){
+		console.log(audioStory.duration)
+		console.log(audioStory.currentTime)
+	}
 }
 
 var lastCorners = null
@@ -169,4 +181,4 @@ function removeCorners(obj){
 	}
 }
 
-export { printError, handleUserInterface, updateDownloadProgress, playAudioTrack, playStoryTrack, stopAudioTrack, createCorners, showLoadinOverlay, isPlaying, audio, audioStory}
+export { printError, handleUserInterface, updateDownloadProgress, playAudioTrack, playStoryTrack, stopStoryTrack, createCorners, showLoadinOverlay, isPlaying, audio, audioStory, queueAudioEvent, doNow}
