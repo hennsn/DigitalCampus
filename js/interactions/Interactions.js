@@ -33,7 +33,7 @@ inventory.innerHTML += "Handy <br> USB Stick"
 
 // the user
 // block user for cutscenes 
-let user = { height: 1.7, eyeHeight: 1.6, speed: 1.3, turnSpeed: 0.03, insideSpeed: 0.7, outsideSpeed: 1.3, isIntersecting: false, }
+let user = { height: 1.7, eyeHeight: 1.6, speed: 1.3, turnSpeed: 0.03, insideSpeed: 0.7, outsideSpeed: 1.3, isIntersecting: false, } //add let isBlocked to block user input
 //const distanceToWalls = 1
 let lastInteractionTime = Date.now()
 
