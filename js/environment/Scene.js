@@ -86,7 +86,7 @@ function fillScene(scene) {
 	glTFLoader.loadAsync('models/samples/stick.glb', e => updateDownloadProgress('stick', e))
 	.then(gltf => {
 		const model = gltf.scene
-		placeLatLonObject(model, 'Stick', 50.93414679, 11.58076147, 182.882, 0)
+		placeLatLonObject(model, 'Stock', 50.93414679, 11.58076147, 182.882, 0)
 		model.rotation.x += 10
 		outsideScene.add(model)
 	})
@@ -306,7 +306,7 @@ function fillScene(scene) {
 	glTFLoader.loadAsync('models/samples/cup.glb', e => updateDownloadProgress('cup', e))
 	.then(gltf => {
 		const model = gltf.scene
-		placeLatLonObject(model, 'Cup', 50.93430969, 11.58055729, 185.247, 0)
+		placeLatLonObject(model, 'Kaffeetasse', 50.93430969, 11.58055729, 185.247, 0) //ehemals Cup
 		hs1Scene.add(model)
 	})
 	.catch(printError)

@@ -1,5 +1,5 @@
 import {inInventory} from './Interactions.js'
-import {printInventory} from './Interactions.js'
+import {printInventory, interactables} from './Interactions.js'
 import { audio, audioStory, doNow, isPlaying, playAudioTrack, playStoryTrack, stopStoryTrack, showLoadinOverlay } from '../UserInterface.js'
 import { updateOnce, updateStory, once, story } from './Story.js'
 
@@ -85,14 +85,21 @@ class InventoryObject extends Interactable {
 
     #takeObject(){
         //console.log('Inventory: ', inInventory)
-        if(once == 7 && this.interactableModel.name == 'Cup'){
+        if(once == 7 && this.interactableModel.name == 'Kaffeetasse'){
             updateOnce() //to 8
             missionText.innerHTML = "Auf zur Kaffeemaschine"
             playStoryTrack('audio/008_Kaffeetasse.mp3')
+            interactables[16].unlocked = true //unlocks coffee maschine
+        }
+        if(once == 12 && this.interactableModel.name == 'Stock'){
+            updateOnce() //to 13
+            missionText.innerHTML = "Verprügel den Beamer"
+            playStoryTrack('audio/012_Mordwaffe.mp3')
+            interactables[10].unlocked = true //beamer
         }
         if(!inInventory.includes(this.interactableModel.name)){
             //maybe remove object instead?
-            this.unlocked = false // for some reason does not worrk //
+            this.unlocked = false // apparently now works
             this.interactableModel.visible = false
             inInventory.push(this.interactableModel.name)
             printInventory()

@@ -149,7 +149,7 @@ function mainLoop(){
 	const deltaTime = clamp((time-lastTime)/1e3, 1e-3, 1.0)
 	lastTime = time
 
-	startStory(scene)
+	startStory(scene, mousecaster)
 	// animation / physics stuff goes here
 	handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, deltaTime, outlinePass)
 	handleUserInterface(deltaTime)

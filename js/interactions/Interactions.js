@@ -26,6 +26,8 @@ const keyboard = window.keyboard = {}
 let wasClicked = false
 //boolean for inventory
 let inventoryOpen = false
+//boolean for user input
+let isBlocked = false
 
 //array für alle modelle die wir einsammeln
 const inInventory = ["Handy", "USB Stick"]
@@ -33,7 +35,7 @@ inventory.innerHTML += "Handy <br> USB Stick"
 
 // the user
 // block user for cutscenes 
-let user = { height: 1.7, eyeHeight: 1.6, speed: 1.3, turnSpeed: 0.03, insideSpeed: 0.7, outsideSpeed: 1.3, isIntersecting: false, } //add let isBlocked to block user input
+let user = { height: 1.7, eyeHeight: 1.6, speed: 1.3, turnSpeed: 0.03, insideSpeed: 0.7, outsideSpeed: 1.3, isIntersecting: false, isBlocked: false} //add let isBlocked to block user input
 //const distanceToWalls = 1
 let lastInteractionTime = Date.now()
 
@@ -114,16 +116,67 @@ const laptopInteractable =
 const laptop2Interactable =
 	new CustomInteractable(undefined, undefined, () => {
 		console.log('laptopt2 was clicked')
+		if(once == 11 && story == 7){
+			updateOnce() //to 12
+			inInventory.pop()
+			printInventory()
+			interactables[7].unlocked = false //locks laptop2
+			interactables[3].unlocked = false //locks player in hs1
+			playStoryTrack('audio/011_Physische_Intervention_Geplant.mp3')
+			missionText.innerHTML = "Sei entrüstet"
+			setTimeout(function(){
+				interactables[3].unlocked = true //unlocks hs2
+				interactables[5].unlocked = true //unlocks stick
+				missionText.innerHTML = "Finde einen Stock"
+			}, 17000)
+		}
 	})
 
 const coffeeMachineInteractable =
 	new CustomInteractable(undefined, undefined, () => {
 		console.log('coffee machine was clicked')
+		if(once==8){
+			updateOnce() //to 9
+			updateStory() //to 7
+			blockUserInput()
+			inInventory.pop()
+			printInventory()
+			interactables[16].unlocked = false //locks coffee machine
+			playStoryTrack('audio/009_Zu_Viel_Kaffee.mp3')
+			interactables[14].unlocked = true //unlocks basement bathroom
+			interactables[15].unlocked = true //unlocks hallway bathroom
+			setTimeout(function(){
+				allowUserInput()
+				missionText.innerHTML = "Finde die Toiletten - und zwar schnell!"
+			}, 12000)
+		}
 	})
 
 const beamerInteractable =
 	new CustomInteractable(undefined, undefined, () => {
 		console.log('beamer was clicked')
+		if(once == 13 && story == 7){
+			updateOnce() //to 14
+			updateStory() //to 8
+			blockUserInput()
+			playStoryTrack('audio/013_Verfehlt.mp3')
+			setTimeout(function(){
+				allowUserInput()
+				missionText.innerHTML = "Mach ihn fertig!"
+			}, 4000)
+		}
+		if(once == 14 && story == 8 && isPlaying == false){
+			updateOnce() //to 15
+			interactables[10].unlocked = false //locks beamer
+			blockUserInput()
+			playStoryTrack('audio/014_Clonk_Beamer.mp3')
+			inInventory.pop()
+			printInventory()
+			setTimeout(function(){
+				allowUserInput()
+				missionText.innerHTML = "Geschafft - nimm deinen rechtmäßigen Platz am Pult ein"
+			}, 5000)
+		}
 	})
 
 const abbeanumInfoBoardInteractable =
@@ -132,8 +185,10 @@ const abbeanumInfoBoardInteractable =
 const tvCuboidInteractable =
 	new CustomInteractable(undefined, undefined, () => {
 		if(once == 6 && isPlaying == false){
-			interactables[10].unlocked = false //locks TV
+			interactables[11].unlocked = false //locks TV
+			blockUserInput()
 			updateOnce() //to 7
+			updateStory() //to 6
 			playStoryTrack('audio/007_Kabel_Gefunden_kaffee.mp3')
 			setTimeout(function(){
 				scene.getObjectByName('AbbeanumInside').getObjectByName('Fernseher_aus').visible = true
@@ -144,7 +199,9 @@ const tvCuboidInteractable =
 				missionText.innerHTML = "Schnell weg - du warst nie hier!"
 				printInventory()
 			}, 5000)
-			updateStory() //to 6
+			setTimeout(function(){
+				allowUserInput()
+			}, 5500)
 		}
 	})
 
@@ -152,7 +209,7 @@ const HS2DoorDummyInteractable =
 	new CustomInteractable(undefined, undefined, () => {
 		console.log('hs2door was clicked')
 		if(story == 3 && isPlaying == false){
-			interactables[11].unlocked = false //locks hs2 door
+			interactables[12].unlocked = false //locks hs2 door
 			if(once == 4){
 				updateOnce() //to 5
 				playStoryTrack('audio/creaking-door-2.mp3') //just dummy placeholder
@@ -171,11 +228,31 @@ const preproomDoorDummyInteractable =
 const bathroomDoorDummyBasementInteractable =
 	new CustomInteractable(undefined, undefined, () => {
 		console.log('bathroom basement was clicked')
+		if(once == 10 && story == 7){
+			updateOnce() //to 11
+			openText()
+			interactables[14].unlocked = false //locks basement bathroom
+			interactables[7].unlocked = true //unlocks laptop2
+			playStoryTrack('audio/010_Toilettengang.mp3')
+			missionText.innerHTML = ""
+			setTimeout(function(){
+				missionText.innerHTML = "Beweise deine Informatik-Kenntnisse indem du das HDMI-Kabel anschließt!"
+				closeText()
+			}, 12000)
+		}
 	})
 
 const bathroomDoorDummyUpstairsInteractable =
 	new CustomInteractable(undefined, undefined, () => {
 		console.log('bathroom upstairs was clicked')
+		if(once == 9 && story == 7){
+			updateOnce() //to 10
+			interactables[15].unlocked = false //locks hallway bathroom
+			playStoryTrack('audio/springTestSound.wav')
+			setTimeout(function(){
+				missionText.innerHTML = "DIE RICHTIGEN TOILETTEN"
+			}, 2000)
+		}
 	})
 
 let interactables = []
@@ -233,104 +310,108 @@ function createInteractions(scene, camera, renderer, mouse){
 	}
 	
 	function keyDown(event){
-		keyWasPressed = true
-		keyboard[event.key] = event.timeStamp
-		keyboard[event.keyCode] = event.timeStamp
-		switch(event.key){
-			case 'w':
-			case 'W':// tap w twice to run
-				user.isRunning = event.timeStamp - lastTimeWWasPressed < 300
-				break;
-			case 's':
-			case 'S':
-				user.isRunning = false
-				break;
-			case ' ':// space for jumping
-				if(jumpTime <= 0.0 || jumpTime >= jumpDuration * 0.75){
-					jumpTime = 0.0
-				}
-				break;
-			case 'z':
-			case 'Z':
-				// MAI'S DEBUGGING MAIN KEY
-				console.log('story: ', story) //test where in story we are
-				console.log('once: ', once) //teste once variable 
-				console.log('isPlaying: ', isPlaying)
-				console.log('inventory: ', inInventory)
-				/*if(overlayActive == false){ 
-					openText()
-				} else {
-					closeText()
-				}*/
-				break;
-			case 'h': 
-			case 'H':
-				// print the current camera position in world coordinates
-				// can be used to place objects
-				console.log('player')
-				console.log(
-					camera.position,
-					formatNumber(zToLat(camera.position.z), 8) + ", " +
-					formatNumber(xToLon(camera.position.x), 8) + ", " +
-					formatNumber(yToHeight(camera.position.y), 3)
-				);
-				if(window.debuggedObject)
-				{
-				console.log('\n')
-				console.log(debuggedObject.name)
-				console.log(
-					formatNumber(zToLat(debuggedObject.position.z), 8) + ", " +
-					formatNumber(xToLon(debuggedObject.position.x), 8) + ", " +
-					formatNumber(yToHeight(debuggedObject.position.y), 3) + "\n" +
-					debuggedObject.position.x + ' ' + debuggedObject.position.y + ' ' + debuggedObject.position.z 
-				)
-				}
-				break;
-			case 'q':
-			case 'Q':
-				// opens inventory
-				if(inventoryOpen == false){
-					playAudioTrack('audio/inventorySound.mp3');
-					document.getElementById("inventory").style.visibility = 'visible';
-					inventoryOpen = true
-				} else {
-					document.getElementById("inventory").style.visibility = 'hidden';
-					inventoryOpen = false
-				}
-				break;
-			case 't':
-			case 'T':
-				var message = window.prompt('Message to send:')
-				if(message){
-					message = message.trim()
-					if(message.length > 0){
-						sendMultiplayerMessage(message)
+		if(isBlocked==false){
+			keyWasPressed = true
+			keyboard[event.key] = event.timeStamp
+			keyboard[event.keyCode] = event.timeStamp
+			switch(event.key){
+				case 'w':
+				case 'W':// tap w twice to run
+					user.isRunning = event.timeStamp - lastTimeWWasPressed < 300
+					break;
+				case 's':
+				case 'S':
+					user.isRunning = false
+					break;
+				case ' ':// space for jumping
+					if(jumpTime <= 0.0 || jumpTime >= jumpDuration * 0.75){
+						jumpTime = 0.0
 					}
-				}
-				break
-			//MAI'S DEBUGGING SIDE KEYS
-			case 'ö':
-				updateStory() //story ++
-				break
-			case 'ä':
-				printInteractables()//story --
-				break
-			case 'ü':
-				updateOnce() //once ++
-				break
+					break;
+				case 'z':
+				case 'Z':
+					// MAI'S DEBUGGING MAIN KEY
+					console.log('story: ', story) //test where in story we are
+					console.log('once: ', once) //teste once variable 
+					console.log('isPlaying: ', isPlaying)
+					console.log('inventory: ', inInventory)
+					/*if(overlayActive == false){ 
+						openText()
+					} else {
+						closeText()
+					}*/
+					break;
+				case 'h': 
+				case 'H':
+					// print the current camera position in world coordinates
+					// can be used to place objects
+					console.log('player')
+					console.log(
+						camera.position,
+						formatNumber(zToLat(camera.position.z), 8) + ", " +
+						formatNumber(xToLon(camera.position.x), 8) + ", " +
+						formatNumber(yToHeight(camera.position.y), 3)
+					);
+					if(window.debuggedObject)
+					{
+					console.log('\n')
+					console.log(debuggedObject.name)
+					console.log(
+						formatNumber(zToLat(debuggedObject.position.z), 8) + ", " +
+						formatNumber(xToLon(debuggedObject.position.x), 8) + ", " +
+						formatNumber(yToHeight(debuggedObject.position.y), 3) + "\n" +
+						debuggedObject.position.x + ' ' + debuggedObject.position.y + ' ' + debuggedObject.position.z 
+					)
+					}
+					break;
+				case 'q':
+				case 'Q':
+					// opens inventory
+					if(inventoryOpen == false){
+						playAudioTrack('audio/inventorySound.mp3');
+						document.getElementById("inventory").style.visibility = 'visible';
+						inventoryOpen = true
+					} else {
+						document.getElementById("inventory").style.visibility = 'hidden';
+						inventoryOpen = false
+					}
+					break;
+				case 't':
+				case 'T':
+					var message = window.prompt('Message to send:')
+					if(message){
+						message = message.trim()
+						if(message.length > 0){
+							sendMultiplayerMessage(message)
+						}
+					}
+					break
+				//MAI'S DEBUGGING SIDE KEYS
+				case 'ö':
+					updateStory() //story ++
+					break
+				case 'ä':
+					printInteractables()//story --
+					break
+				case 'ü':
+					updateOnce() //once ++
+					break
+			}
 		}
 	}
 	
 	function keyUp(event){
-		keyWasPressed = true
-		switch(event.key){
-			case 'w':
-			case 'W':
-				lastTimeWWasPressed = keyboard[event.key]
-				break
+		if(isBlocked==false){
+			keyWasPressed = true
+			switch(event.key){
+				case 'w':
+				case 'W':
+					lastTimeWWasPressed = keyboard[event.key]
+					break
+			}
+			delete keyboard[event.key]
+			delete keyboard[event.keyCode]
 		}
-		delete keyboard[event.key]
-		delete keyboard[event.keyCode]
 	}
 	
 	// for debugging: fps/frame-time/memory usage
@@ -425,7 +506,7 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 		trashcanInteractable.scene = flurScene
 	}
 
-	const stick = scene.getObjectByName('Stick')
+	const stick = scene.getObjectByName('Stock')
 	if(stick){
 	stickInteractable.setInteractableModel(stick)
 	stickInteractable.scene = outsideScene
@@ -438,7 +519,7 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 		laptopInteractable.scene = hs1Scene
 	}
 	
-	const laptop2 = scene.getObjectByName('Laptop with Backup') //Laptop2 originally
+	const laptop2 = scene.getObjectByName('Laptop2') 
 	if(laptop2){
 		laptop2Interactable.setInteractableModel(laptop2)
 		laptop2Interactable.scene = flurScene
@@ -449,7 +530,7 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 		blackboardsInteractable.setInteractableModel(blackboards)
 		blackboardsInteractable.scene = hs1Scene
 	}
-	const cup = scene.getObjectByName('Cup')
+	const cup = scene.getObjectByName('Kaffeetasse')
 	if(cup) {
 		cupInteractable.setInteractableModel(cup)
 		cupInteractable.scene = hs1Scene
@@ -596,7 +677,7 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 	/////////////////////////////
 	/////MOUSE INTERACTIONS//////
 	////////////////////////////
-	if(wasClicked == true){
+	if(wasClicked == true && isBlocked == false){
 		if(abbeanumDoorEntrance) abbeanumDoorEntrance.visible = true
 		//console.log(interactables[5].unlocked) //just for debugging reasons, do not click outside
 
@@ -605,7 +686,7 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 		//////Array of clickable objects
 		const clickableObjects = (
 			scene == outsideScene ? [abbeanumDoorEntrance, stick] :
-			scene == flurScene ? [abbeanumDoorExit, trashcan, hs1DoorEntrance, coffeeMachine, HS2DoorDummy, tvCuboid] :
+			scene == flurScene ? [abbeanumDoorExit, trashcan, hs1DoorEntrance, coffeeMachine, HS2DoorDummy, tvCuboid, bathroomDoorDummyBasement, bathroomDoorDummyUpstairs] :
 			scene == hs1Scene ? [hs1DoorExit, laptop, laptop2, cup, beamer] :
 			[]
 		).filter(model => !!model)
@@ -664,5 +745,12 @@ function printInteractables(){
 	}
 	console.log(interactables)
 }
+//functions to toggle user input
+function blockUserInput(){
+	isBlocked = true
+}
+function allowUserInput(){
+	isBlocked = false
+}
 
-export { createInteractions, handleInteractions, inInventory, printInventory, interactables, keyWasPressed, wasClicked }
+export { createInteractions, handleInteractions, inInventory, printInventory, interactables, keyWasPressed, wasClicked, blockUserInput, allowUserInput }

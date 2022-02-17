@@ -1,5 +1,5 @@
 import { audio, audioStory, doNow, isPlaying, playAudioTrack, playStoryTrack, stopStoryTrack } from '../UserInterface.js'
-import {interactables, keyWasPressed, wasClicked, printInventory, inInventory} from './Interactions.js'
+import {interactables, keyWasPressed, wasClicked, printInventory, inInventory, blockUserInput, allowUserInput} from './Interactions.js'
 
 /*To do:
 Find out how to completely disable keyboard input during overlay*/
@@ -25,16 +25,18 @@ function openText(){
 	//document.getElementById("infoPicture").classList.add("active");
 	document.getElementById("overlay").classList.add("active");
 	overlayActive = true
+    blockUserInput()
 }
 
 function closeText(){
 	//document.getElementById("infoPicture").classList.remove("active");
 	document.getElementById("overlay").classList.remove("active");
 	overlayActive = false
+    allowUserInput()
 }
 
 
-function startStory(scene){
+function startStory(scene, mousecaster){
     //Spawn
     if(scene == outsideScene && story == 0 && keyWasPressed == true || wasClicked == true){
         if(once == 0){
@@ -66,7 +68,8 @@ function startStory(scene){
     }
     //button, dann anruf
     if(story == 2 && once == 3 && isPlaying == false){
-        interactables[4].unlocked = false
+        interactables[4].unlocked = false //locks laptop
+        interactables[6].unlocked = false //loks trashcan, needed because the trashcan misbehaves
         inInventory.pop()
         inInventory.push('*falscher* USB Stick')
 		inventory.innerHTML = "Handy <br> *falscher* USB Stick"
@@ -90,7 +93,7 @@ function startStory(scene){
     //after phone call
     if(story == 3){
         missionText.innerHTML = "Gehe Kai, Henrik und Jan um einen Laptop anflehen"
-        interactables[11].unlocked = true
+        interactables[12].unlocked = true //unlocks HS2 door
     }
     //after hs2 dialogue
     if(story == 4 && once == 5 && isPlaying == false){
@@ -108,15 +111,27 @@ function startStory(scene){
             inInventory.push('altes VGA Kabel')
         }
         printInventory()
-        interactables[10].unlocked = true //unlocks TV
+        interactables[11].unlocked = true //unlocks TV
     }
     if(once == 7 && story == 6 && isPlaying == false){
-        interactables[8].unlocked = true //unlocks cup
+        interactables[9].unlocked = true //unlocks cup
         missionText.innerHTML = "Hole die Kaffeetasse"
     }
-    if(once == 8 && story == 6 && isPlaying ==false){
-        //hier weiter mit kaffee maschine
+    if(once == 13 && story == 7){
+        mousecaster.far = 6 //adjusts mousecaster to click on beamer
     }
+    if(once == 15 && story == 8 && isPlaying == false){
+        updateOnce() //to 16
+        setTimeout(function(){
+            openText()
+            playStoryTrack('audio/016_Ende.mp3')
+            missionText.innerHTML = ""
+        }, 7000)
+        setTimeout(function(){
+            closeText()
+        }, 20000)
+    }
+    
 }
 
 export {story, once, openText, closeText, overlayActive, startStory, updateStory, updateOnce}
