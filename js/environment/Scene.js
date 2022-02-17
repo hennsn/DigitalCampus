@@ -306,7 +306,7 @@ function fillScene(scene) {
 	glTFLoader.loadAsync('models/samples/cup.glb', e => updateDownloadProgress('cup', e))
 	.then(gltf => {
 		const model = gltf.scene
-		placeLatLonObject(model, 'Cup', 50.93424200, 11.58070168, 184.232, 0)
+		placeLatLonObject(model, 'Cup', 50.93430969, 11.58055729, 185.247, 0)
 		hs1Scene.add(model)
 	})
 	.catch(printError)
