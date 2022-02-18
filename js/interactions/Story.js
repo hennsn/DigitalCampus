@@ -41,7 +41,7 @@ function startStory(scene, mousecaster){
     //Spawn
     if(scene == outsideScene && story == 0 && keyWasPressed == true || wasClicked == true){
         if(once == 0){
-            playStoryTrack('audio/001_Einleitung_Spawn.mp3') //('audio/springTestSound.wav')
+            playStoryTrack('audio/001_Einleitung_Spawn_New.mp3') //('audio/springTestSound.wav')
             once = 1
         }
         //block Abbeanum door?
