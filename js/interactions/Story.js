@@ -43,12 +43,14 @@ function startStory(scene, mousecaster){
         if(once == 0){
             playStoryTrack('audio/001_Einleitung_Spawn_New.mp3') //('audio/springTestSound.wav')
             once = 1
+            interactables[0].unlocked = false //locks abbeanum door
         }
         //block Abbeanum door?
     }
     //end of spawn audio
     if(once == 1 && scene == outsideScene && isPlaying == false){
         missionText.innerHTML = "Gehe ins Abbeanum"
+        interactables[0].unlocked = true //unlocks Abbeanum door
         //unlock abbeanum door?
     }
     //enter abbeanum

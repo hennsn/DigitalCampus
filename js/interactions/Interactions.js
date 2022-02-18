@@ -111,6 +111,7 @@ const laptopInteractable =
 		}
 		if(story == 4 && once == 5){
 			inInventory.pop()
+			printInventory()
 			//laptop tausch:
 			hs1Scene.getObjectByName("Laptop2").visible = true
 			hs1Scene.getObjectByName("Laptop").visible = false
@@ -166,10 +167,12 @@ const beamerInteractable =
 		if(once == 13 && story == 7){
 			updateOnce() //to 14
 			updateStory() //to 8
+			interactables[10].unlocked = false //locks beamer
 			blockUserInput()
 			playStoryTrack('audio/013_Verfehlt.mp3')
 			setTimeout(function(){
 				allowUserInput()
+				interactables[10].unlocked = true //unlocks beamer
 				missionText.innerHTML = "Mach ihn fertig!"
 			}, 3000)
 		}
@@ -236,10 +239,12 @@ const preproomDoorDummyInteractable =
 const bathroomDoorDummyBasementInteractable =
 	new CustomInteractable(undefined, undefined, () => {
 		console.log('bathroom basement was clicked')
-		if(once == 10 && story == 7){
+		if((once == 10 || once == 9) && story == 7){
+			if(once == 9) updateOnce() //to 10
 			updateOnce() //to 11
 			openText()
 			interactables[14].unlocked = false //locks basement bathroom
+			interactables[15].unlocked = false //locks hallway bathroo
 			interactables[7].unlocked = true //unlocks laptop2
 			playStoryTrack('audio/010_Toilettengang.mp3')
 			missionText.innerHTML = ""
