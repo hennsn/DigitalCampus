@@ -1,5 +1,5 @@
 import { audio, audioStory, doNow, isPlaying, playAudioTrack, playStoryTrack, stopStoryTrack } from '../UserInterface.js'
-import {interactables, keyWasPressed, wasClicked, printInventory, inInventory, blockUserInput, allowUserInput} from './Interactions.js'
+import {interactables, keyWasPressed, wasClicked, printInventory, inInventory, hideInventory, blockUserInput, allowUserInput} from './Interactions.js'
 
 /*To do:
 Find out how to completely disable keyboard input during overlay*/
@@ -25,6 +25,7 @@ function openText(){
 	//document.getElementById("infoPicture").classList.add("active");
 	document.getElementById("overlay").classList.add("active");
 	overlayActive = true
+    hideInventory()
     blockUserInput()
 }
 
@@ -40,7 +41,7 @@ function startStory(scene, mousecaster){
     //Spawn
     if(scene == outsideScene && story == 0 && keyWasPressed == true || wasClicked == true){
         if(once == 0){
-            playStoryTrack('audio/springTestSound.wav')//('audio/001_Einleitung_Spawn.mp3')
+            playStoryTrack('audio/001_Einleitung_Spawn.mp3') //('audio/springTestSound.wav')
             once = 1
         }
         //block Abbeanum door?
@@ -68,16 +69,15 @@ function startStory(scene, mousecaster){
     }
     //button, dann anruf
     if(story == 2 && once == 3 && isPlaying == false){
-        interactables[4].unlocked = false //locks laptop
         interactables[6].unlocked = false //loks trashcan, needed because the trashcan misbehaves
         inInventory.pop()
         inInventory.push('*falscher* USB Stick')
-		inventory.innerHTML = "Handy <br> *falscher* USB Stick"
+		printInventory()
         missionText.innerHTML = "Ruf Lisa an"
         document.getElementById("button").classList.add("active")
         button.addEventListener('click', () =>{
             if(once == 3 && story == 2){
-                playStoryTrack('audio/springTestSound.wav')//("audio/004_Telefonat.mp3")
+                playStoryTrack("audio/004_Telefonat.mp3")//('audio/springTestSound.wav')
                 missionText.innerHTML = "Pace aufgeregt im Hörsaal umher"
                 document.getElementById("button").classList.remove("active")
                 once = 4
@@ -126,11 +126,15 @@ function startStory(scene, mousecaster){
             openText()
             playStoryTrack('audio/016_Ende.mp3')
             missionText.innerHTML = ""
-        }, 7000)
+        }, 4000)
+        setTimeout(function(){
+            missionText.innerHTML = "Danke für Deine Aufmerksamkeit :-)"
+        }, 25000)
         setTimeout(function(){
             closeText()
-        }, 20000)
+        }, 28000)
     }
+    if(once == 16 & overlayActive == false) missionText.innerHTML = ""
     
 }
 

@@ -98,8 +98,16 @@ const laptopInteractable =
 		console.log('laptop1 was clicked')
 		if(once == 2){
 			updateOnce() //once to 3
-			playStoryTrack('audio/springTestSound.wav')//('audio/003_Falscher_Stick.mp3')
+			interactables[4].unlocked = false //locks laptop
+			blockUserInput()
+			setTimeout(function(){
+				openText()
+			}, 18000)
+			playStoryTrack('audio/003_Falscher_Stick.mp3')//('audio/springTestSound.wav')
 			updateStory() //story to 2
+			setTimeout(function(){
+				closeText()
+			}, 34000)
 		}
 		if(story == 4 && once == 5){
 			inInventory.pop()
@@ -107,7 +115,7 @@ const laptopInteractable =
 			hs1Scene.getObjectByName("Laptop2").visible = true
 			hs1Scene.getObjectByName("Laptop").visible = false
 			updateOnce() //to 6
-			playStoryTrack('audio/springTestSound.wav')//('audio/006_Kein_HDMI.mp3')
+			playStoryTrack('audio/006_Kein_HDMI.mp3')//('audio/springTestSound.wav')
 			updateStory() //to 5
 			interactables[4].unlocked = false //locks laptop
 		}
@@ -163,7 +171,7 @@ const beamerInteractable =
 			setTimeout(function(){
 				allowUserInput()
 				missionText.innerHTML = "Mach ihn fertig!"
-			}, 4000)
+			}, 3000)
 		}
 		if(once == 14 && story == 8 && isPlaying == false){
 			updateOnce() //to 15
@@ -175,7 +183,7 @@ const beamerInteractable =
 			setTimeout(function(){
 				allowUserInput()
 				missionText.innerHTML = "Geschafft - nimm deinen rechtmäßigen Platz am Pult ein"
-			}, 5000)
+			}, 3000)
 		}
 	})
 
@@ -236,7 +244,7 @@ const bathroomDoorDummyBasementInteractable =
 			playStoryTrack('audio/010_Toilettengang.mp3')
 			missionText.innerHTML = ""
 			setTimeout(function(){
-				missionText.innerHTML = "Beweise deine Informatik-Kenntnisse indem du das HDMI-Kabel anschließt!"
+				missionText.innerHTML = "Beweise deine Informatik Kenntnisse: Schließ das HDMI-Kabel an!"
 				closeText()
 			}, 12000)
 		}
@@ -752,5 +760,10 @@ function blockUserInput(){
 function allowUserInput(){
 	isBlocked = false
 }
+//hide inventory
+function hideInventory(){
+	document.getElementById("inventory").style.visibility = 'hidden';
+	inventoryOpen = false
+}
 
-export { createInteractions, handleInteractions, inInventory, printInventory, interactables, keyWasPressed, wasClicked, blockUserInput, allowUserInput }
+export { createInteractions, handleInteractions, inInventory, printInventory, hideInventory, interactables, keyWasPressed, wasClicked, blockUserInput, allowUserInput }
