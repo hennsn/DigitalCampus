@@ -28,6 +28,8 @@ let wasClicked = false
 let inventoryOpen = false
 //boolean for user input
 let isBlocked = false
+//boolean for picture display
+let infoPictureOpen = false;
 
 //array für alle modelle die wir einsammeln
 const inInventory = ["Handy", "USB Stick"]
@@ -409,6 +411,19 @@ function createInteractions(scene, camera, renderer, mouse){
 				case 'ü':
 					updateOnce() //once ++
 					break
+				
+				//display picture (vorerst hierüber)
+				case 'p':
+					if(infoPictureOpen == false){
+						document.getElementById("infoPicture").style.visibility = 'visible';
+						display_image('images/history.jpg'); // image height relates to browser-window height
+						infoPictureOpen = true;
+					}else{
+						document.getElementById("infoPicture").style.visibility = 'hidden';
+						close_image('leImage');
+						infoPictureOpen = false;
+					}
+					break;
 			}
 		}
 	}
@@ -429,6 +444,26 @@ function createInteractions(scene, camera, renderer, mouse){
 	
 	// for debugging: fps/frame-time/memory usage
 	// browsers are typically locked at the screen refresh rate, so 60 fps (in my case) is perfect
+
+	// ++ Bildanzeige (derzeit über p)
+	function display_image(src) {
+		var a = document.createElement("img");
+		a.src = src;
+		//a.width = width;
+		a.height = window.innerHeight-100;
+		a.id = 'leImage';
+		a.style.margin = "0 auto";
+		document.getElementById("dispImage").appendChild(a);  
+	}
+
+
+	function close_image(imgID){
+		var imgID = imgID;
+		var b = document.getElementById(imgID);
+		b.parentNode.removeChild(b);
+	}
+	
+
 
 	////////////////////
 	//MOUSE LISTENERS///

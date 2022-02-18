@@ -128,6 +128,26 @@ body {
 	user-select: none; /* Standard */
 }
 
+#infoPicture {
+	position: fixed;
+	visibility: hidden;
+	top: 30;
+    left: 30;
+    right: 30;
+    bottom: 30;
+	opacity: 1;	
+	-webkit-user-select: none; /* Safari */        
+	-moz-user-select: none; /* Firefox */
+	-ms-user-select: none; /* IE10+/Edge */
+	user-select: none; /* Standard */
+}
+
+.imageBox {	/* part of infoPictore */
+	display: grid;
+	margin: 0 auto;
+	max-width: 100%;
+}
+
 #overlay {
     position: fixed;
     opacity: 0;
