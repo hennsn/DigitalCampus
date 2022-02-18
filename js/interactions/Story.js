@@ -108,7 +108,7 @@ function startStory(scene, mousecaster){
         interactables[4].unlocked = true //unlocks laptop
     }
     if(story == 5 && once == 6 && isPlaying == false){
-        missionText.innerHTML = "Yoinke ein Kabel"
+        missionText.innerHTML = "*Leihe* dir irgendwo im Abbeanum ein Kabel"
         if(!inInventory.includes('altes VGA Kabel')){
             inInventory.push('altes VGA Kabel')
         }
