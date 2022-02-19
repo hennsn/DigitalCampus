@@ -219,3 +219,68 @@ body {
 	bottom: 0px;
 	display: none;
 }
+
+#abbeanum-quiz{
+	position: fixed;
+	visibility: hidden;
+	height: 40%;
+	width: 50%;
+	top: 25%;
+	left: 25%;
+	margin: 0 auto;
+	
+	background-color: rgb(228, 201, 155);
+	border: 2px black;
+	border-radius: 10px;
+	border-style: groove;
+	opacity: 0.75;
+	/*text*/
+	padding: 0.5em; /*abstand textbox rand*/
+	color: #000;
+	font-size: 1.5em;
+	text-align: center;
+	/* Kapitälchen */
+	font-variant: small-caps;
+	font-weight: bold;
+	/* cannot be selected */
+	-webkit-user-select: none; /* Safari */        
+	-moz-user-select: none; /* Firefox */
+	-ms-user-select: none; /* IE10+/Edge */
+	user-select: none; /* Standard */
+}
+/* buttons for quiz */
+.answer-btns{
+	display: grid;
+	margin: 10px 0;
+	gap: 8px;
+	justify-content: center;
+	font-size: 1.4rem;
+}
+.btn {
+	background-color: darkslategray;
+	color: white;
+	border: 2px solid black;
+	border-radius: 5px;
+	padding: 5px 10px;
+	outline: none;
+}
+.btn:hover {
+	border-color:white;
+}
+.btn.correct {
+	background-color: green;
+}
+.btn.wrong {
+	background-color: red;
+}
+.start-btn, .next-btn, .exit-btn {
+	gap: 15px;
+	font-size: 1.2rem;
+	padding: 7px 12px;
+	background-color: cadetblue;
+	color: black;
+	font-weight: bold;
+}
+.hide {
+	display: none;
+}
