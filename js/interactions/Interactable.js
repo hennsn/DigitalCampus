@@ -1,7 +1,10 @@
 import {inInventory} from './Interactions.js'
-import {printInventory, interactables} from './Interactions.js'
+import {printInventory, interactables, findElement} from './Interactions.js'
 import { audio, audioStory, doNow, isPlaying, playAudioTrack, playStoryTrack, stopStoryTrack, showLoadinOverlay } from '../UserInterface.js'
 import { updateOnce, updateStory, once, story } from './Story.js'
+
+//boolean for infoObject audios
+let playedOnce = false
 
 class Interactable {
     constructor(interactableModel, scene, unlocked) { //merge changed scenes to scene //unlocked=true
@@ -89,13 +92,13 @@ class InventoryObject extends Interactable {
             updateOnce() //to 8
             missionText.innerHTML = "Auf zur Kaffeemaschine"
             playStoryTrack('audio/008_Kaffeetasse.mp3')
-            interactables[16].unlocked = true //unlocks coffee maschine
+            interactables[findElement("CoffeeMachine")].unlocked = true //unlocks coffee maschine
         }
         if(once == 12 && this.interactableModel.name == 'Stock'){
             updateOnce() //to 13
             missionText.innerHTML = "Verprügel den Beamer"
             playStoryTrack('audio/012_Mordwaffe.mp3')
-            interactables[10].unlocked = true //beamer
+            interactables[findElement("Beamer")].unlocked = true //beamer
         }
         if(!inInventory.includes(this.interactableModel.name)){
             //maybe remove object instead?
@@ -127,7 +130,12 @@ class InfoObject extends Interactable {
     }
 
     #getInfo(){
-
+        if(this.interactableModel.name == 'AbbeanumInfoBoard'){
+            if(playedOnce == false){
+                playAudioTrack('audio/018_Geschichte_Abb.mp3')
+                playedOnce = true
+            }
+        }
     }
 }
 

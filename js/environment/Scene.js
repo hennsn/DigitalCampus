@@ -92,11 +92,12 @@ function fillScene(scene) {
 	})
 	.catch(printError)
 
-	glTFLoader.loadAsync('models/samples/abbeanum_infoboard.glb', e => updateDownloadProgress('stick', e))
+	glTFLoader.loadAsync('models/samples/abbeanum_infoboard.glb', e => updateDownloadProgress('abbeanumInfoBoard', e))
 	.then(gltf => {
 		const model = gltf.scene
 		placeLatLonObject(model, 'AbbeanumInfoBoard', 50.93413541, 11.58075170, 184.125, 10)
 		outsideScene.add(model)
+		model.visible = true
 	})
 	.catch(printError)
 

@@ -1,5 +1,5 @@
 import { audio, audioStory, doNow, isPlaying, playAudioTrack, playStoryTrack, stopStoryTrack } from '../UserInterface.js'
-import {interactables, keyWasPressed, wasClicked, printInventory, inInventory, hideInventory, blockUserInput, allowUserInput} from './Interactions.js'
+import {interactables, keyWasPressed, wasClicked, printInventory, inInventory, hideInventory, blockUserInput, allowUserInput, findElement} from './Interactions.js'
 
 /*To do:
 Find out how to completely disable keyboard input during overlay*/
@@ -43,15 +43,13 @@ function startStory(scene, mousecaster){
         if(once == 0){
             playStoryTrack('audio/001_Einleitung_Spawn_New.mp3') //('audio/springTestSound.wav')
             once = 1
-            interactables[0].unlocked = false //locks abbeanum door
+            interactables[findElement("AbbeanumDoorEntrance")].unlocked = false 
         }
-        //block Abbeanum door?
     }
     //end of spawn audio
     if(once == 1 && scene == outsideScene && isPlaying == false){
         missionText.innerHTML = "Gehe ins Abbeanum"
-        interactables[0].unlocked = true //unlocks Abbeanum door
-        //unlock abbeanum door?
+        interactables[findElement("AbbeanumDoorEntrance")].unlocked = true
     }
     //enter abbeanum
     if(scene == flurScene && story == 0){
@@ -62,16 +60,14 @@ function startStory(scene, mousecaster){
     if(scene == hs1Scene && story == 1){
         missionText.innerHTML = "Gehe zum Laptop und teste deine Powerpoint"
         if(once == 1){
-            //HIER NOCH BILD ÖFFNEN
             playStoryTrack('audio/002_Hier_Laptop.mp3')
             once = 2
         }
-        interactables[3].unlocked = false //locks player in hs1
-        interactables[4].unlocked = true //unlocks laptop
+        interactables[4].unlocked = true //unlocks laptop; geht nicht mit findElement, da laptop dann noch nicht im Array
     }
     //button, dann anruf
     if(story == 2 && once == 3 && isPlaying == false){
-        interactables[6].unlocked = false //loks trashcan, needed because the trashcan misbehaves
+        interactables[findElement("Trashcan")].unlocked = false //locks trashcan, needed because the trashcan misbehaves
         inInventory.pop()
         inInventory.push('*falscher* USB Stick')
 		printInventory()
@@ -90,22 +86,22 @@ function startStory(scene, mousecaster){
     if(once == 4 && isPlaying == false){
         story = 3
         document.getElementById("button").classList.remove("active")
-        interactables[3].unlocked = true //unlocks hs1 exit
+        interactables[findElement("HS1DoorExit")].unlocked = true
     }
     //after phone call
     if(story == 3){
         missionText.innerHTML = "Gehe Kai, Henrik und Jan um einen Laptop anflehen"
-        interactables[12].unlocked = true //unlocks HS2 door
+        interactables[findElement("HS2DoorDummy")].unlocked = true 
     }
     //after hs2 dialogue
     if(story == 4 && once == 5 && isPlaying == false){
         missionText.innerHTML = "Schließ den rettenden Laptop an den Beamer an"
-        closeText() //schließt overlay
+        closeText() 
         if(!inInventory.includes('Laptop mit Backup')){
             inInventory.push('Laptop mit Backup')
         }
         printInventory()
-        interactables[4].unlocked = true //unlocks laptop
+        interactables[findElement("Laptop")].unlocked = true 
     }
     if(story == 5 && once == 6 && isPlaying == false){
         missionText.innerHTML = "*Leihe* dir irgendwo im Abbeanum ein Kabel"
@@ -113,10 +109,10 @@ function startStory(scene, mousecaster){
             inInventory.push('altes VGA Kabel')
         }
         printInventory()
-        interactables[11].unlocked = true //unlocks TV
+        interactables[findElement("TvCuboid")].unlocked = true 
     }
     if(once == 7 && story == 6 && isPlaying == false){
-        interactables[9].unlocked = true //unlocks cup
+        interactables[findElement("Kaffeetasse")].unlocked = true 
         missionText.innerHTML = "Hole die Kaffeetasse"
     }
     if(once == 13 && story == 7){

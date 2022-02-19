@@ -100,7 +100,8 @@ const laptopInteractable =
 		console.log('laptop1 was clicked')
 		if(once == 2){
 			updateOnce() //once to 3
-			interactables[4].unlocked = false //locks laptop
+			interactables[findElement("HS1DoorExit")].unlocked = false 
+			interactables[findElement("Laptop")].unlocked = false 
 			blockUserInput()
 			setTimeout(function(){
 				openText()
@@ -112,15 +113,15 @@ const laptopInteractable =
 			}, 34000)
 		}
 		if(story == 4 && once == 5){
+			updateOnce() //to 6
+			updateStory() //to 5
 			inInventory.pop()
 			printInventory()
 			//laptop tausch:
 			hs1Scene.getObjectByName("Laptop2").visible = true
 			hs1Scene.getObjectByName("Laptop").visible = false
-			updateOnce() //to 6
 			playStoryTrack('audio/006_Kein_HDMI.mp3')//('audio/springTestSound.wav')
-			updateStory() //to 5
-			interactables[4].unlocked = false //locks laptop
+			interactables[findElement("Laptop")].unlocked = false 
 		}
 	})
 
@@ -131,13 +132,13 @@ const laptop2Interactable =
 			updateOnce() //to 12
 			inInventory.pop()
 			printInventory()
-			interactables[7].unlocked = false //locks laptop2
-			interactables[3].unlocked = false //locks player in hs1
+			interactables[findElement("Laptop2")].unlocked = false 
+			interactables[findElement("HS1DoorExit")].unlocked = false 
 			playStoryTrack('audio/011_Physische_Intervention_Geplant.mp3')
 			missionText.innerHTML = "Sei entrüstet"
 			setTimeout(function(){
-				interactables[3].unlocked = true //unlocks hs2
-				interactables[5].unlocked = true //unlocks stick
+				interactables[findElement("HS1DoorExit")].unlocked = true 
+				interactables[findElement("Stock")].unlocked = true 
 				missionText.innerHTML = "Finde einen Stock"
 			}, 17000)
 		}
@@ -152,10 +153,10 @@ const coffeeMachineInteractable =
 			blockUserInput()
 			inInventory.pop()
 			printInventory()
-			interactables[16].unlocked = false //locks coffee machine
+			interactables[findElement("CoffeeMachine")].unlocked = false
 			playStoryTrack('audio/009_Zu_Viel_Kaffee.mp3')
-			interactables[14].unlocked = true //unlocks basement bathroom
-			interactables[15].unlocked = true //unlocks hallway bathroom
+			interactables[findElement("BathroomDoorDummyBasement")].unlocked = true 
+			interactables[findElement("BathroomDoorDummyUpstairs")].unlocked = true 
 			setTimeout(function(){
 				allowUserInput()
 				missionText.innerHTML = "Finde die Toiletten - und zwar schnell!"
@@ -169,18 +170,18 @@ const beamerInteractable =
 		if(once == 13 && story == 7){
 			updateOnce() //to 14
 			updateStory() //to 8
-			interactables[10].unlocked = false //locks beamer
+			interactables[findElement("Beamer")].unlocked = false 
 			blockUserInput()
 			playStoryTrack('audio/013_Verfehlt.mp3')
 			setTimeout(function(){
 				allowUserInput()
-				interactables[10].unlocked = true //unlocks beamer
+				interactables[findElement("Beamer")].unlocked = true 
 				missionText.innerHTML = "Mach ihn fertig!"
 			}, 3000)
 		}
 		if(once == 14 && story == 8 && isPlaying == false){
 			updateOnce() //to 15
-			interactables[10].unlocked = false //locks beamer
+			interactables[findElement("Beamer")].unlocked = false 
 			blockUserInput()
 			playStoryTrack('audio/014_Clonk_Beamer.mp3')
 			inInventory.pop()
@@ -198,7 +199,7 @@ const abbeanumInfoBoardInteractable =
 const tvCuboidInteractable =
 	new CustomInteractable(undefined, undefined, () => {
 		if(once == 6 && isPlaying == false){
-			interactables[11].unlocked = false //locks TV
+			interactables[findElement("TvCuboid")].unlocked = false 
 			blockUserInput()
 			updateOnce() //to 7
 			updateStory() //to 6
@@ -222,12 +223,12 @@ const HS2DoorDummyInteractable =
 	new CustomInteractable(undefined, undefined, () => {
 		console.log('hs2door was clicked')
 		if(story == 3 && isPlaying == false){
-			interactables[12].unlocked = false //locks hs2 door
+			interactables[findElement("HS2DoorDummy")].unlocked = false 
 			if(once == 4){
 				updateOnce() //to 5
+				updateStory() //to 4
 				playStoryTrack('audio/creaking-door-2.mp3') //just dummy placeholder
 				openText() //should stop input at some point
-				updateStory() //to 4
 			}	
 		}
 	})
@@ -245,9 +246,9 @@ const bathroomDoorDummyBasementInteractable =
 			if(once == 9) updateOnce() //to 10
 			updateOnce() //to 11
 			openText()
-			interactables[14].unlocked = false //locks basement bathroom
-			interactables[15].unlocked = false //locks hallway bathroo
-			interactables[7].unlocked = true //unlocks laptop2
+			interactables[findElement("BathroomDoorDummyBasement")].unlocked = false
+			interactables[findElement("BathroomDoorDummyUpstairs")].unlocked = false 
+			interactables[findElement("Laptop2")].unlocked = true
 			playStoryTrack('audio/010_Toilettengang.mp3')
 			missionText.innerHTML = ""
 			setTimeout(function(){
@@ -262,7 +263,7 @@ const bathroomDoorDummyUpstairsInteractable =
 		console.log('bathroom upstairs was clicked')
 		if(once == 9 && story == 7){
 			updateOnce() //to 10
-			interactables[15].unlocked = false //locks hallway bathroom
+			interactables[findElement("BathroomDoorDummyUpstairs")].unlocked = false 
 			playStoryTrack('audio/springTestSound.wav')
 			setTimeout(function(){
 				missionText.innerHTML = "DIE RICHTIGEN TOILETTEN"
@@ -350,6 +351,7 @@ function createInteractions(scene, camera, renderer, mouse){
 					console.log('once: ', once) //teste once variable 
 					console.log('isPlaying: ', isPlaying)
 					console.log('inventory: ', inInventory)
+					//console.log(findElement())
 					/*if(overlayActive == false){ 
 						openText()
 					} else {
@@ -444,26 +446,7 @@ function createInteractions(scene, camera, renderer, mouse){
 	
 	// for debugging: fps/frame-time/memory usage
 	// browsers are typically locked at the screen refresh rate, so 60 fps (in my case) is perfect
-
-	// ++ Bildanzeige (derzeit über p)
-	function display_image(src) {
-		var a = document.createElement("img");
-		a.src = src;
-		//a.width = width;
-		a.height = window.innerHeight-100;
-		a.id = 'leImage';
-		a.style.margin = "0 auto";
-		document.getElementById("dispImage").appendChild(a);  
-	}
-
-
-	function close_image(imgID){
-		var imgID = imgID;
-		var b = document.getElementById(imgID);
-		b.parentNode.removeChild(b);
-	}
 	
-
 
 	////////////////////
 	//MOUSE LISTENERS///
@@ -591,10 +574,10 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 		// vertically below the beamer, so we can interact from the ground
 		beamerInteractable.position = new THREE.Vector3(-7.065151656086955, 3.1155215629228477, -35.33847308541997)
 	}
-	const abbeanumInfoBoard = scene.getObjectByName('64Tafel')
-	if(beamer){
-		beamerInteractable.setInteractableModel(abbeanumInfoBoard)
-		beamerInteractable.scene = outsideScene
+	const abbeanumInfoBoard = scene.getObjectByName('AbbeanumInfoBoard')
+	if(abbeanumInfoBoard){
+		abbeanumInfoBoardInteractable.setInteractableModel(abbeanumInfoBoard)
+		abbeanumInfoBoardInteractable.scene = outsideScene
 	}
 
 	const tvCuboid = scene.getObjectByName('TvCuboid')
@@ -649,7 +632,8 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 							.filter(interactable => interactable.interactableModel)	
 	acceleration.set(0,0,0)
 	var dtx = clamp(dt * 10, 0, 1) // the lower this number is, the smoother is the motion
-	
+
+
 	/**
 	 * Helper function for updating the camera controls in the animation loop.
 	 */
@@ -733,9 +717,9 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 
 		//////Array of clickable objects
 		const clickableObjects = (
-			scene == outsideScene ? [abbeanumDoorEntrance, stick] :
-			scene == flurScene ? [abbeanumDoorExit, trashcan, hs1DoorEntrance, coffeeMachine, HS2DoorDummy, tvCuboid, bathroomDoorDummyBasement, bathroomDoorDummyUpstairs] :
-			scene == hs1Scene ? [hs1DoorExit, laptop, laptop2, cup, beamer] :
+			scene == outsideScene ? [abbeanumDoorEntrance, stick, abbeanumInfoBoard] :
+			scene == flurScene ? [abbeanumDoorExit, trashcan, hs1DoorEntrance, coffeeMachine, HS2DoorDummy, tvCuboid, bathroomDoorDummyBasement, bathroomDoorDummyUpstairs, preproomDoorDummy] :
+			scene == hs1Scene ? [hs1DoorExit, laptop, laptop2, cup, beamer, blackboards] :
 			[]
 		).filter(model => !!model)
 
@@ -760,13 +744,13 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 		}
 
 		//DEBUGGING
-		/*
+		
 		if(currentInteractables.length >= 1 && clickableObjects.length > 0){
 			console.log('currentInteractables: ', currentInteractables[0].interactableModel.name)
 			console.log('clicakable: ', clickableObjects[0].name)
 			console.log('all clickable: ', clickableObjects)
 			
-		}*/
+		}
 		
 
 		/*Just checks one object
@@ -781,6 +765,13 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 	
 	keyWasPressed = false
 	
+}
+
+//find index of object in interactables array we are looking for
+function findElement(lookingFor){
+	const indexInteractables = interactables.findIndex(interactable => interactable.interactableModel.name == lookingFor)
+	//console.log("index of", lookingFor + " in Interactables: ", indexInteractables)
+	return indexInteractables
 }
 
 //prints everything in inventory-array to inventory-textbox
@@ -806,4 +797,22 @@ function hideInventory(){
 	inventoryOpen = false
 }
 
-export { createInteractions, handleInteractions, inInventory, printInventory, hideInventory, interactables, keyWasPressed, wasClicked, blockUserInput, allowUserInput }
+//Bildanzeige (derzeit über p)
+function display_image(src) {
+	var a = document.createElement("img");
+	a.src = src;
+	//a.width = width;
+	a.height = window.innerHeight-100;
+	a.id = 'leImage';
+	a.style.margin = "0 auto";
+	document.getElementById("dispImage").appendChild(a);  
+}
+function close_image(imgID){
+	var imgID = imgID;
+	var b = document.getElementById(imgID);
+	b.parentNode.removeChild(b);
+}
+
+
+
+export { createInteractions, handleInteractions, inInventory, printInventory, hideInventory, interactables, keyWasPressed, wasClicked, blockUserInput, allowUserInput, findElement }
