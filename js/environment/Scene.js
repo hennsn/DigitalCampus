@@ -86,17 +86,18 @@ function fillScene(scene) {
 	glTFLoader.loadAsync('models/samples/stick.glb', e => updateDownloadProgress('stick', e))
 	.then(gltf => {
 		const model = gltf.scene
-		placeLatLonObject(model, 'Stick', 50.93414679, 11.58076147, 182.882, 0)
+		placeLatLonObject(model, 'Stock', 50.93414679, 11.58076147, 182.882, 0)
 		model.rotation.x += 10
 		outsideScene.add(model)
 	})
 	.catch(printError)
 
-	glTFLoader.loadAsync('models/samples/abbeanum_infoboard.glb', e => updateDownloadProgress('stick', e))
+	glTFLoader.loadAsync('models/samples/abbeanum_infoboard.glb', e => updateDownloadProgress('abbeanumInfoBoard', e))
 	.then(gltf => {
 		const model = gltf.scene
 		placeLatLonObject(model, 'AbbeanumInfoBoard', 50.93413541, 11.58075170, 184.125, 10)
 		outsideScene.add(model)
+		model.visible = true
 	})
 	.catch(printError)
 
@@ -296,7 +297,7 @@ function fillScene(scene) {
 	glTFLoader.loadAsync('models/samples/laptop2.glb', e => updateDownloadProgress('laptop2', e))
 	.then(gltf => {
 		const model = gltf.scene
-		placeLatLonObject(model, 'Laptop with Backup', 50.93424693, 11.58070168, 184.212, -90) //Laptop2 originally
+		placeLatLonObject(model, 'Laptop2', 50.93424693, 11.58070168, 184.212, -90) //rename no longer needed
 		hs1Scene.add(model)
 		model.visible = false
 	})
@@ -306,7 +307,7 @@ function fillScene(scene) {
 	glTFLoader.loadAsync('models/samples/cup.glb', e => updateDownloadProgress('cup', e))
 	.then(gltf => {
 		const model = gltf.scene
-		placeLatLonObject(model, 'Cup', 50.93430969, 11.58055729, 185.247, 0)
+		placeLatLonObject(model, 'Kaffeetasse', 50.93430969, 11.58055729, 185.247, 0) //ehemals Cup
 		hs1Scene.add(model)
 	})
 	.catch(printError)

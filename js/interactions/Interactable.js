@@ -1,9 +1,13 @@
 import {inInventory} from './Interactions.js'
-import {printInventory} from './Interactions.js'
-import { playAudioTrack, showLoadinOverlay } from '../UserInterface.js'
+import {printInventory, interactables, findElement} from './Interactions.js'
+import { audio, audioStory, doNow, isPlaying, playAudioTrack, playStoryTrack, stopStoryTrack, showLoadinOverlay } from '../UserInterface.js'
+import { updateOnce, updateStory, once, story } from './Story.js'
+
+//boolean for infoObject audios
+let playedOnce = false
 
 class Interactable {
-    constructor(interactableModel, scene, unlocked=true) {
+    constructor(interactableModel, scene, unlocked) { //merge changed scenes to scene //unlocked=true
         this.interactableModel = interactableModel
         this.position = interactableModel ? interactableModel.position : undefined
         this.scene = scene
@@ -11,7 +15,7 @@ class Interactable {
         this.interactionRadius = 3
         // in ms
         this.interactionInterval = 300
-        this.unlocked = unlocked
+        //this.unlocked = unlocked //tried commenting it out and declare in subclasses, worked for doors, NOT for inventory objects 
     }
 
     canInteract(currentScene, camera, lastInteractionTime) {
@@ -47,7 +51,6 @@ class Interactable {
 
     // interact is a facade to the individual interaction implementations of inheriting classes
     interact() {
-        //console.log('YES')
         console.log('Interacting with ' + this.interactableModel.name)
     }
 }
@@ -57,6 +60,7 @@ class Door extends Interactable {
         super(interactableModel, scene)
         // the player gets teleported to entryPoint upon interacting with this door
         this.entryPoint = entryPoint
+        this.unlocked = true
     }
 
     #openDoor(currentScene, camera){
@@ -79,15 +83,29 @@ class Door extends Interactable {
 class InventoryObject extends Interactable {
     constructor(interactableModel, scene) {
         super(interactableModel, scene)
+        this.unlocked = false
     }
 
     #takeObject(){
         //console.log('Inventory: ', inInventory)
+        if(once == 7 && this.interactableModel.name == 'Kaffeetasse'){
+            updateOnce() //to 8
+            missionText.innerHTML = "Auf zur Kaffeemaschine"
+            playStoryTrack('audio/008_Kaffeetasse.mp3')
+            interactables[findElement("CoffeeMachine")].unlocked = true //unlocks coffee maschine
+        }
+        if(once == 12 && this.interactableModel.name == 'Stock'){
+            updateOnce() //to 13
+            missionText.innerHTML = "Verprügel den Beamer"
+            playStoryTrack('audio/012_Mordwaffe.mp3')
+            interactables[findElement("Beamer")].unlocked = true //beamer
+        }
         if(!inInventory.includes(this.interactableModel.name)){
+            //maybe remove object instead?
+            this.unlocked = false // apparently now works
+            this.interactableModel.visible = false
             inInventory.push(this.interactableModel.name)
             printInventory()
-            //maybe remove object instead?
-            this.interactableModel.visible = false
         }else{
             console.log('already stored')
         }
@@ -103,6 +121,7 @@ class InventoryObject extends Interactable {
 class InfoObject extends Interactable {
     constructor(interactableModel, scene) {
         super(interactableModel, scene)
+        this.unlocked = true
     }
 
     interact(){
@@ -111,7 +130,12 @@ class InfoObject extends Interactable {
     }
 
     #getInfo(){
-
+        if(this.interactableModel.name == 'AbbeanumInfoBoard'){
+            if(playedOnce == false){
+                playAudioTrack('audio/018_Geschichte_Abb.mp3')
+                playedOnce = true
+            }
+        }
     }
 }
 
@@ -121,6 +145,7 @@ class CustomInteractable extends Interactable {
         super(interactableModel, scene)
         // custom interaction function
         this.interactionFunction = interactionFunction
+        this.unlocked = false
     }
 
     interact(){

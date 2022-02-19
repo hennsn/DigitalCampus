@@ -2,6 +2,13 @@
 import * as THREE from 'https://cdn.skypack.dev/three@0.135.0'
 import { mix, degToRad } from './Maths.js'
 
+//boolean to check if audio is playing
+let isPlaying = false
+let audioStory
+let audio
+let setback
+let doNow = false
+
 function printError(error, printToUser){
 	console.error(error)
 	// todo print to user, if not 0
@@ -87,9 +94,37 @@ function handleUserInterface(dt){
 }
 
 function playAudioTrack(srcUrl){
-	var audio = new Audio(srcUrl)
+	audio = new Audio(srcUrl) //var audio
 	audio.play()
 	return audio
+}
+
+function playStoryTrack(srcUrl){
+	isPlaying = true
+	audioStory = new Audio(srcUrl) 
+	audioStory.play()
+	audioStory.onloadedmetadata = function(){
+		console.log(audioStory.duration)
+	}
+	audioStory.addEventListener("ended", function(){
+		console.log('story audio ended')
+		isPlaying = false
+	})
+	return audioStory
+}
+
+function stopStoryTrack(audioStory) {
+    audioStory.pause();
+    audioStory.currentTime = 0;
+}
+
+//doesn't work
+function queueAudioEvent(setback){
+	console.log('setback: ', setback)
+	audioStory.onloadedmetadata = function(){
+		console.log(audioStory.duration)
+		console.log(audioStory.currentTime)
+	}
 }
 
 var lastCorners = null
@@ -146,4 +181,4 @@ function removeCorners(obj){
 	}
 }
 
-export { printError, handleUserInterface, updateDownloadProgress, playAudioTrack, createCorners, showLoadinOverlay }
+export { printError, handleUserInterface, updateDownloadProgress, playAudioTrack, playStoryTrack, stopStoryTrack, createCorners, showLoadinOverlay, isPlaying, audio, audioStory, queueAudioEvent, doNow}
