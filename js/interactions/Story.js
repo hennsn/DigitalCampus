@@ -41,7 +41,7 @@ function startStory(scene, mousecaster){
     //Spawn
     if(scene == outsideScene && story == 0 && keyWasPressed == true || wasClicked == true){
         if(once == 0){
-            playStoryTrack('audio/springTestSound.wav')//('audio/001_Einleitung_Spawn_New.mp3')
+            playStoryTrack('audio/001_Einleitung_Spawn_New.mp3')//('audio/springTestSound.wav')
             once = 1
             interactables[findElement("AbbeanumDoorEntrance")].unlocked = false 
         }
@@ -49,7 +49,6 @@ function startStory(scene, mousecaster){
     //end of spawn audio
     if(once == 1 && scene == outsideScene && isPlaying == false){
         missionText.innerHTML = "Gehe ins Abbeanum"
-        interactables[findElement("AbbeanumDoorEntrance")].unlocked = true
     }
     //enter abbeanum
     if(scene == flurScene && story == 0){

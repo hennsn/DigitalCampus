@@ -32,6 +32,9 @@ let isBlocked = false
 //boolean for picture display
 let infoPictureOpen = false;
 
+//triggers interactions when in range
+let closeEnough = 0
+
 //array für alle modelle die wir einsammeln
 const inInventory = ["Handy", "USB Stick"]
 inventory.innerHTML += "Handy <br> USB Stick"
@@ -363,13 +366,9 @@ function createInteractions(scene, camera, renderer, mouse){
 					console.log('story: ', story) //test where in story we are
 					console.log('once: ', once) //teste once variable 
 					console.log('isPlaying: ', isPlaying)
-					console.log('inventory: ', inInventory)
+					//console.log('inventory: ', inInventory)
 					//console.log(findElement())
-					/*if(overlayActive == false){ 
-						openText()
-					} else {
-						closeText()
-					}*/
+					console.log(closeEnough)
 					break;
 				case 'h': 
 				case 'H':
@@ -688,8 +687,17 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 
 	if(couldInteract != canInteract){
 		couldInteract = canInteract
-		controlHints.innerHTML = canInteract ? 'WASD walk<br>LEFT/RIGHT turn<br>E interact' : 'WASD walk<br>LEFT/RIGHT turn'
+		controlHints.innerHTML = canInteract ? 'WASD laufen<br>LEFT/RIGHT drehen<br>Q Inventar<br>E interagieren' : 'WASD walk<br>LEFT/RIGHT turn<br>Q Inventar'
+		//play the abbeanumInfoboard audio
+		if(closeEnough == 0 && isPlaying == false && once == 1){
+			closeEnough = 1
+			playStoryTrack('audio/018_Geschichte_Abb.mp3')
+			setTimeout(function(){
+				interactables[findElement("AbbeanumDoorEntrance")].unlocked = true
+			}, 3000)
+		} 
 	}
+	
 	// we could create an "Interactable" class, which does this, and could generalize pickups with that
 	// check for general entrances - this can be made more generic
 	if((keyboard.e || keyboard.Enter) && 
@@ -769,7 +777,7 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 		if(currentInteractables.length >= 1 && clickableObjects.length > 0){
 			console.log('currentInteractables: ', currentInteractables[0].interactableModel.name)
 			console.log('clicakable: ', clickableObjects[0].name)
-			console.log('all clickable: ', clickableObjects)
+			//console.log('all clickable: ', clickableObjects)
 			
 		}
 		
@@ -808,10 +816,14 @@ function printInteractables(){
 //functions to toggle user input
 function blockUserInput(){
 	isBlocked = true
+	controlHints.style.visibility = 'hidden'
 }
 function allowUserInput(){
 	isBlocked = false
+	controlHints.style.visibility = 'visible'
 }
+
+
 //hide inventory
 function hideInventory(){
 	document.getElementById("inventory").style.visibility = 'hidden';
