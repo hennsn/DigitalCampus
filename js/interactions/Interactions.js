@@ -32,6 +32,7 @@ let isBlocked = false
 let infoPictureOpen = false;
 //boolean for quiz
 let quizOpen = false;
+let openOnce = false
 
 //array für alle modelle die wir einsammeln
 const inInventory = ["Handy", "USB Stick"]
@@ -238,6 +239,19 @@ const HS2DoorDummyInteractable =
 const preproomDoorDummyInteractable = 
 	new CustomInteractable(undefined, undefined, () => {
 		console.log('preproom was clicked')
+		console.log(quizOpen)
+		if(openOnce == false){
+			openOnce = true
+			if(quizOpen == false){
+				document.getElementById("abbeanum-quiz").style.visibility = 'visible';
+				quizOpen = true;
+				interactables[findElement("PreproomDoorDummy")].unlocked = false
+				if(openOnce == true) blockUserInput()
+			}else{
+				document.getElementById("abbeanum-quiz").style.visibility = 'hidden';
+				quizOpen = false;
+			}
+		}
 	})
 
 
@@ -825,7 +839,6 @@ function close_image(imgID){
 	b.parentNode.removeChild(b);
 }
 
-// ---- Quiz ----- (derzeit über 'k')
 const quizStartBtn = document.getElementById('quiz-start');
 const quizNextBtn = document.getElementById('quiz-next');
 const quizExitBtn = document.getElementById('quiz-exit');
@@ -842,6 +855,11 @@ quizNextBtn.addEventListener('click', () => {
 quizExitBtn.addEventListener('click', () => {
 	document.getElementById("abbeanum-quiz").style.visibility = 'hidden';
 	quizOpen = false;
+	openOnce = false
+	allowUserInput()
+	setTimeout(function(){
+		interactables[findElement("PreproomDoorDummy")].unlocked = true
+	}, 1500)
 });
 
 

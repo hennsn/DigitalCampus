@@ -41,7 +41,7 @@ function startStory(scene, mousecaster){
     //Spawn
     if(scene == outsideScene && story == 0 && keyWasPressed == true || wasClicked == true){
         if(once == 0){
-            playStoryTrack('audio/001_Einleitung_Spawn_New.mp3') //('audio/springTestSound.wav')
+            playStoryTrack('audio/springTestSound.wav')//('audio/001_Einleitung_Spawn_New.mp3')
             once = 1
             interactables[findElement("AbbeanumDoorEntrance")].unlocked = false 
         }
@@ -55,6 +55,9 @@ function startStory(scene, mousecaster){
     if(scene == flurScene && story == 0){
         missionText.innerHTML = "Gehe zum Hörsaal 1"
         story = 1
+        setTimeout(function(){ //delay needed
+            interactables[findElement("PreproomDoorDummy")].unlocked = true
+        }, 1500)
     }
     //enter hs1
     if(scene == hs1Scene && story == 1){
@@ -63,7 +66,9 @@ function startStory(scene, mousecaster){
             playStoryTrack('audio/002_Hier_Laptop.mp3')
             once = 2
         }
-        interactables[4].unlocked = true //unlocks laptop; geht nicht mit findElement, da laptop dann noch nicht im Array
+        setTimeout(function(){ //delay needed
+            interactables[findElement("Laptop")].unlocked = true
+        }, 500)
     }
     //button, dann anruf
     if(story == 2 && once == 3 && isPlaying == false){
