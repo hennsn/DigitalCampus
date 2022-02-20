@@ -1,11 +1,27 @@
-// ---- Quiz ----- (derzeit über 'k')
-/*const quizStartBtn = document.getElementById('quiz-start');
+import { allowUserInput, findElement } from "./Interactions.js";
+
+const quizStartBtn = document.getElementById('quiz-start');
 const quizNextBtn = document.getElementById('quiz-next');
 const quizExitBtn = document.getElementById('quiz-exit');
 const quizQuestionContainer = document.getElementById('quiz-container');
 const quizQuestionElem = document.getElementById('question');
 const quizAnswerBtnElem = document.getElementById('quiz-answer-btns')
+
 let quizQuestionIndex;
+//boolean for quiz
+let quizOpen = false;
+let openOnce = false
+
+function quizOpen_True(){
+	quizOpen = true
+}
+function quizOpen_False(){
+	quizOpen = false
+}
+function openOnce_True(){
+	openOnce = true
+}
+
 
 quizStartBtn.addEventListener('click', quizStart);
 quizNextBtn.addEventListener('click', () => {
@@ -15,6 +31,11 @@ quizNextBtn.addEventListener('click', () => {
 quizExitBtn.addEventListener('click', () => {
 	document.getElementById("abbeanum-quiz").style.visibility = 'hidden';
 	quizOpen = false;
+	openOnce = false
+	allowUserInput()
+	setTimeout(function(){
+		interactables[findElement("PreproomDoorDummy")].unlocked = true
+	}, 1500)
 });
 
 
@@ -115,4 +136,6 @@ const quizQuestions = [
 		]
 	}
 ]
-// --- (ende quiz) ---*/
+// --- (ende quiz) ---
+
+export {openOnce, quizOpen, openOnce_True, quizOpen_True, quizOpen_False}
