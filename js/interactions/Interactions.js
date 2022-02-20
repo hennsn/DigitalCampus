@@ -273,7 +273,6 @@ const bathroomDoorDummyUpstairsInteractable =
 
 let interactables = []
 
-
 function createInteractions(scene, camera, renderer, mouse){
 
 	// change to a more intuitive rotation order
@@ -326,7 +325,7 @@ function createInteractions(scene, camera, renderer, mouse){
 	}
 	
 	function keyDown(event){
-		if(isBlocked==false){
+		if(!isBlocked){
 			keyWasPressed = true
 			keyboard[event.key] = event.timeStamp
 			keyboard[event.keyCode] = event.timeStamp
@@ -431,17 +430,15 @@ function createInteractions(scene, camera, renderer, mouse){
 	}
 	
 	function keyUp(event){
-		if(isBlocked==false){
-			keyWasPressed = true
-			switch(event.key){
-				case 'w':
-				case 'W':
-					lastTimeWWasPressed = keyboard[event.key]
-					break
-			}
-			delete keyboard[event.key]
-			delete keyboard[event.keyCode]
+		if(!isBlocked) keyWasPressed = true
+		switch(event.key){
+			case 'w':
+			case 'W':
+				lastTimeWWasPressed = keyboard[event.key]
+				break
 		}
+		delete keyboard[event.key]
+		delete keyboard[event.keyCode]
 	}
 	
 	// for debugging: fps/frame-time/memory usage
