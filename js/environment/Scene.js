@@ -33,7 +33,7 @@ function fillScene(scene) {
 		.catch(printError)
 	
 	
-	// Formerly AbbeanumDoorOnly -> renamed to InteractionRectanguloid so it can be resized and reused for any
+	// Formerly AbbeanumDoorOnly -> renamed to InteractionCuboid so it can be resized and reused for any
 	// interactable surface
 	glTFLoader.loadAsync('models/samples/interaction_cuboid.glb', e => updateDownloadProgress('InteractionCuboid', e))
 	.then(gltf => {
@@ -74,12 +74,10 @@ function fillScene(scene) {
 		bathroomDoorDummyUpstairs.scale.set(1,1.7,1.2)
 
 		flurScene.add(bathroomDoorDummyUpstairs)
-
-		const preproomDoorDummy = model.clone()
-		placeLatLonObject(preproomDoorDummy, 'PreproomDoorDummy',  50.93413028, 11.58053525, 185.693, 10)
-		preproomDoorDummy.scale.set(1,1.8,1.3)
-		flurScene.add(preproomDoorDummy)
 		
+		const infoboardCorridor = model.clone()
+		placeLatLonObject(infoboardCorridor, 'InfoboardCorridor',  50.93411436, 11.58043701, 186.176, 5)
+		flurScene.add(infoboardCorridor)
 	})
 	.catch(printError)
 
@@ -204,6 +202,15 @@ function fillScene(scene) {
 	})
 	.catch(printError)
 	
+	glTFLoader.loadAsync('models/samples/flyer.glb', e => updateDownloadProgress('flyer', e))
+	.then(gltf => {
+		const model = gltf.scene
+		placeLatLonObject(model, 'Flyer',  50.93413136, 11.58053499, 186.608, 186)
+		model.scale.set(1,3,3)
+		flurScene.add(model)
+	})
+	.catch(printError)
+
 
 	fbxLoader.loadAsync('models/samples/moving_plant.fbx', e => updateDownloadProgress('movingPlant', e))
 	.then(model => {
@@ -249,13 +256,21 @@ function fillScene(scene) {
 	})
 	.catch(printError)
 
-
 	glTFLoader.loadAsync('models/samples/wet_floor_sign.glb', e => updateDownloadProgress('wetFloorSign', e))
 	.then(gltf => {
 		const model = gltf.scene
 		placeLatLonObject(model, 'WetFloorSign' , 50.93398735, 11.58047673, 184.520, 10)
 		// make it wide
 		model.scale.set(3.5, 1.5, 2)
+		flurScene.add(model)
+	})
+	.catch(printError)
+
+	glTFLoader.loadAsync('models/samples/bathroom_m.glb', e => updateDownloadProgress('stick', e))
+	.then(gltf => {
+		const model = gltf.scene
+		placeLatLonObject(model, 'BathroomM', 50.93403099, 11.58052090, 183.547, 190)
+		model.scale.set(1,1.7,1.7)
 		flurScene.add(model)
 	})
 	.catch(printError)

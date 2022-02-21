@@ -55,7 +55,7 @@ function startStory(scene, mousecaster){
         missionText.innerHTML = "Gehe zum Hörsaal 1"
         story = 1
         setTimeout(function(){ //delay needed
-            interactables[findElement("PreproomDoorDummy")].unlocked = true
+            interactables[findElement("Flyer")].unlocked = true
         }, 1500)
     }
     //enter hs1

@@ -237,16 +237,15 @@ const HS2DoorDummyInteractable =
 		}
 	})
 
-const preproomDoorDummyInteractable = 
+const flyerInteractable = 
 	new CustomInteractable(undefined, undefined, () => {
-		console.log('preproom was clicked')
 		console.log(quizOpen)
 		if(openOnce == false){
 			openOnce_True()
 			if(quizOpen == false){
 				document.getElementById("abbeanum-quiz").style.visibility = 'visible';
 				quizOpen_True()
-				interactables[findElement("PreproomDoorDummy")].unlocked = false
+				interactables[findElement("Flyer")].unlocked = false
 				if(openOnce == true) blockUserInput()
 			}else{
 				document.getElementById("abbeanum-quiz").style.visibility = 'hidden';
@@ -287,6 +286,9 @@ const bathroomDoorDummyUpstairsInteractable =
 			}, 2000)
 		}
 	})
+
+const infoboardCorridorInteractable = new InfoObject(undefined, undefined, undefined)
+
 
 let interactables = []
 
@@ -439,7 +441,7 @@ function createInteractions(scene, camera, renderer, mouse){
 					}
 					break;
 
-				case 'k':	// display Abbeanum-Quiz (vorerst hierüber)
+				case '.':	// display Abbeanum-Quiz (vorerst hierüber)
 					if(quizOpen == false){
 						document.getElementById("abbeanum-quiz").style.visibility = 'visible';
 						quizOpen = true;
@@ -612,12 +614,6 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 		HS2DoorDummyInteractable.scene = flurScene
 	}
 
-	const preproomDoorDummy = scene.getObjectByName('PreproomDoorDummy')
-	if(preproomDoorDummy){
-		preproomDoorDummyInteractable.setInteractableModel(preproomDoorDummy)
-		preproomDoorDummyInteractable.scene = flurScene
-	}
-
 
 	const bathroomDoorDummyBasement = scene.getObjectByName('BathroomDoorDummyBasement')
 	if(bathroomDoorDummyBasement){
@@ -631,24 +627,36 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 		bathroomDoorDummyUpstairsInteractable.setInteractableModel(bathroomDoorDummyUpstairs)
 		bathroomDoorDummyUpstairsInteractable.scene = flurScene
 	}
+
 	const coffeeMachine = scene.getObjectByName('CoffeeMachine')
 	if(coffeeMachine){
 		coffeeMachineInteractable.setInteractableModel(coffeeMachine)
 		coffeeMachineInteractable.scene = flurScene
 	}
 
+	const flyer = scene.getObjectByName('Flyer')
+	if(flyer){
+		flyerInteractable.setInteractableModel(flyer)
+		flyerInteractable.scene = flurScene
+	}
+	
+	const infoboardCorridor = scene.getObjectByName('InfoboardCorridor')
+	if(infoboardCorridor){
+		infoboardCorridorInteractable.setInteractableModel(infoboardCorridor)
+		infoboardCorridorInteractable.scene = flurScene
+	}
 	const dumpsterGreen  = scene.getObjectByName('DumpsterGreen')
 	const dumpsterBlue   = scene.getObjectByName('DumpsterBlue')
 	const dumpsterYellow = scene.getObjectByName('DumpsterYellow')
-
+	const bathroomM = scene.getObjectByName('BathroomM')
 	interactables = window.interactables = [abbeanumDoorEntranceInteractable, abbeanumDoorExitInteractable, 
 							hs1DoorEntranceInteractable, hs1DoorExitInteractable, 
 						 	laptopInteractable, stickInteractable,
 							trashcanInteractable, laptop2Interactable, blackboardsInteractable, cupInteractable,
 							beamerInteractable, tvCuboidInteractable, HS2DoorDummyInteractable,
-							preproomDoorDummyInteractable, bathroomDoorDummyBasementInteractable,
+							flyerInteractable, bathroomDoorDummyBasementInteractable,
 							bathroomDoorDummyUpstairsInteractable, abbeanumInfoBoardInteractable,
-							coffeeMachineInteractable]
+							coffeeMachineInteractable, infoboardCorridorInteractable]
 							.filter(interactable => interactable.interactableModel)	
 	acceleration.set(0,0,0)
 	var dtx = clamp(dt * 10, 0, 1) // the lower this number is, the smoother is the motion
@@ -747,7 +755,7 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 		//////Array of clickable objects
 		const clickableObjects = (
 			scene == outsideScene ? [abbeanumDoorEntrance, stick, abbeanumInfoBoard] :
-			scene == flurScene ? [abbeanumDoorExit, trashcan, hs1DoorEntrance, coffeeMachine, HS2DoorDummy, tvCuboid, bathroomDoorDummyBasement, bathroomDoorDummyUpstairs, preproomDoorDummy] :
+			scene == flurScene ? [abbeanumDoorExit, trashcan, hs1DoorEntrance, coffeeMachine, HS2DoorDummy, tvCuboid, bathroomDoorDummyBasement, bathroomDoorDummyUpstairs ,flyer] :
 			scene == hs1Scene ? [hs1DoorExit, laptop, laptop2, cup, beamer, blackboards] :
 			[]
 		).filter(model => !!model)
