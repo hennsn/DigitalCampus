@@ -5,9 +5,11 @@ const quizNextBtn = document.getElementById('quiz-next');
 const quizExitBtn = document.getElementById('quiz-exit');
 const quizQuestionContainer = document.getElementById('quiz-container');
 const quizQuestionElem = document.getElementById('question');
-const quizAnswerBtnElem = document.getElementById('quiz-answer-btns')
+const quizAnswerBtnElem = document.getElementById('quiz-answer-btns');
+const quizAnswerEvaluatedElem = document.getElementById('quizAnswerEvaluated'); 
 
 let quizQuestionIndex;
+let quizCountCorrect;
 //boolean for quiz
 let quizOpen = false;
 let openOnce = false
@@ -25,7 +27,7 @@ function openOnce_False(){
 	openOnce = false
 }
 
-
+// Start-, Next- and Exit-Button
 quizStartBtn.addEventListener('click', quizStart);
 quizNextBtn.addEventListener('click', () => {
 	quizQuestionIndex++;
@@ -47,6 +49,7 @@ function quizStart(){
 	quizStartBtn.classList.add('hide');
 	quizExitBtn.classList.add('hide');
 	quizQuestionIndex = 0;
+	quizCountCorrect = 0;
 	quizQuestionContainer.classList.remove('hide');
 	quizNextQuestion();
 }
@@ -58,12 +61,12 @@ function quizNextQuestion(){
 
 function display_question(question){
 	quizQuestionElem.innerText = question.question;
-	question.answers.forEach(answer => {
+	question.answers.forEach(answer => {	// display the answers onto the Buttons
 		const button = document.createElement('button');
 		button.innerText = answer.text;
 		button.classList.add('btn');
 		if(answer.correct){
-			button.dataset.correct = answer.correct;	// da wir strings vergleichen
+			button.dataset.correct = answer.correct;
 		}
 		button.addEventListener('click', quizAnswer);
 		quizAnswerBtnElem.appendChild(button);
@@ -71,6 +74,7 @@ function display_question(question){
 }
 
 function resetAnswers(){
+	quizAnswerEvaluatedElem.innerText = '';
 	clearGivenAnswer(document.body);
 	quizNextBtn.classList.add('hide');
 	while(quizAnswerBtnElem.firstChild){
@@ -81,6 +85,13 @@ function resetAnswers(){
 function quizAnswer(e){		// check the answer
 	const clickedBtn = e.target;
 	const correct = clickedBtn.dataset.correct;	// check the dataset
+	
+	if (clickedBtn.dataset.correct =='true'){
+		quizAnswerEvaluatedElem.innerText = 'richtig!';
+		quizCountCorrect++;
+	} else if (clickedBtn.dataset.correct != 'true') {
+		quizAnswerEvaluatedElem.innerText = 'leider falsch';
+	}
 	setGivenAnswer(document.body, correct);	
 	Array.from(quizAnswerBtnElem.children).forEach(button => {
 		setGivenAnswer(button, button.dataset.correct)
@@ -88,6 +99,7 @@ function quizAnswer(e){		// check the answer
 	if (quizQuestions.length > quizQuestionIndex +1){	
 		quizNextBtn.classList.remove('hide');
 	} else {
+		document.getElementById('quizFinished').innerText = 'du hast ' + quizCountCorrect + ' von ' + quizQuestions.length + ' richtig';
 		quizStartBtn.innerText = 'Restart';
 		quizStartBtn.classList.remove('hide');
 		quizExitBtn.classList.remove('hide');
