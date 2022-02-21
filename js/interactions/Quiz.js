@@ -21,6 +21,9 @@ function quizOpen_False(){
 function openOnce_True(){
 	openOnce = true
 }
+function openOnce_False(){
+	openOnce = false
+}
 
 
 quizStartBtn.addEventListener('click', quizStart);
@@ -34,7 +37,7 @@ quizExitBtn.addEventListener('click', () => {
 	openOnce = false
 	allowUserInput()
 	setTimeout(function(){
-		interactables[findElement("PreproomDoorDummy")].unlocked = true
+		interactables[findElement("Flyer")].unlocked = true
 	}, 1500)
 });
 
@@ -138,4 +141,4 @@ const quizQuestions = [
 ]
 // --- (ende quiz) ---
 
-export {openOnce, quizOpen, openOnce_True, quizOpen_True, quizOpen_False}
+export {openOnce, quizOpen, openOnce_True, openOnce_False, quizOpen_True, quizOpen_False}
