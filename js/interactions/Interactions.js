@@ -14,6 +14,7 @@ import { handleKeyBoardMovementInteractionsInteraction } from './InteractionUtil
 import { checkCollision } from './InteractionUtils/CollisionCheck.js'
 import { Constants } from './Constants.js'
 import {story, once, openText, closeText, overlayActive, updateStory, updateOnce} from './Story.js'
+import {openOnce, quizOpen, openOnce_True, quizOpen_True, quizOpen_False} from './Quiz.js'
 
 // what exactly does that do? / how does it work?
 // eher etwas für die #InteractionsGruppe
@@ -30,6 +31,9 @@ let inventoryOpen = false
 let isBlocked = false
 //boolean for picture display
 let infoPictureOpen = false;
+
+//triggers interactions when in range
+let closeEnough = 0
 
 //array für alle modelle die wir einsammeln
 const inInventory = ["Handy", "USB Stick"]
@@ -233,9 +237,21 @@ const HS2DoorDummyInteractable =
 		}
 	})
 
-const preproomDoorDummyInteractable = 
+const flyerInteractable = 
 	new CustomInteractable(undefined, undefined, () => {
-		console.log('preproom was clicked')
+		console.log(quizOpen)
+		if(openOnce == false){
+			openOnce_True()
+			if(quizOpen == false){
+				document.getElementById("abbeanum-quiz").style.visibility = 'visible';
+				quizOpen_True()
+				interactables[findElement("Flyer")].unlocked = false
+				if(openOnce == true) blockUserInput()
+			}else{
+				document.getElementById("abbeanum-quiz").style.visibility = 'hidden';
+				quizOpen_False()
+			}
+		}
 	})
 
 
@@ -270,6 +286,9 @@ const bathroomDoorDummyUpstairsInteractable =
 			}, 2000)
 		}
 	})
+
+const infoboardCorridorInteractable = new InfoObject(undefined, undefined, undefined)
+
 
 let interactables = []
 
@@ -349,13 +368,9 @@ function createInteractions(scene, camera, renderer, mouse){
 					console.log('story: ', story) //test where in story we are
 					console.log('once: ', once) //teste once variable 
 					console.log('isPlaying: ', isPlaying)
-					console.log('inventory: ', inInventory)
+					//console.log('inventory: ', inInventory)
 					//console.log(findElement())
-					/*if(overlayActive == false){ 
-						openText()
-					} else {
-						closeText()
-					}*/
+					console.log(closeEnough)
 					break;
 				case 'h': 
 				case 'H':
@@ -423,6 +438,16 @@ function createInteractions(scene, camera, renderer, mouse){
 						document.getElementById("infoPicture").style.visibility = 'hidden';
 						close_image('leImage');
 						infoPictureOpen = false;
+					}
+					break;
+
+				case '.':	// display Abbeanum-Quiz (vorerst hierüber)
+					if(quizOpen == false){
+						document.getElementById("abbeanum-quiz").style.visibility = 'visible';
+						quizOpen = true;
+					}else{
+						document.getElementById("abbeanum-quiz").style.visibility = 'hidden';
+						quizOpen = false;
 					}
 					break;
 			}
@@ -589,12 +614,6 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 		HS2DoorDummyInteractable.scene = flurScene
 	}
 
-	const preproomDoorDummy = scene.getObjectByName('PreproomDoorDummy')
-	if(preproomDoorDummy){
-		preproomDoorDummyInteractable.setInteractableModel(preproomDoorDummy)
-		preproomDoorDummyInteractable.scene = flurScene
-	}
-
 
 	const bathroomDoorDummyBasement = scene.getObjectByName('BathroomDoorDummyBasement')
 	if(bathroomDoorDummyBasement){
@@ -608,24 +627,36 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 		bathroomDoorDummyUpstairsInteractable.setInteractableModel(bathroomDoorDummyUpstairs)
 		bathroomDoorDummyUpstairsInteractable.scene = flurScene
 	}
+
 	const coffeeMachine = scene.getObjectByName('CoffeeMachine')
 	if(coffeeMachine){
 		coffeeMachineInteractable.setInteractableModel(coffeeMachine)
 		coffeeMachineInteractable.scene = flurScene
 	}
 
+	const flyer = scene.getObjectByName('Flyer')
+	if(flyer){
+		flyerInteractable.setInteractableModel(flyer)
+		flyerInteractable.scene = flurScene
+	}
+	
+	const infoboardCorridor = scene.getObjectByName('InfoboardCorridor')
+	if(infoboardCorridor){
+		infoboardCorridorInteractable.setInteractableModel(infoboardCorridor)
+		infoboardCorridorInteractable.scene = flurScene
+	}
 	const dumpsterGreen  = scene.getObjectByName('DumpsterGreen')
 	const dumpsterBlue   = scene.getObjectByName('DumpsterBlue')
 	const dumpsterYellow = scene.getObjectByName('DumpsterYellow')
-
+	const bathroomM = scene.getObjectByName('BathroomM')
 	interactables = window.interactables = [abbeanumDoorEntranceInteractable, abbeanumDoorExitInteractable, 
 							hs1DoorEntranceInteractable, hs1DoorExitInteractable, 
 						 	laptopInteractable, stickInteractable,
 							trashcanInteractable, laptop2Interactable, blackboardsInteractable, cupInteractable,
 							beamerInteractable, tvCuboidInteractable, HS2DoorDummyInteractable,
-							preproomDoorDummyInteractable, bathroomDoorDummyBasementInteractable,
+							flyerInteractable, bathroomDoorDummyBasementInteractable,
 							bathroomDoorDummyUpstairsInteractable, abbeanumInfoBoardInteractable,
-							coffeeMachineInteractable]
+							coffeeMachineInteractable, infoboardCorridorInteractable]
 							.filter(interactable => interactable.interactableModel)	
 	acceleration.set(0,0,0)
 	var dtx = clamp(dt * 10, 0, 1) // the lower this number is, the smoother is the motion
@@ -664,8 +695,17 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 
 	if(couldInteract != canInteract){
 		couldInteract = canInteract
-		controlHints.innerHTML = canInteract ? 'WASD walk<br>LEFT/RIGHT turn<br>E interact' : 'WASD walk<br>LEFT/RIGHT turn'
+		controlHints.innerHTML = canInteract ? 'WASD laufen<br>LEFT/RIGHT drehen<br>Q Inventar<br>E interagieren' : 'WASD walk<br>LEFT/RIGHT turn<br>Q Inventar'
+		//play the abbeanumInfoboard audio
+		if(closeEnough == 0 && isPlaying == false && once == 1){
+			closeEnough = 1
+			playStoryTrack('audio/018_Geschichte_Abb.mp3')
+			setTimeout(function(){
+				interactables[findElement("AbbeanumDoorEntrance")].unlocked = true
+			}, 3000)
+		} 
 	}
+	
 	// we could create an "Interactable" class, which does this, and could generalize pickups with that
 	// check for general entrances - this can be made more generic
 	if((keyboard.e || keyboard.Enter) && 
@@ -715,7 +755,7 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 		//////Array of clickable objects
 		const clickableObjects = (
 			scene == outsideScene ? [abbeanumDoorEntrance, stick, abbeanumInfoBoard] :
-			scene == flurScene ? [abbeanumDoorExit, trashcan, hs1DoorEntrance, coffeeMachine, HS2DoorDummy, tvCuboid, bathroomDoorDummyBasement, bathroomDoorDummyUpstairs, preproomDoorDummy] :
+			scene == flurScene ? [abbeanumDoorExit, trashcan, hs1DoorEntrance, coffeeMachine, HS2DoorDummy, tvCuboid, bathroomDoorDummyBasement, bathroomDoorDummyUpstairs ,flyer] :
 			scene == hs1Scene ? [hs1DoorExit, laptop, laptop2, cup, beamer, blackboards] :
 			[]
 		).filter(model => !!model)
@@ -745,7 +785,7 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 		if(currentInteractables.length >= 1 && clickableObjects.length > 0){
 			console.log('currentInteractables: ', currentInteractables[0].interactableModel.name)
 			console.log('clicakable: ', clickableObjects[0].name)
-			console.log('all clickable: ', clickableObjects)
+			//console.log('all clickable: ', clickableObjects)
 			
 		}
 		
@@ -784,10 +824,14 @@ function printInteractables(){
 //functions to toggle user input
 function blockUserInput(){
 	isBlocked = true
+	controlHints.style.visibility = 'hidden'
 }
 function allowUserInput(){
 	isBlocked = false
+	controlHints.style.visibility = 'visible'
 }
+
+
 //hide inventory
 function hideInventory(){
 	document.getElementById("inventory").style.visibility = 'hidden';
@@ -809,7 +853,5 @@ function close_image(imgID){
 	var b = document.getElementById(imgID);
 	b.parentNode.removeChild(b);
 }
-
-
 
 export { createInteractions, handleInteractions, inInventory, printInventory, hideInventory, interactables, keyWasPressed, wasClicked, blockUserInput, allowUserInput, findElement }

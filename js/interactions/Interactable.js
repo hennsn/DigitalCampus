@@ -130,12 +130,7 @@ class InfoObject extends Interactable {
     }
 
     #getInfo(){
-        if(this.interactableModel.name == 'AbbeanumInfoBoard'){
-            if(playedOnce == false){
-                playAudioTrack('audio/018_Geschichte_Abb.mp3')
-                playedOnce = true
-            }
-        }
+        
     }
 }
 
