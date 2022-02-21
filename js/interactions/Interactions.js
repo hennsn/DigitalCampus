@@ -310,24 +310,18 @@ const infoboardCorridorInteractable =
 		if(!openOnce){
 			openOnce_True() //alows picture to open for the first time
 			if(infoPictureOpen == false){
-				document.getElementById("infoPicture").style.visibility = 'visible';
 				display_image('images/history.jpg'); // image height relates to browser-window height
-				infoPictureOpen = true;
 				setTimeout(function(){
 					openOnce_False() //allows picture to close
-				}, 500)
+				}, 200)
 			}else{
-				document.getElementById("infoPicture").style.visibility = 'hidden';
-				//openOnce_True()
 				close_image('leImage');
-				infoPictureOpen = false;
 				setTimeout(function(){
 					openOnce_False() //allows picture to open again
-				}, 500)
+				}, 200)
 			}
 		}
 	})
-
 
 let interactables = []
 
@@ -408,6 +402,7 @@ function createInteractions(scene, camera, renderer, mouse){
 					console.log('once: ', once) //teste once variable 
 					//console.log('isPlaying: ', isPlaying)
 					console.log('openOnce: ', openOnce)
+					console.log('infoPictureOpen: ', infoPictureOpen)
 					//console.log('inventory: ', inInventory)
 					//console.log(findElement())
 					console.log(closeEnough)
@@ -742,12 +737,6 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 			playStoryTrack('audio/018_Geschichte_Abb.mp3')
 			interactables[findElement("AbbeanumDoorEntrance")].unlocked = true
 		} 
-		if(infoPictureOpen == true){
-			document.getElementById("infoPicture").style.visibility = 'hidden';
-			close_image('leImage');
-			infoPictureOpen = false;
-			openOnce_False()
-		}
 	}
 	
 	// we could create an "Interactable" class, which does this, and could generalize pickups with that
@@ -787,6 +776,10 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 	
 	updateSparkles(scene, camera, targetSizes, sparkleTargets, time, dt)
 	
+	//AUTOMATICALLY CLOSE PICTURE WHEN WALKING AWAY
+	/*if(!currentInteractables.includes(infoboardCorridorInteractable) && infoPictureOpen == true){
+		close_image('leImage')
+	}*/
 	/////////////////////////////
 	/////MOUSE INTERACTIONS//////
 	////////////////////////////
@@ -884,6 +877,8 @@ function hideInventory(){
 
 //Bildanzeige (derzeit über p)
 function display_image(src) {
+	infoPictureOpen = true; //new
+	document.getElementById("infoPicture").style.visibility = 'visible'; //new
 	var a = document.createElement("img");
 	a.src = src;
 	//a.width = width;
@@ -893,6 +888,8 @@ function display_image(src) {
 	document.getElementById("dispImage").appendChild(a);  
 }
 function close_image(imgID){
+	infoPictureOpen = false; //new
+	document.getElementById("infoPicture").style.visibility = 'hidden'; //new
 	var imgID = imgID;
 	var b = document.getElementById(imgID);
 	b.parentNode.removeChild(b);
