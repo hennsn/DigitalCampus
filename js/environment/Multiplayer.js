@@ -4,6 +4,11 @@ import { FontLoader } from 'https://cdn.skypack.dev/three@0.135.0/examples/jsm/l
 import { TextGeometry } from 'https://cdn.skypack.dev/three@0.135.0/examples/jsm/geometries/TextGeometry.js'
 import { mix } from '../Maths.js'
 
+// configure this to set the host for multiplayer requests
+const serverURL = "https://anionoa.uber.space/digitalcampus"
+
+const multiplayerIsEnabled = window.multiplayerIsEnabled = serverURL && serverURL.length > 0
+
 var lastRequest = []
 var lastTime = 0
 var state = 'ready'
@@ -41,6 +46,9 @@ var lastChatText = null
 
 function updateMultiplayer(scene, time, deltaTime, camera){
 	
+	// Multiplayer was disabled
+	if(!window.multiplayerIsEnabled) return;
+	
 	var deltaTime = Math.abs(time - lastTime) * 1e-3
 	
 	var players = scene.getObjectByName('players')
@@ -66,7 +74,7 @@ function updateMultiplayer(scene, time, deltaTime, camera){
 		lastTime = time
 		state = 'waiting'
 		const x = new XMLHttpRequest()
-		var requestURL = "https://anionoa.uber.space/digitalcampus?"+
+		var requestURL = serverURL + "?"+
 			"name="+encodeURIComponent(selfName)+
 			"&x="+(camera.position.x*1)+
 			"&y="+(camera.position.y*1)+
