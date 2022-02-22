@@ -14,7 +14,7 @@ import { handleKeyBoardMovementInteractionsInteraction } from './InteractionUtil
 import { checkCollision } from './InteractionUtils/CollisionCheck.js'
 import { Constants } from './Constants.js'
 import {story, once, openText, closeText, overlayActive, updateStory, updateOnce} from './Story.js'
-import {openOnce, quizOpen, openOnce_True, quizOpen_True, quizOpen_False} from './Quiz.js'
+import {openOnce, quizOpen, openOnce_True, openOnce_False, quizOpen_True, quizOpen_False} from './Quiz.js'
 
 // what exactly does that do? / how does it work?
 // eher etwas für die #InteractionsGruppe
@@ -36,7 +36,7 @@ let infoPictureOpen = false;
 let closeEnough = 0
 
 //array für alle modelle die wir einsammeln
-const inInventory = ["Handy", "USB Stick"]
+let inInventory = ["Handy", "USB Stick"]
 inventory.innerHTML += "Handy <br> USB Stick"
 
 // the user
@@ -95,23 +95,29 @@ const cupInteractable =
 const blackboardsInteractable = 
 	new InventoryObject(undefined, undefined)
 
-const trashcanInteractable =
-	new InventoryObject(undefined, undefined)
-
 //CUSTOMS//
+const trashcanInteractable =
+	new CustomInteractable(undefined, undefined, () => {
+		if(inInventory.includes("altes VGA Kabel")){
+			inInventory = inInventory.filter(e => e !== 'altes VGA Kabel');
+			printInventory()
+			interactables[findElement("Trashcan")].unlocked = false
+		}
+	})
+
 const laptopInteractable =
 	new CustomInteractable(undefined, undefined, () => {
 		console.log('laptop1 was clicked')
 		if(once == 2){
 			updateOnce() //once to 3
-			interactables[findElement("HS1DoorExit")].unlocked = false 
-			interactables[findElement("Laptop")].unlocked = false 
+			updateStory() //story to 2
+			interactables[findElement("Laptop")].unlocked = false
+			interactables[findElement("HS1DoorExit")].unlocked = false  
+			playStoryTrack('audio/003_Falscher_Stick.mp3')//('audio/springTestSound.wav')
 			blockUserInput()
 			setTimeout(function(){
 				openText()
 			}, 18000)
-			playStoryTrack('audio/003_Falscher_Stick.mp3')//('audio/springTestSound.wav')
-			updateStory() //story to 2
 			setTimeout(function(){
 				closeText()
 			}, 34000)
@@ -126,6 +132,11 @@ const laptopInteractable =
 			hs1Scene.getObjectByName("Laptop").visible = false
 			playStoryTrack('audio/006_Kein_HDMI.mp3')//('audio/springTestSound.wav')
 			interactables[findElement("Laptop")].unlocked = false 
+			if(!inInventory.includes('altes VGA Kabel')){
+				inInventory.push('altes VGA Kabel')
+				interactables[findElement("Trashcan")].unlocked = true
+			}
+			printInventory()
 		}
 	})
 
@@ -198,7 +209,15 @@ const beamerInteractable =
 	})
 
 const abbeanumInfoBoardInteractable =
-	new InfoObject(undefined, undefined)
+	new CustomInteractable(undefined, undefined, () => {
+		if(closeEnough == 0 && isPlaying == false && once == 1){
+			closeEnough = 1
+			playStoryTrack('audio/018_Geschichte_Abb.mp3')
+			setTimeout(function(){
+				interactables[findElement("AbbeanumDoorEntrance")].unlocked = true
+			}, 1500)
+        }
+	})
 
 const tvCuboidInteractable =
 	new CustomInteractable(undefined, undefined, () => {
@@ -237,24 +256,6 @@ const HS2DoorDummyInteractable =
 		}
 	})
 
-const flyerInteractable = 
-	new CustomInteractable(undefined, undefined, () => {
-		console.log(quizOpen)
-		if(openOnce == false){
-			openOnce_True()
-			if(quizOpen == false){
-				document.getElementById("abbeanum-quiz").style.visibility = 'visible';
-				quizOpen_True()
-				interactables[findElement("Flyer")].unlocked = false
-				if(openOnce == true) blockUserInput()
-			}else{
-				document.getElementById("abbeanum-quiz").style.visibility = 'hidden';
-				quizOpen_False()
-			}
-		}
-	})
-
-
 const bathroomDoorDummyBasementInteractable =
 	new CustomInteractable(undefined, undefined, () => {
 		console.log('bathroom basement was clicked')
@@ -287,8 +288,40 @@ const bathroomDoorDummyUpstairsInteractable =
 		}
 	})
 
-const infoboardCorridorInteractable = new InfoObject(undefined, undefined, undefined)
+const flyerInteractable = 
+	new CustomInteractable(undefined, undefined, () => {
+		console.log(quizOpen)
+		if(openOnce == false){
+			openOnce_True()
+			if(quizOpen == false){
+				document.getElementById("abbeanum-quiz").style.visibility = 'visible';
+				quizOpen_True()
+				interactables[findElement("Flyer")].unlocked = false
+				if(openOnce == true) blockUserInput()
+			}else{
+				document.getElementById("abbeanum-quiz").style.visibility = 'hidden';
+				quizOpen_False()
+			}
+		}
+	})
 
+const infoboardCorridorInteractable = 
+	new CustomInteractable(undefined, undefined, () => {
+		if(!openOnce){
+			openOnce_True() //alows picture to open for the first time
+			if(infoPictureOpen == false){
+				display_image('images/history.jpg'); // image height relates to browser-window height
+				setTimeout(function(){
+					openOnce_False() //allows picture to close
+				}, 200)
+			}else{
+				close_image('leImage');
+				setTimeout(function(){
+					openOnce_False() //allows picture to open again
+				}, 200)
+			}
+		}
+	})
 
 let interactables = []
 
@@ -367,7 +400,9 @@ function createInteractions(scene, camera, renderer, mouse){
 					// MAI'S DEBUGGING MAIN KEY
 					console.log('story: ', story) //test where in story we are
 					console.log('once: ', once) //teste once variable 
-					console.log('isPlaying: ', isPlaying)
+					//console.log('isPlaying: ', isPlaying)
+					console.log('openOnce: ', openOnce)
+					console.log('infoPictureOpen: ', infoPictureOpen)
 					//console.log('inventory: ', inInventory)
 					//console.log(findElement())
 					console.log(closeEnough)
@@ -700,9 +735,7 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 		if(closeEnough == 0 && isPlaying == false && once == 1){
 			closeEnough = 1
 			playStoryTrack('audio/018_Geschichte_Abb.mp3')
-			setTimeout(function(){
-				interactables[findElement("AbbeanumDoorEntrance")].unlocked = true
-			}, 3000)
+			interactables[findElement("AbbeanumDoorEntrance")].unlocked = true
 		} 
 	}
 	
@@ -743,6 +776,14 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 	
 	updateSparkles(scene, camera, targetSizes, sparkleTargets, time, dt)
 	
+	//AUTOMATICALLY CLOSE PICTURE WHEN WALKING AWAY
+	if(infoPictureOpen==true){
+		let distance =camera.position.distanceTo(infoboardCorridor.position)
+		if(distance > 2){
+			close_image('leImage')
+			//console.log('TOO FAR')
+		}
+	}
 	/////////////////////////////
 	/////MOUSE INTERACTIONS//////
 	////////////////////////////
@@ -755,7 +796,7 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 		//////Array of clickable objects
 		const clickableObjects = (
 			scene == outsideScene ? [abbeanumDoorEntrance, stick, abbeanumInfoBoard] :
-			scene == flurScene ? [abbeanumDoorExit, trashcan, hs1DoorEntrance, coffeeMachine, HS2DoorDummy, tvCuboid, bathroomDoorDummyBasement, bathroomDoorDummyUpstairs ,flyer] :
+			scene == flurScene ? [abbeanumDoorExit, trashcan, hs1DoorEntrance, coffeeMachine, HS2DoorDummy, tvCuboid, bathroomDoorDummyBasement, bathroomDoorDummyUpstairs, flyer, infoboardCorridor] :
 			scene == hs1Scene ? [hs1DoorExit, laptop, laptop2, cup, beamer, blackboards] :
 			[]
 		).filter(model => !!model)
@@ -840,6 +881,8 @@ function hideInventory(){
 
 //Bildanzeige (derzeit über p)
 function display_image(src) {
+	infoPictureOpen = true; //new
+	document.getElementById("infoPicture").style.visibility = 'visible'; //new
 	var a = document.createElement("img");
 	a.src = src;
 	//a.width = width;
@@ -849,9 +892,12 @@ function display_image(src) {
 	document.getElementById("dispImage").appendChild(a);  
 }
 function close_image(imgID){
+	infoPictureOpen = false; //new
+	document.getElementById("infoPicture").style.visibility = 'hidden'; //new
 	var imgID = imgID;
 	var b = document.getElementById(imgID);
 	b.parentNode.removeChild(b);
 }
+
 
 export { createInteractions, handleInteractions, inInventory, printInventory, hideInventory, interactables, keyWasPressed, wasClicked, blockUserInput, allowUserInput, findElement }

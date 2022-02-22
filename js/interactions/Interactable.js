@@ -1,5 +1,5 @@
 import {inInventory} from './Interactions.js'
-import {printInventory, interactables, findElement} from './Interactions.js'
+import {printInventory, interactables, findElement } from './Interactions.js'
 import { audio, audioStory, doNow, isPlaying, playAudioTrack, playStoryTrack, stopStoryTrack, showLoadinOverlay } from '../UserInterface.js'
 import { updateOnce, updateStory, once, story } from './Story.js'
 
@@ -130,7 +130,7 @@ class InfoObject extends Interactable {
     }
 
     #getInfo(){
-        
+       
     }
 }
 

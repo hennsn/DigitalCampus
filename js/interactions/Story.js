@@ -41,7 +41,7 @@ function startStory(scene, mousecaster){
     //Spawn
     if(scene == outsideScene && story == 0 && keyWasPressed == true || wasClicked == true){
         if(once == 0){
-            playStoryTrack('audio/001_Einleitung_Spawn_New.mp3')//('audio/springTestSound.wav')
+            playStoryTrack('audio/springTestSound.wav')//('audio/001_Einleitung_Spawn_New.mp3')
             once = 1
             interactables[findElement("AbbeanumDoorEntrance")].unlocked = false 
         }
@@ -49,6 +49,7 @@ function startStory(scene, mousecaster){
     //end of spawn audio
     if(once == 1 && scene == outsideScene && isPlaying == false){
         missionText.innerHTML = "Gehe ins Abbeanum"
+        interactables[findElement("AbbeanumInfoBoard")].unlocked = true
     }
     //enter abbeanum
     if(scene == flurScene && story == 0){
@@ -56,7 +57,8 @@ function startStory(scene, mousecaster){
         story = 1
         setTimeout(function(){ //delay needed
             interactables[findElement("Flyer")].unlocked = true
-        }, 1500)
+            interactables[findElement("InfoboardCorridor")].unlocked = true
+        }, 500)
     }
     //enter hs1
     if(scene == hs1Scene && story == 1){
@@ -79,7 +81,7 @@ function startStory(scene, mousecaster){
         document.getElementById("button").classList.add("active")
         button.addEventListener('click', () =>{
             if(once == 3 && story == 2){
-                playStoryTrack("audio/004_Telefonat.mp3")//('audio/springTestSound.wav')
+                playStoryTrack('audio/springTestSound.wav')//("audio/004_Telefonat.mp3")
                 missionText.innerHTML = "Pace aufgeregt im Hörsaal umher"
                 document.getElementById("button").classList.remove("active")
                 once = 4
@@ -109,10 +111,6 @@ function startStory(scene, mousecaster){
     }
     if(story == 5 && once == 6 && isPlaying == false){
         missionText.innerHTML = "*Leihe* dir irgendwo im Abbeanum ein Kabel"
-        if(!inInventory.includes('altes VGA Kabel')){
-            inInventory.push('altes VGA Kabel')
-        }
-        printInventory()
         interactables[findElement("TvCuboid")].unlocked = true 
     }
     if(once == 7 && story == 6 && isPlaying == false){
