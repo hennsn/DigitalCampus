@@ -1,4 +1,4 @@
-import { allowUserInput, findElement } from "./Interactions.js";
+import { allowUserInput, lockElement, unlockElement } from "./Interactions.js";
 
 const quizStartBtn = document.getElementById('quiz-start');
 const quizNextBtn = document.getElementById('quiz-next');
@@ -39,7 +39,7 @@ quizExitBtn.addEventListener('click', () => {
 	openOnce = false
 	allowUserInput()
 	setTimeout(function(){
-		interactables[findElement("Flyer")].unlocked = true
+		unlockElement("Flyer")
 	}, 1500)
 });
 

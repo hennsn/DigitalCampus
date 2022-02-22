@@ -22,7 +22,7 @@ import { fillScene } from './environment/Scene.js'
 import { createTerrain } from './environment/Terrain.js'
 import { handleUserInterface } from './UserInterface.js'
 import { createInteractions, handleInteractions } from './interactions/Interactions.js'
-import {startStory} from './interactions/Story.js'
+import { startStory } from './interactions/Story.js'
 import { updateMultiplayer } from './environment/Multiplayer.js'
 
 
@@ -77,11 +77,11 @@ outsideScene.name = 'outside'
 // NOT WORKING YET, SO NOT NEEDED, but when deleting please mind, that the outlinepass is given to the handle interactions funcion
 var composer = window.composer = new EffectComposer(renderer)
 const renderPass = new RenderPass(outsideScene, camera)
-composer.addPass(renderPass)
+// composer.addPass(renderPass)
 var outlinePass = new OutlinePass(new THREE.Vector2(window.innerWidth, window.innerHeight), outsideScene, camera);
-composer.addPass(outlinePass)
-var saoPass = window.saoPass = new SAOPass(outsideScene, camera, false, true)
-composer.addPass(saoPass) // screen space ambient occlusion
+// composer.addPass(outlinePass)
+// var saoPass = window.saoPass = new SAOPass(outsideScene, camera, false, true)
+// composer.addPass(saoPass) // screen space ambient occlusion
 
 
 
@@ -131,12 +131,9 @@ window.addEventListener('resize', (event) => {
 // define interactions
 createInteractions(scene, camera, renderer, mouse)
 
-// todo webxr button & support
-
-// todo top-down map?
-
-const stats = Stats()
-document.body.appendChild(stats.dom)
+// debugging information
+// const stats = Stats()
+// document.body.appendChild(stats.dom)
 
 var lastTime = new Date().getTime()
 let i = 1;
@@ -154,7 +151,7 @@ function mainLoop(){
 	handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, deltaTime, outlinePass)
 	handleUserInterface(deltaTime)
 	updateMultiplayer(scene, time, deltaTime, camera)
-	stats.update()
+	// stats.update()
 	
 	// todo we should be able to register event listeners for mainLoop, and do our stuff inside of them
 	if(window.envMap){

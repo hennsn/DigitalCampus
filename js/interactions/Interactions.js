@@ -16,10 +16,6 @@ import { Constants } from './Constants.js'
 import {story, once, openText, closeText, overlayActive, updateStory, updateOnce} from './Story.js'
 import {openOnce, quizOpen, openOnce_True, openOnce_False, quizOpen_True, quizOpen_False} from './Quiz.js'
 
-// what exactly does that do? / how does it work?
-// eher etwas für die #InteractionsGruppe
-// import { XRControllerModelFactory } from 'https://cdn.skypack.dev/three@0.135.0/examples/jsm/webxr/XRControllerModelFactory.js'
-
 // the keyboard
 const keyboard = window.keyboard = {}
 
@@ -71,132 +67,110 @@ const CorridorEntryPointFromHS1 = new THREE.Vector3(-16.9378, 3.8484, -34.7462)
 const CorridorEntryPointFromOutside = new THREE.Vector3(1.4122, 1.4596, -20.0527)
 const HS1EntryPointFromCorridor = new THREE.Vector3(-15.5154, 3.8484, -35.038)
 
-//DOORS//
-const abbeanumDoorEntranceInteractable = 
-	new Door(undefined, undefined, CorridorEntryPointFromOutside)
+// Doors
+const abbeanumDoorEntranceInteractable = new Door('AbbeanumDoorEntrance', 'flurScene', CorridorEntryPointFromOutside)
+const abbeanumDoorExitInteractable = new Door('AbbeanumDoorExit', 'outsideScene', OutsideEntryPointFromAbbeanum)
+const hs1DoorEntranceInteractable = new Door('HS1DoorEntrance', 'hs1Scene', HS1EntryPointFromCorridor)
+const hs1DoorExitInteractable = new Door('HS1DoorExit', 'flurScene', CorridorEntryPointFromHS1)
 
-const abbeanumDoorExitInteractable = 
-	new Door(undefined, undefined, OutsideEntryPointFromAbbeanum)
+// Inventory Objects
+const stickInteractable = new InventoryObject('Stock')
+const cupInteractable = new InventoryObject('Kaffeetasse')
 
-const hs1DoorEntranceInteractable =
-	new Door(undefined, undefined, HS1EntryPointFromCorridor)
+// NOT REALLY NEEDED
+const blackboardsInteractable = new InventoryObject('Blackboards')
 
-const hs1DoorExitInteractable =
-	new Door(undefined, undefined, CorridorEntryPointFromHS1)
+// Custom Objects
+const trashcanInteractable = new CustomInteractable('Trashcan', () => {
+	if(inInventory.includes("altes VGA Kabel")){
+		inInventory = inInventory.filter(e => e !== 'altes VGA Kabel');
+		printInventory()
+		lockElement("Trashcan")
+	}
+})
 
-//INVENTORY ONBJECTS//
-const stickInteractable =
-	new InventoryObject(undefined, undefined)
-
-const cupInteractable =
-	new InventoryObject(undefined, undefined)
-
-//NOT REALLY NEEDED//
-const blackboardsInteractable = 
-	new InventoryObject(undefined, undefined)
-
-//CUSTOMS//
-const trashcanInteractable =
-	new CustomInteractable(undefined, undefined, () => {
-		if(inInventory.includes("altes VGA Kabel")){
-			inInventory = inInventory.filter(e => e !== 'altes VGA Kabel');
-			printInventory()
-			interactables[findElement("Trashcan")].unlocked = false
+const laptopInteractable = new CustomInteractable('Laptop', () => {
+	console.log('laptop1 was clicked')
+	if(once == 2){
+		updateOnce() //once to 3
+		updateStory() //story to 2
+		lockElement("Laptop")
+		lockElement("HS1DoorExit")
+		playStoryTrack('audio/003_Falscher_Stick.mp3')//('audio/springTestSound.wav')
+		blockUserInput()
+		setTimeout(openText, 18000)
+		setTimeout(closeText, 34000)
+	} else if(story == 4 && once == 5){
+		updateOnce() //to 6
+		updateStory() //to 5
+		inInventory.pop()
+		printInventory()
+		// laptop tausch:
+		hs1Scene.getObjectByName("Laptop2").visible = true
+		hs1Scene.getObjectByName("Laptop").visible = false
+		playStoryTrack('audio/006_Kein_HDMI.mp3')//('audio/springTestSound.wav')
+		lockElement("Laptop")
+		if(!inInventory.includes('altes VGA Kabel')){
+			inInventory.push('altes VGA Kabel')
+			unlockElement("Trashcan")
 		}
-	})
+		printInventory()
+	}
+})
 
-const laptopInteractable =
-	new CustomInteractable(undefined, undefined, () => {
-		console.log('laptop1 was clicked')
-		if(once == 2){
-			updateOnce() //once to 3
-			updateStory() //story to 2
-			interactables[findElement("Laptop")].unlocked = false
-			interactables[findElement("HS1DoorExit")].unlocked = false  
-			playStoryTrack('audio/003_Falscher_Stick.mp3')//('audio/springTestSound.wav')
-			blockUserInput()
-			setTimeout(function(){
-				openText()
-			}, 18000)
-			setTimeout(function(){
-				closeText()
-			}, 34000)
-		}
-		if(story == 4 && once == 5){
-			updateOnce() //to 6
-			updateStory() //to 5
-			inInventory.pop()
-			printInventory()
-			//laptop tausch:
-			hs1Scene.getObjectByName("Laptop2").visible = true
-			hs1Scene.getObjectByName("Laptop").visible = false
-			playStoryTrack('audio/006_Kein_HDMI.mp3')//('audio/springTestSound.wav')
-			interactables[findElement("Laptop")].unlocked = false 
-			if(!inInventory.includes('altes VGA Kabel')){
-				inInventory.push('altes VGA Kabel')
-				interactables[findElement("Trashcan")].unlocked = true
-			}
-			printInventory()
-		}
-	})
+const laptop2Interactable = new CustomInteractable('Laptop2', () => {
+	console.log('laptopt2 was clicked')
+	if(once == 11 && story == 7){
+		updateOnce() //to 12
+		inInventory.pop()
+		printInventory()
+		lockElement("Laptop2")
+		lockElement("HS1DoorExit")
+		playStoryTrack('audio/011_Physische_Intervention_Geplant.mp3')
+		missionText.innerHTML = "Sei entrüstet"
+		setTimeout(function(){
+			unlockElement("HS1DoorExit")
+			unlockElement("Stock")
+			missionText.innerHTML = "Finde einen Stock"
+		}, 17000)
+	}
+})
 
-const laptop2Interactable =
-	new CustomInteractable(undefined, undefined, () => {
-		console.log('laptopt2 was clicked')
-		if(once == 11 && story == 7){
-			updateOnce() //to 12
-			inInventory.pop()
-			printInventory()
-			interactables[findElement("Laptop2")].unlocked = false 
-			interactables[findElement("HS1DoorExit")].unlocked = false 
-			playStoryTrack('audio/011_Physische_Intervention_Geplant.mp3')
-			missionText.innerHTML = "Sei entrüstet"
-			setTimeout(function(){
-				interactables[findElement("HS1DoorExit")].unlocked = true 
-				interactables[findElement("Stock")].unlocked = true 
-				missionText.innerHTML = "Finde einen Stock"
-			}, 17000)
-		}
-	})
+const coffeeMachineInteractable = new CustomInteractable('CoffeeMachine', () => {
+	console.log('coffee machine was clicked')
+	if(once == 8){
+		updateOnce() //to 9
+		updateStory() //to 7
+		blockUserInput()
+		inInventory.pop()
+		printInventory()
+		lockElement("CoffeeMachine")
+		playStoryTrack('audio/009_Zu_Viel_Kaffee.mp3')
+		unlockElement("BathroomDoorDummyBasement")
+		unlockElement("BathroomDoorDummyUpstairs")
+		setTimeout(function(){
+			allowUserInput()
+			missionText.innerHTML = "Finde die Toiletten - und zwar schnell!"
+		}, 12000)
+	}
+})
 
-const coffeeMachineInteractable =
-	new CustomInteractable(undefined, undefined, () => {
-		console.log('coffee machine was clicked')
-		if(once==8){
-			updateOnce() //to 9
-			updateStory() //to 7
-			blockUserInput()
-			inInventory.pop()
-			printInventory()
-			interactables[findElement("CoffeeMachine")].unlocked = false
-			playStoryTrack('audio/009_Zu_Viel_Kaffee.mp3')
-			interactables[findElement("BathroomDoorDummyBasement")].unlocked = true 
-			interactables[findElement("BathroomDoorDummyUpstairs")].unlocked = true 
-			setTimeout(function(){
-				allowUserInput()
-				missionText.innerHTML = "Finde die Toiletten - und zwar schnell!"
-			}, 12000)
-		}
-	})
-
-const beamerInteractable =
-	new CustomInteractable(undefined, undefined, () => {
+const beamerInteractable = new CustomInteractable('Beamer', () => {
 		console.log('beamer was clicked')
 		if(once == 13 && story == 7){
 			updateOnce() //to 14
 			updateStory() //to 8
-			interactables[findElement("Beamer")].unlocked = false 
+			lockElement("Beamer")
 			blockUserInput()
 			playStoryTrack('audio/013_Verfehlt.mp3')
 			setTimeout(function(){
 				allowUserInput()
-				interactables[findElement("Beamer")].unlocked = true 
+				unlockElement("Beamer")
 				missionText.innerHTML = "Mach ihn fertig!"
 			}, 3000)
-		}
-		if(once == 14 && story == 8 && isPlaying == false){
+		} else if(once == 14 && story == 8 && !isPlaying){
 			updateOnce() //to 15
-			interactables[findElement("Beamer")].unlocked = false 
+			lockElement("Beamer")
 			blockUserInput()
 			playStoryTrack('audio/014_Clonk_Beamer.mp3')
 			inInventory.pop()
@@ -208,122 +182,128 @@ const beamerInteractable =
 		}
 	})
 
-const abbeanumInfoBoardInteractable =
-	new CustomInteractable(undefined, undefined, () => {
-		if(closeEnough == 0 && isPlaying == false && once == 1){
-			closeEnough = 1
-			playStoryTrack('audio/018_Geschichte_Abb.mp3')
-			setTimeout(function(){
-				interactables[findElement("AbbeanumDoorEntrance")].unlocked = true
-			}, 1500)
-        }
-	})
+const abbeanumInfoBoardInteractable = new CustomInteractable('AbbeanumInfoBoard', () => {
+	if(closeEnough == 0 && !isPlaying && once == 1){
+		closeEnough = 1
+		playStoryTrack('audio/018_Geschichte_Abb.mp3')
+		setTimeout(function(){
+			unlock("AbbeanumDoorEntrance")
+		}, 1500)
+	}
+})
 
-const tvCuboidInteractable =
-	new CustomInteractable(undefined, undefined, () => {
-		if(once == 6 && isPlaying == false){
-			interactables[findElement("TvCuboid")].unlocked = false 
-			blockUserInput()
-			updateOnce() //to 7
-			updateStory() //to 6
-			playStoryTrack('audio/007_Kabel_Gefunden_kaffee.mp3')
-			setTimeout(function(){
-				scene.getObjectByName('AbbeanumInside').getObjectByName('Fernseher_aus').visible = true
-				scene.getObjectByName('AbbeanumInside').getObjectByName('Fernseher_an').visible = false
-				if(!inInventory.includes('brandneues HDMI-Kabel')){
-					inInventory.push('brandneues HDMI-Kabel')
-				}
-				missionText.innerHTML = "Schnell weg - du warst nie hier!"
-				printInventory()
-			}, 5000)
-			setTimeout(function(){
-				allowUserInput()
-			}, 5500)
-		}
-	})
-
-const HS2DoorDummyInteractable =
-	new CustomInteractable(undefined, undefined, () => {
-		console.log('hs2door was clicked')
-		if(story == 3 && isPlaying == false){
-			interactables[findElement("HS2DoorDummy")].unlocked = false 
-			if(once == 4){
-				updateOnce() //to 5
-				updateStory() //to 4
-				playStoryTrack('audio/creaking-door-2.mp3') //just dummy placeholder
-				openText() //should stop input at some point
-			}	
-		}
-	})
-
-const bathroomDoorDummyBasementInteractable =
-	new CustomInteractable(undefined, undefined, () => {
-		console.log('bathroom basement was clicked')
-		if((once == 10 || once == 9) && story == 7){
-			if(once == 9) updateOnce() //to 10
-			updateOnce() //to 11
-			openText()
-			interactables[findElement("BathroomDoorDummyBasement")].unlocked = false
-			interactables[findElement("BathroomDoorDummyUpstairs")].unlocked = false 
-			interactables[findElement("Laptop2")].unlocked = true
-			playStoryTrack('audio/010_Toilettengang.mp3')
-			missionText.innerHTML = ""
-			setTimeout(function(){
-				missionText.innerHTML = "Beweise deine Informatik Kenntnisse: Schließ das HDMI-Kabel an!"
-				closeText()
-			}, 12000)
-		}
-	})
-
-const bathroomDoorDummyUpstairsInteractable =
-	new CustomInteractable(undefined, undefined, () => {
-		console.log('bathroom upstairs was clicked')
-		if(once == 9 && story == 7){
-			updateOnce() //to 10
-			interactables[findElement("BathroomDoorDummyUpstairs")].unlocked = false 
-			playStoryTrack('audio/springTestSound.wav')
-			setTimeout(function(){
-				missionText.innerHTML = "DIE RICHTIGEN TOILETTEN"
-			}, 2000)
-		}
-	})
-
-const flyerInteractable = 
-	new CustomInteractable(undefined, undefined, () => {
-		console.log(quizOpen)
-		if(openOnce == false){
-			openOnce_True()
-			if(quizOpen == false){
-				document.getElementById("abbeanum-quiz").style.visibility = 'visible';
-				quizOpen_True()
-				interactables[findElement("Flyer")].unlocked = false
-				if(openOnce == true) blockUserInput()
-			}else{
-				document.getElementById("abbeanum-quiz").style.visibility = 'hidden';
-				quizOpen_False()
+const tvCuboidInteractable = new CustomInteractable('TvCuboid', () => {
+	if(once == 6 && !isPlaying){
+		lockElement("TvCuboid")
+		blockUserInput()
+		updateOnce() //to 7
+		updateStory() //to 6
+		playStoryTrack('audio/007_Kabel_Gefunden_kaffee.mp3')
+		setTimeout(function(){
+			scene.getObjectByName('AbbeanumInside').getObjectByName('Fernseher_aus').visible = true
+			scene.getObjectByName('AbbeanumInside').getObjectByName('Fernseher_an').visible = false
+			if(!inInventory.includes('brandneues HDMI-Kabel')){
+				inInventory.push('brandneues HDMI-Kabel')
 			}
-		}
-	})
+			missionText.innerHTML = "Schnell weg - du warst nie hier!"
+			printInventory()
+		}, 5000)
+		setTimeout(allowUserInput, 5500)
+	}
+})
 
-const infoboardCorridorInteractable = 
-	new CustomInteractable(undefined, undefined, () => {
-		if(!openOnce){
-			openOnce_True() //alows picture to open for the first time
-			if(infoPictureOpen == false){
-				display_image('images/history.jpg'); // image height relates to browser-window height
-				setTimeout(function(){
-					openOnce_False() //allows picture to close
-				}, 200)
-			}else{
-				close_image('leImage');
-				setTimeout(function(){
-					openOnce_False() //allows picture to open again
-				}, 200)
-			}
-		}
-	})
+const HS2DoorDummyInteractable = new CustomInteractable('HS2DoorDummy', () => {
+	console.log('hs2door was clicked')
+	if(story == 3 && !isPlaying){
+		lockElement("HS2DoorDummy")
+		if(once == 4){
+			updateOnce() //to 5
+			updateStory() //to 4
+			playStoryTrack('audio/creaking-door-2.mp3') //just dummy placeholder
+			openText() //should stop input at some point
+		}	
+	}
+})
 
-let interactables = []
+const bathroomDoorDummyBasementInteractable = new CustomInteractable('BathroomDoorDummyBasement', () => {
+	console.log('bathroom basement was clicked')
+	if((once == 10 || once == 9) && story == 7){
+		if(once == 9) updateOnce() //to 10
+		updateOnce() //to 11
+		openText()
+		lockElement("BathroomDoorDummyBasement")
+		lockElement("BathroomDoorDummyUpstairs")
+		unlockElement("Laptop2")
+		playStoryTrack('audio/010_Toilettengang.mp3')
+		missionText.innerHTML = ""
+		setTimeout(function(){
+			missionText.innerHTML = "Beweise deine Informatik Kenntnisse: Schließ das HDMI-Kabel an!"
+			closeText()
+		}, 12000)
+	}
+})
+
+const bathroomDoorDummyUpstairsInteractable = new CustomInteractable('BathroomDoorDummyUpstairs', () => {
+	console.log('bathroom upstairs was clicked')
+	if(once == 9 && story == 7){
+		updateOnce() //to 10
+		lockElement("BathroomDoorDummyUpstairs")
+		playStoryTrack('audio/springTestSound.wav')
+		setTimeout(function(){
+			missionText.innerHTML = "DIE RICHTIGEN TOILETTEN"
+		}, 2000)
+	}
+})
+
+const flyerInteractable = new CustomInteractable('Flyer', () => {
+	console.log(quizOpen)
+	if(openOnce == false){
+		openOnce_True()
+		if(quizOpen == false){
+			document.getElementById("abbeanum-quiz").style.visibility = 'visible';
+			quizOpen_True()
+			lockElement("Flyer")
+			if(openOnce == true) blockUserInput()
+		} else {
+			document.getElementById("abbeanum-quiz").style.visibility = 'hidden';
+			quizOpen_False()
+		}
+	}
+})
+
+const infoboardCorridorInteractable = new CustomInteractable('InfoboardCorridor', () => {
+	if(!openOnce){
+		openOnce_True() // allows picture to open for the first time
+		if(infoPictureOpen){
+			close_image('leImage');
+			setTimeout(openOnce_False, 200) // allows picture to open again
+		} else {
+			display_image('images/history.jpg'); // image height relates to browser-window height
+			setTimeout(openOnce_False, 200) //allows picture to close
+		}
+	}
+})
+
+const interactables = [
+	abbeanumDoorEntranceInteractable, abbeanumDoorExitInteractable, 
+	hs1DoorEntranceInteractable, hs1DoorExitInteractable, 
+	laptopInteractable, stickInteractable,
+	trashcanInteractable, laptop2Interactable, blackboardsInteractable, cupInteractable,
+	beamerInteractable, tvCuboidInteractable, HS2DoorDummyInteractable,
+	flyerInteractable, bathroomDoorDummyBasementInteractable,
+	bathroomDoorDummyUpstairsInteractable, abbeanumInfoBoardInteractable,
+	coffeeMachineInteractable, infoboardCorridorInteractable
+]
+
+window.interactables = interactables
+
+function unlockElement(name){
+	findElement(name).unlocked = true
+}
+
+function lockElement(name){
+	findElement(name).unlocked = false
+}
 
 function createInteractions(scene, camera, renderer, mouse){
 
@@ -549,6 +529,7 @@ var acceleration = new THREE.Vector3(0,0,0)
 var couldInteract = false
 
 const dumpsterTmpPos = new THREE.Vector3() // temporary variable
+const beamerInteractionPosition = new THREE.Vector3(-7.065151656086955, 3.1155215629228477, -35.33847308541997)
 
 // helper functions for the animation loop
 function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, dt, outlinepass = null){
@@ -564,142 +545,29 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 	const abbeanumHS1 = scene.getObjectByName('AbbeanumHS1')
 	const wetFloor = scene.getObjectByName('WetFloorSign')
 	
-	const abbeanumDoorEntrance = scene.getObjectByName('AbbeanumDoorEntrance')
-	if(abbeanumDoorEntrance){
-		abbeanumDoorEntranceInteractable.setInteractableModel(abbeanumDoorEntrance)
-		abbeanumDoorEntranceInteractable.scene = flurScene
-	} 
-		
-	const abbeanumDoorExit = scene.getObjectByName('AbbeanumDoorExit')
-	if(abbeanumDoorExit) {
-		abbeanumDoorExitInteractable.setInteractableModel(abbeanumDoorExit)
-		abbeanumDoorExitInteractable.scene = outsideScene
-	}
-		
-	const hs1DoorEntrance = scene.getObjectByName('HS1DoorEntrance')
-	if(hs1DoorEntrance) {
-		hs1DoorEntranceInteractable.setInteractableModel(hs1DoorEntrance)
-		hs1DoorEntranceInteractable.scene = hs1Scene
-	}
-
-	const hs1DoorExit = scene.getObjectByName('HS1DoorExit')
-	if(hs1DoorExit) {
-		hs1DoorExitInteractable.setInteractableModel(hs1DoorExit)
-		hs1DoorExitInteractable.scene = flurScene
-	}
-
-	const trashcan = window.trashcan = scene.getObjectByName('Trashcan')
-	if(trashcan){
-		trashcanInteractable.setInteractableModel(trashcan)	
-		trashcanInteractable.scene = flurScene
-	}
-
-	const stick = scene.getObjectByName('Stock')
-	if(stick){
-	stickInteractable.setInteractableModel(stick)
-	stickInteractable.scene = outsideScene
-	}
-
-	// the laptops need more verbose names
-	const laptop = scene.getObjectByName('Laptop')
-	if(laptop){
-		laptopInteractable.setInteractableModel(laptop)
-		laptopInteractable.scene = hs1Scene
-	}
+	interactables.forEach(interactable => {
+		if(interactable.name && !interactable.interactableModel){
+			const model = scene.getObjectByName(interactable.name)
+			if(model){
+				interactable.setInteractableModel(model, scene)
+			}
+		}
+	})
 	
-	const laptop2 = scene.getObjectByName('Laptop2') 
-	if(laptop2){
-		laptop2Interactable.setInteractableModel(laptop2)
-		laptop2Interactable.scene = flurScene
-	}
-
-	const blackboards = scene.getObjectByName('Blackboards')
-	if(blackboards){
-		blackboardsInteractable.setInteractableModel(blackboards)
-		blackboardsInteractable.scene = hs1Scene
-	}
-	const cup = scene.getObjectByName('Kaffeetasse')
-	if(cup) {
-		cupInteractable.setInteractableModel(cup)
-		cupInteractable.scene = hs1Scene
-	}
-
-	const beamer = scene.getObjectByName('Beamer')
-	if(beamer){
-		beamerInteractable.setInteractableModel(beamer)
-		beamerInteractable.scene = hs1Scene
-		// vertically below the beamer, so we can interact from the ground
-		beamerInteractable.position = new THREE.Vector3(-7.065151656086955, 3.1155215629228477, -35.33847308541997)
-	}
-	const abbeanumInfoBoard = scene.getObjectByName('AbbeanumInfoBoard')
-	if(abbeanumInfoBoard){
-		abbeanumInfoBoardInteractable.setInteractableModel(abbeanumInfoBoard)
-		abbeanumInfoBoardInteractable.scene = outsideScene
-	}
-
-	const tvCuboid = scene.getObjectByName('TvCuboid')
-	if(tvCuboid){
-		tvCuboidInteractable.setInteractableModel(tvCuboid)
-		tvCuboidInteractable.scene = flurScene
-	}
-
-	const HS2DoorDummy = scene.getObjectByName('HS2DoorDummy')
-	if(HS2DoorDummy){
-		HS2DoorDummyInteractable.setInteractableModel(HS2DoorDummy)
-		HS2DoorDummyInteractable.scene = flurScene
-	}
-
-
-	const bathroomDoorDummyBasement = scene.getObjectByName('BathroomDoorDummyBasement')
-	if(bathroomDoorDummyBasement){
-		bathroomDoorDummyBasementInteractable.setInteractableModel(bathroomDoorDummyBasement)
-		bathroomDoorDummyBasementInteractable.scene = flurScene
-	}
-
+	var abbeanumDoorEntrance = abbeanumDoorEntranceInteractable.interactableModel
 	
-	const bathroomDoorDummyUpstairs = scene.getObjectByName('BathroomDoorDummyUpstairs')
-	if(bathroomDoorDummyUpstairs){
-		bathroomDoorDummyUpstairsInteractable.setInteractableModel(bathroomDoorDummyUpstairs)
-		bathroomDoorDummyUpstairsInteractable.scene = flurScene
-	}
-
-	const coffeeMachine = scene.getObjectByName('CoffeeMachine')
-	if(coffeeMachine){
-		coffeeMachineInteractable.setInteractableModel(coffeeMachine)
-		coffeeMachineInteractable.scene = flurScene
-	}
-
-	const flyer = scene.getObjectByName('Flyer')
-	if(flyer){
-		flyerInteractable.setInteractableModel(flyer)
-		flyerInteractable.scene = flurScene
-	}
+	// vertically below the beamer, so we can interact from the ground
+	beamerInteractable.position = beamerInteractionPosition
 	
-	const infoboardCorridor = scene.getObjectByName('InfoboardCorridor')
-	if(infoboardCorridor){
-		infoboardCorridorInteractable.setInteractableModel(infoboardCorridor)
-		infoboardCorridorInteractable.scene = flurScene
-	}
 	const dumpsterGreen  = scene.getObjectByName('DumpsterGreen')
 	const dumpsterBlue   = scene.getObjectByName('DumpsterBlue')
 	const dumpsterYellow = scene.getObjectByName('DumpsterYellow')
 	const bathroomM = scene.getObjectByName('BathroomM')
-	interactables = window.interactables = [abbeanumDoorEntranceInteractable, abbeanumDoorExitInteractable, 
-							hs1DoorEntranceInteractable, hs1DoorExitInteractable, 
-						 	laptopInteractable, stickInteractable,
-							trashcanInteractable, laptop2Interactable, blackboardsInteractable, cupInteractable,
-							beamerInteractable, tvCuboidInteractable, HS2DoorDummyInteractable,
-							flyerInteractable, bathroomDoorDummyBasementInteractable,
-							bathroomDoorDummyUpstairsInteractable, abbeanumInfoBoardInteractable,
-							coffeeMachineInteractable, infoboardCorridorInteractable]
-							.filter(interactable => interactable.interactableModel)	
-	acceleration.set(0,0,0)
-	var dtx = clamp(dt * 10, 0, 1) // the lower this number is, the smoother is the motion
-
 
 	/**
 	 * Helper function for updating the camera controls in the animation loop.
 	 */
+	acceleration.set(0,0,0)
 	handleKeyBoardMovementInteractionsInteraction(acceleration, window.debuggedObject, user, dt)
 	
 	/* Dumpster interactions ^^ */
@@ -710,14 +578,15 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 			dumpster.getObjectByName('Cube002').parent.rotation.set(0, 0, -clamp(3-dist, 0, 1)*15*degToRad)
 		}
 	})
+	
+	var dtx = clamp(dt * 10, 0, 1) // the lower this number is, the smoother is the motion
 
 	// ---------------------------------------------- INTERACTION CHECKERS -------------------------------------------------
 	// we are only looking for all interactable objects in our interactable array
 	// we will choose the closest for interaction.
 	// if that does not work, it might have to be changed to the closest one that we look at.
 	/////ADD A FILTER TO CHECK WHETHER 'currentInteractables[i].interactableModel.name' is already in 'inInventory' array //////
-	const currentInteractables = window.currentInteractables = interactables.filter(interactable => 
-							 interactable != undefined && interactable.canInteract(scene, camera, lastInteractionTime))
+	const currentInteractables = window.currentInteractables = interactables.filter(interactable => !!interactable && interactable.interactableModel && interactable.canInteract(scene, camera, lastInteractionTime))
 	const sparkleTargets = currentInteractables.map(o => o.interactableModel.position)
 	//calculate box sizes of the interactables, so we can decide on which area the particles can spawn
 	var box = new THREE.Box3()
@@ -732,42 +601,22 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 		couldInteract = canInteract
 		controlHints.innerHTML = canInteract ? 'WASD laufen<br>LEFT/RIGHT drehen<br>Q Inventar<br>E interagieren' : 'WASD walk<br>LEFT/RIGHT turn<br>Q Inventar'
 		//play the abbeanumInfoboard audio
-		if(closeEnough == 0 && isPlaying == false && once == 1){
+		if(closeEnough == 0 && !isPlaying && once == 1){
 			closeEnough = 1
 			playStoryTrack('audio/018_Geschichte_Abb.mp3')
-			interactables[findElement("AbbeanumDoorEntrance")].unlocked = true
+			unlockElement("AbbeanumDoorEntrance")
 		} 
 	}
 	
-	// we could create an "Interactable" class, which does this, and could generalize pickups with that
-	// check for general entrances - this can be made more generic
-	if((keyboard.e || keyboard.Enter) && 
-		currentInteractables != undefined &&
+	// check for key-presses, which try to interact
+	if((keyboard.e || keyboard.E || keyboard.Enter) && 
+		keyWasPressed && !isBlocked &&
+		currentInteractables &&
 		currentInteractables.length > 0
-	)
-	{
-	//////Array of clickable objects
-	const clickableObjects = (
-		scene == outsideScene ? [abbeanumDoorEntrance, stick, abbeanumInfoBoard] :
-		scene == flurScene ? [abbeanumDoorExit, trashcan, hs1DoorEntrance, coffeeMachine, HS2DoorDummy, tvCuboid, bathroomDoorDummyBasement, bathroomDoorDummyUpstairs, flyer, infoboardCorridor] :
-		scene == hs1Scene ? [hs1DoorExit, laptop, laptop2, cup, beamer, blackboards] :
-		[]
-	).filter(model => !!model)
-
-	raycaster.far=5
-	raycaster.near=0.1
-	raycaster.setFromCamera(new THREE.Vector2, camera)
-
-	const rayIntersects = raycaster.intersectObjects(clickableObjects)
-	
-
-	
-	intersectSortAndAct(rayIntersects, clickableObjects)
-	}
+	) keyPressInteract(camera, currentInteractables)
 	
 	velocity.multiplyScalar(1-dtx)
 	
-
 	// transform the input from camera space into world space
 	var accelerationLength = acceleration.length()
 	if(accelerationLength > 0){
@@ -784,61 +633,39 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 	updateSparkles(scene, camera, targetSizes, sparkleTargets, time, dt)
 	
 	//AUTOMATICALLY CLOSE PICTURE WHEN WALKING AWAY
-	if(infoPictureOpen==true){
-		let distance =camera.position.distanceTo(infoboardCorridor.position)
+	if(infoPictureOpen){
+		const infoboardCorridor = infoboardCorridorInteractable.interactableModel
+		const distance = camera.position.distanceTo(infoboardCorridor.position)
 		if(distance > 2){
 			close_image('leImage')
 			//console.log('TOO FAR')
 		}
 	}
-	/////////////////////////////
-	/////MOUSE INTERACTIONS//////
-	////////////////////////////
-	if(wasClicked == true && isBlocked == false){
+	
+	//////////////////////////////
+	///// MOUSE INTERACTIONS /////
+	//////////////////////////////
+	if(wasClicked && !isBlocked){
 		if(abbeanumDoorEntrance) abbeanumDoorEntrance.visible = true
-		//console.log(interactables[5].unlocked) //just for debugging reasons, do not click outside
 
-		mousecaster.setFromCamera( mouse, camera );
-
-		//////Array of clickable objects
-		const clickableObjects = (
-			scene == outsideScene ? [abbeanumDoorEntrance, stick, abbeanumInfoBoard] :
-			scene == flurScene ? [abbeanumDoorExit, trashcan, hs1DoorEntrance, coffeeMachine, HS2DoorDummy, tvCuboid, bathroomDoorDummyBasement, bathroomDoorDummyUpstairs, flyer, infoboardCorridor] :
-			scene == hs1Scene ? [hs1DoorExit, laptop, laptop2, cup, beamer, blackboards] :
-			[]
-		).filter(model => !!model)
-
-		const mouseIntersects = mousecaster.intersectObjects(clickableObjects);
-		intersectSortAndAct(mouseIntersects, clickableObjects)
-		//DEBUGGING
+		mousecaster.setFromCamera(mouse, camera)
 		
-		if(currentInteractables.length >= 1 && clickableObjects.length > 0){
-			console.log('currentInteractables: ', currentInteractables[0].interactableModel.name)
-			console.log('clicakable: ', clickableObjects[0].name)
-			//console.log('all clickable: ', clickableObjects)
-			
-		}
-		
-
-		/*Just checks one object
-		const mouseIntersects = mousecaster.intersectObject(abbeanumDoor);
-		if(mouseIntersects.length>0){
-			console.log('clicked on object')
-		}*/
+		const mouseIntersects = mousecaster.intersectObjects(currentInteractables.map(ci => ci.interactableModel))
+		rayInteract(mouseIntersects)
 	
 		if(abbeanumDoorEntrance) abbeanumDoorEntrance.visible = false;
-		wasClicked = false
+		
 	}
 	
+	wasClicked = false
 	keyWasPressed = false
 	
 }
 
-//find index of object in interactables array we are looking for
+// find object in interactables array we are looking for
 function findElement(lookingFor){
-	const indexInteractables = interactables.findIndex(interactable => interactable.interactableModel.name == lookingFor)
-	//console.log("index of", lookingFor + " in Interactables: ", indexInteractables)
-	return indexInteractables
+	const index = interactables.findIndex(interactable => interactable.name == lookingFor || (interactable.interactableModel && interactable.interactableModel.name == name))
+	return interactables[index]
 }
 
 //prints everything in inventory-array to inventory-textbox
@@ -870,7 +697,7 @@ function hideInventory(){
 
 //Bildanzeige (derzeit über p)
 function display_image(src) {
-	infoPictureOpen = true; //new
+	infoPictureOpen = true
 	document.getElementById("infoPicture").style.visibility = 'visible'; //new
 	var a = document.createElement("img");
 	a.src = src;
@@ -881,34 +708,60 @@ function display_image(src) {
 	document.getElementById("dispImage").appendChild(a);  
 }
 function close_image(imgID){
-	infoPictureOpen = false; //new
+	infoPictureOpen = false
 	document.getElementById("infoPicture").style.visibility = 'hidden'; //new
 	var imgID = imgID;
 	var b = document.getElementById(imgID);
 	b.parentNode.removeChild(b);
 }
 
-function intersectSortAndAct(rayIntersects, clickableObjects)
-{
-	for ( let i = 0; i < rayIntersects.length; i ++ ) {
-		
-		//ordnet clickableObjects
-		if(clickableObjects != undefined && clickableObjects.length > 0){
-			clickableObjects.sort((e1,e2) => {
-				if(camera.position.distanceTo(e1.position) > camera.position.distanceTo(e2.position)){
-					return +1
-				} else {
-					return -1
-				}
-			})
-			if(currentInteractables.length > 0 && clickableObjects[0].name == currentInteractables[0].interactableModel.name){
-				currentInteractables[0].interact(scene, camera)
-			}else{
-				
-			}	
+// temporary variables
+const interactTmp1 = new THREE.Vector3() 
+const interactTmp2 = new THREE.Vector3()
+
+// key presses only give a guess on what should be interacted with,
+// so we choose the closest available object, which matches the current
+// view direction the best
+function keyPressInteract(camera, currentInteractables){
+	const maxDistance = 5
+	const cameraDirection = interactTmp1
+	const objectDirection = interactTmp2
+	// find out the camera direction
+	cameraDirection.set(0,0,1)
+	cameraDirection.transformDirection(camera.matrixWorld)
+	// find the best match
+	var best = null
+	var bestScore = 1e300
+	for(var i=0;i<currentInteractables.length;i++){
+		const ci = currentInteractables[i]
+		objectDirection.copy(camera.position).sub(ci.position)
+		const dot = objectDirection.dot(cameraDirection)
+		if(dot > 0){
+			// proportional to length, and inversely proportional to the direction
+			const score = objectDirection.lengthSq() / dot
+			if(score < bestScore){
+				best = ci
+				bestScore = score
+			}
+		}
+	}
+	if(best) best.interact(scene, camera)
+}
+
+function rayInteract(rayIntersects){
+	// just use the closest one;
+	// the list is already sorted by Three.js
+	if(rayIntersects.length > 0){
+		// search trough hierarchy for first interactable
+		var mesh = rayIntersects[0].object
+		while(mesh){
+			if(mesh.userData && mesh.userData.interact){
+				mesh.userData.interact(scene, camera)
+				return
+			} else mesh = mesh.parent
 		}
 	}
 }
 
 
-export { createInteractions, handleInteractions, inInventory, printInventory, hideInventory, interactables, keyWasPressed, wasClicked, blockUserInput, allowUserInput, findElement }
+export { createInteractions, handleInteractions, inInventory, printInventory, hideInventory, interactables, keyWasPressed, wasClicked, blockUserInput, allowUserInput, findElement, lockElement, unlockElement }
