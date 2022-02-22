@@ -217,3 +217,19 @@ export const infoboardCorridorInteractable = new CustomInteractable('InfoboardCo
         }
     }
 })
+
+
+export const infoboardOutside = new CustomInteractable('HistoryBoard', () => {
+	if(!openOnce){
+		openOnce_True() // allows picture to open for the first time
+		if(infoPictureOpen){
+			close_image('leImage');
+			setTimeout(openOnce_False, 200) // allows picture to open again
+		} else {
+			display_image('images/history.jpg'); // image height relates to browser-window height
+			setTimeout(openOnce_False, 200) // allows picture to close
+		}
+	}
+})
+
+infoboardOutside.unlocked = true

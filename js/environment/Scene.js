@@ -9,7 +9,7 @@ window.mixers = []
 function fillScene(scene) {
 	
 	// our first model: the Abbeanum, Fröbelstieg 1
-	glTFLoader.loadAsync('models/samples/abbeanum.glb', e => updateDownloadProgress('Abbeanum', e))
+	glTFLoader.loadAsync('models/samples/abbeanum_new_v2.glb', e => updateDownloadProgress('Abbeanum', e))
 		.then(gltf => {
 			const model = window.abbeanum = gltf.scene
 			placeLatLonObject(model, 'Abbeanum', 50.9339769, 11.5804391, 182, +15)
