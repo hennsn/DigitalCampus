@@ -777,9 +777,13 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 	updateSparkles(scene, camera, targetSizes, sparkleTargets, time, dt)
 	
 	//AUTOMATICALLY CLOSE PICTURE WHEN WALKING AWAY
-	/*if(!currentInteractables.includes(infoboardCorridorInteractable) && infoPictureOpen == true){
-		close_image('leImage')
-	}*/
+	if(infoPictureOpen==true){
+		let distance =camera.position.distanceTo(infoboardCorridor.position)
+		if(distance > 2){
+			close_image('leImage')
+			//console.log('TOO FAR')
+		}
+	}
 	/////////////////////////////
 	/////MOUSE INTERACTIONS//////
 	////////////////////////////
