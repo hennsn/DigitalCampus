@@ -4,7 +4,7 @@ import {CustomInteractable, Door, InventoryObject} from "./Interactable.js";
 import {closeText, once, openText, story, updateOnce, updateStory} from "./Story.js";
 import {isPlaying, playStoryTrack} from "../UserInterface.js";
 import {openOnce, openOnce_False, openOnce_True, quizOpen, quizOpen_False, quizOpen_True} from "./Quiz.js";
-import {allowUserInput, blockUserInput, inInventory, lockElement, printInventory, unlockElement, closeEnough} from "./Interactions.js";
+import {allowUserInput, blockUserInput, inInventory, lockElement, printInventory, unlockElement, closeEnough, display_image, close_image } from "./Interactions.js";
 
 //triggers interactions when in range
 
@@ -208,7 +208,7 @@ export const flyerInteractable = new CustomInteractable('Flyer', () => {
 export const infoboardCorridorInteractable = new CustomInteractable('InfoboardCorridor', () => {
     if (!openOnce) {
         openOnce_True() // allows picture to open for the first time
-        if (infoPictureOpen) {
+        if (window.infoPictureOpen) {
             close_image('leImage');
             setTimeout(openOnce_False, 200) // allows picture to open again
         } else {
@@ -222,7 +222,7 @@ export const infoboardCorridorInteractable = new CustomInteractable('InfoboardCo
 export const infoboardOutside = new CustomInteractable('HistoryBoard', () => {
 	if(!openOnce){
 		openOnce_True() // allows picture to open for the first time
-		if(infoPictureOpen){
+		if(window.infoPictureOpen){
 			close_image('leImage');
 			setTimeout(openOnce_False, 200) // allows picture to open again
 		} else {

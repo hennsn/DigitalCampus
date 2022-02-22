@@ -44,7 +44,7 @@ let inventoryOpen = false
 //boolean for user input
 let isBlocked = false
 //boolean for picture display
-let infoPictureOpen = false;
+window.infoPictureOpen = false;
 
 //triggers interactions when in range
 export var closeEnough = 0
@@ -533,4 +533,4 @@ function rayInteract(rayIntersects){
 }
 
 
-export { createInteractions, handleInteractions, inInventory, printInventory, hideInventory, interactables, keyWasPressed, wasClicked, blockUserInput, allowUserInput, findElement, lockElement, unlockElement }
+export { createInteractions, handleInteractions, inInventory, printInventory, hideInventory, interactables, keyWasPressed, wasClicked, blockUserInput, allowUserInput, findElement, lockElement, unlockElement, display_image, close_image }
