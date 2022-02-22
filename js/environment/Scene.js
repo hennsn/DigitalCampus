@@ -228,7 +228,6 @@ function fillScene(scene) {
 	fbxLoader.loadAsync('models/samples/spider.fbx', e => updateDownloadProgress('spider', e))
 	.then(model => {
 		placeLatLonObject(model, 'spider', 50.93408137-0.0000015, 11.58043973-0.000005, 187.6, 0)
-		console.log(model)
 		const s = 0.3 / 70
 		model.rotateY(-0.05869048965668795)
 		model.rotateX(-2.519544938372642)

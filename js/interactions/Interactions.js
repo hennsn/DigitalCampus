@@ -744,18 +744,25 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 	if((keyboard.e || keyboard.Enter) && 
 		currentInteractables != undefined &&
 		currentInteractables.length > 0
-	) {	
-		// sort interactables, such that the closest element will be interacted with
-		currentInteractables.sort((e1,e2) => {
-			if(camera.position.distanceTo(e1.position) > camera.position.distanceTo(e2.position)){
-				return +1
-			} else{
-				return -1
-			}
-		})
-		
-		currentInteractables[0].interact(scene, camera)
-		lastInteractionTime = Date.now()
+	)
+	{
+	//////Array of clickable objects
+	const clickableObjects = (
+		scene == outsideScene ? [abbeanumDoorEntrance, stick, abbeanumInfoBoard] :
+		scene == flurScene ? [abbeanumDoorExit, trashcan, hs1DoorEntrance, coffeeMachine, HS2DoorDummy, tvCuboid, bathroomDoorDummyBasement, bathroomDoorDummyUpstairs, flyer, infoboardCorridor] :
+		scene == hs1Scene ? [hs1DoorExit, laptop, laptop2, cup, beamer, blackboards] :
+		[]
+	).filter(model => !!model)
+
+	raycaster.far=5
+	raycaster.near=0.1
+	raycaster.setFromCamera(new THREE.Vector2, camera)
+
+	const rayIntersects = raycaster.intersectObjects(clickableObjects)
+	
+
+	
+	intersectSortAndAct(rayIntersects, clickableObjects)
 	}
 	
 	velocity.multiplyScalar(1-dtx)
@@ -802,25 +809,7 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 		).filter(model => !!model)
 
 		const mouseIntersects = mousecaster.intersectObjects(clickableObjects);
-		for ( let i = 0; i < mouseIntersects.length; i ++ ) {
-		
-			//ordnet clickableObjects
-			if(clickableObjects != undefined && clickableObjects.length > 0){
-				clickableObjects.sort((e1,e2) => {
-					if(camera.position.distanceTo(e1.position) > camera.position.distanceTo(e2.position)){
-						return +1
-					} else {
-						return -1
-					}
-				})
-				if(currentInteractables.length > 0 && clickableObjects[0].name == currentInteractables[0].interactableModel.name){
-					currentInteractables[0].interact(scene, camera)
-				}else{
-					
-				}	
-			}
-		}
-
+		intersectSortAndAct(mouseIntersects, clickableObjects)
 		//DEBUGGING
 		
 		if(currentInteractables.length >= 1 && clickableObjects.length > 0){
@@ -897,6 +886,28 @@ function close_image(imgID){
 	var imgID = imgID;
 	var b = document.getElementById(imgID);
 	b.parentNode.removeChild(b);
+}
+
+function intersectSortAndAct(rayIntersects, clickableObjects)
+{
+	for ( let i = 0; i < rayIntersects.length; i ++ ) {
+		
+		//ordnet clickableObjects
+		if(clickableObjects != undefined && clickableObjects.length > 0){
+			clickableObjects.sort((e1,e2) => {
+				if(camera.position.distanceTo(e1.position) > camera.position.distanceTo(e2.position)){
+					return +1
+				} else {
+					return -1
+				}
+			})
+			if(currentInteractables.length > 0 && clickableObjects[0].name == currentInteractables[0].interactableModel.name){
+				currentInteractables[0].interact(scene, camera)
+			}else{
+				
+			}	
+		}
+	}
 }
 
 
