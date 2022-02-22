@@ -5,13 +5,14 @@ function createLighting(scene){
 	
 	// sun light from above
 	// can support shadows, but we need a ground to project them onto, and we need to configure them (best depending on the hardware capabilities)
-	const sun = window.sun = new THREE.DirectionalLight(0xffffff, 0.8)
-	sun.position.set(0.8,0.7,1) // the sun has its default target at 0,0,0
+	const sun = window.sun = new THREE.DirectionalLight(0xffffff, 0.7)
+	sun.position.set(10,0.8,2) // the sun has its default target at 0,0,0
+	sun.name = 'sun'
 	scene.add(sun)
 	scene.add(sun.target) // needs to be added, if we want to change the suns target
 
 	// ambient light from below
-	const ambient = new THREE.AmbientLight( 0x222222 )
+	const ambient = new THREE.AmbientLight(0x333333)
 	ambient.name = 'ambient'
 	scene.add(ambient)
 	
@@ -22,7 +23,7 @@ function createInsideLighting(scene){
 	// sun light from above
 	// can support shadows, but we need a ground to project them onto, and we need to configure them (best depending on the hardware capabilities)
 	const sun = window.sun = new THREE.DirectionalLight(0xffffff, 0.6)
-	sun.position.set(0.8,0.7,1) // the sun has its default target at 0,0,0
+	sun.position.set(10,0.8,2) // the sun has its default target at 0,0,0
 	sun.name = 'sun'
 	scene.add(sun)
 	scene.add(sun.target) // needs to be added, if we want to change the suns target

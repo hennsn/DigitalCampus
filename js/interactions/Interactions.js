@@ -13,8 +13,8 @@ import { JoyStick } from '../libs/joystick/joy.min-2.js'
 import { handleKeyBoardMovementInteractionsInteraction } from './InteractionUtils/MovementInteractions.js'
 import { checkCollision } from './InteractionUtils/CollisionCheck.js'
 import { Constants } from './Constants.js'
-import {story, once, openText, closeText, overlayActive, updateStory, updateOnce} from './Story.js'
-import {openOnce, quizOpen, openOnce_True, openOnce_False, quizOpen_True, quizOpen_False} from './Quiz.js'
+import { story, once, openText, closeText, overlayActive, updateStory, updateOnce, setMissionText } from './Story.js'
+import { openOnce, quizOpen, openOnce_True, openOnce_False, quizOpen_True, quizOpen_False } from './Quiz.js'
 
 // the keyboard
 const keyboard = window.keyboard = {}
@@ -37,7 +37,7 @@ inventory.innerHTML += "Handy <br> USB Stick"
 
 // the user
 // block user for cutscenes 
-let user = { height: 1.7, eyeHeight: 1.6, speed: 1.3, turnSpeed: 0.03, insideSpeed: 0.7, outsideSpeed: 1.3, isIntersecting: false, isBlocked: false} //add let isBlocked to block user input
+let user = { height: 1.7, eyeHeight: 1.6, speed: 1.3, turnSpeed: 0.03, insideSpeed: 0.7, outsideSpeed: 1.3, isIntersecting: false, isBlocked: false } //add let isBlocked to block user input
 //const distanceToWalls = 1
 let lastInteractionTime = Date.now()
 
@@ -127,11 +127,11 @@ const laptop2Interactable = new CustomInteractable('Laptop2', () => {
 		lockElement("Laptop2")
 		lockElement("HS1DoorExit")
 		playStoryTrack('audio/011_Physische_Intervention_Geplant.mp3')
-		missionText.innerHTML = "Sei entrüstet"
+		setMissionText("Sei entrüstet")
 		setTimeout(function(){
 			unlockElement("HS1DoorExit")
 			unlockElement("Stock")
-			missionText.innerHTML = "Finde einen Stock"
+			setMissionText("Finde einen Stab oder Stock")
 		}, 17000)
 	}
 })
@@ -150,7 +150,7 @@ const coffeeMachineInteractable = new CustomInteractable('CoffeeMachine', () => 
 		unlockElement("BathroomDoorDummyUpstairs")
 		setTimeout(function(){
 			allowUserInput()
-			missionText.innerHTML = "Finde die Toiletten - und zwar schnell!"
+			setMissionText("Finde die Toiletten - und zwar schnell!")
 		}, 12000)
 	}
 })
@@ -166,7 +166,7 @@ const beamerInteractable = new CustomInteractable('Beamer', () => {
 			setTimeout(function(){
 				allowUserInput()
 				unlockElement("Beamer")
-				missionText.innerHTML = "Mach ihn fertig!"
+				setMissionText("Mach ihn fertig!")
 			}, 3000)
 		} else if(once == 14 && story == 8 && !isPlaying){
 			updateOnce() //to 15
@@ -177,7 +177,7 @@ const beamerInteractable = new CustomInteractable('Beamer', () => {
 			printInventory()
 			setTimeout(function(){
 				allowUserInput()
-				missionText.innerHTML = "Geschafft - nimm deinen rechtmäßigen Platz am Pult ein"
+				setMissionText("Geschafft - nimm deinen rechtmäßigen Platz am Pult ein")
 			}, 3000)
 		}
 	})
@@ -205,7 +205,7 @@ const tvCuboidInteractable = new CustomInteractable('TvCuboid', () => {
 			if(!inInventory.includes('brandneues HDMI-Kabel')){
 				inInventory.push('brandneues HDMI-Kabel')
 			}
-			missionText.innerHTML = "Schnell weg - du warst nie hier!"
+			setMissionText("Schnell weg - du warst nie hier!")
 			printInventory()
 		}, 5000)
 		setTimeout(allowUserInput, 5500)
@@ -235,9 +235,9 @@ const bathroomDoorDummyBasementInteractable = new CustomInteractable('BathroomDo
 		lockElement("BathroomDoorDummyUpstairs")
 		unlockElement("Laptop2")
 		playStoryTrack('audio/010_Toilettengang.mp3')
-		missionText.innerHTML = ""
+		setMissionText("")
 		setTimeout(function(){
-			missionText.innerHTML = "Beweise deine Informatik Kenntnisse: Schließ das HDMI-Kabel an!"
+			setMissionText("Beweise deine Informatik-Kenntnisse: Schließ das HDMI-Kabel an!")
 			closeText()
 		}, 12000)
 	}
@@ -248,9 +248,10 @@ const bathroomDoorDummyUpstairsInteractable = new CustomInteractable('BathroomDo
 	if(once == 9 && story == 7){
 		updateOnce() //to 10
 		lockElement("BathroomDoorDummyUpstairs")
+		// is this the correct sound??...
 		playStoryTrack('audio/springTestSound.wav')
 		setTimeout(function(){
-			missionText.innerHTML = "DIE RICHTIGEN TOILETTEN"
+			setMissionText("DIE RICHTIGEN TOILETTEN")
 		}, 2000)
 	}
 })
@@ -272,6 +273,7 @@ const flyerInteractable = new CustomInteractable('Flyer', () => {
 })
 
 const infoboardCorridorInteractable = new CustomInteractable('InfoboardCorridor', () => {
+	// should this truly be shown here? Antonio is asking...
 	if(!openOnce){
 		openOnce_True() // allows picture to open for the first time
 		if(infoPictureOpen){
@@ -284,6 +286,21 @@ const infoboardCorridorInteractable = new CustomInteractable('InfoboardCorridor'
 	}
 })
 
+const infoboardOutside = new CustomInteractable('HistoryBoard', () => {
+	if(!openOnce){
+		openOnce_True() // allows picture to open for the first time
+		if(infoPictureOpen){
+			close_image('leImage');
+			setTimeout(openOnce_False, 200) // allows picture to open again
+		} else {
+			display_image('images/history.jpg'); // image height relates to browser-window height
+			setTimeout(openOnce_False, 200) // allows picture to close
+		}
+	}
+})
+
+infoboardOutside.unlocked = true
+
 const interactables = [
 	abbeanumDoorEntranceInteractable, abbeanumDoorExitInteractable, 
 	hs1DoorEntranceInteractable, hs1DoorExitInteractable, 
@@ -292,7 +309,7 @@ const interactables = [
 	beamerInteractable, tvCuboidInteractable, HS2DoorDummyInteractable,
 	flyerInteractable, bathroomDoorDummyBasementInteractable,
 	bathroomDoorDummyUpstairsInteractable, abbeanumInfoBoardInteractable,
-	coffeeMachineInteractable, infoboardCorridorInteractable
+	coffeeMachineInteractable, infoboardCorridorInteractable, infoboardOutside
 ]
 
 window.interactables = interactables
@@ -313,7 +330,8 @@ function createInteractions(scene, camera, renderer, mouse){
 	renderer.xr.enabled = true
 	document.body.appendChild(VRButton.createButton(renderer))
 	
-	camera.position.set(7.2525284107715935, 0.949415911263972, -21.716083277168504)
+	camera.position.set(7.2525, 0.9494, -21.7161)
+	camera.rotation.set(0, 65 * degToRad, 0)
 	
 	// create joysticks,
 	// maybe only if we are on a phone
@@ -358,37 +376,24 @@ function createInteractions(scene, camera, renderer, mouse){
 	
 	function keyDown(event){
 		if(!isBlocked){
+			var key = event.key.toLowerCase()
 			keyWasPressed = true
-			keyboard[event.key] = event.timeStamp
+			keyboard[key] = event.timeStamp
 			keyboard[event.keyCode] = event.timeStamp
-			switch(event.key){
-				case 'w':
-				case 'W':// tap w twice to run
+			switch(key){
+				case 'w':// tap w twice to run
 					user.isRunning = event.timeStamp - lastTimeWWasPressed < 300
+					lastTimeWWasPressed = event.timeStamp
 					break;
 				case 's':
-				case 'S':
 					user.isRunning = false
 					break;
 				case ' ':// space for jumping
 					if(jumpTime <= 0.0 || jumpTime >= jumpDuration * 0.75){
 						jumpTime = 0.0
 					}
-					break;
-				case 'z':
-				case 'Z':
-					// MAI'S DEBUGGING MAIN KEY
-					console.log('story: ', story) //test where in story we are
-					console.log('once: ', once) //teste once variable 
-					//console.log('isPlaying: ', isPlaying)
-					console.log('openOnce: ', openOnce)
-					console.log('infoPictureOpen: ', infoPictureOpen)
-					//console.log('inventory: ', inInventory)
-					//console.log(findElement())
-					console.log(closeEnough)
-					break;
-				case 'h': 
-				case 'H':
+					break
+				case 'h':
 					// print the current camera position in world coordinates
 					// can be used to place objects
 					console.log('player')
@@ -411,7 +416,6 @@ function createInteractions(scene, camera, renderer, mouse){
 					}
 					break;
 				case 'q':
-				case 'Q':
 					// opens inventory
 					if(inventoryOpen == false){
 						playAudioTrack('audio/inventorySound.mp3');
@@ -423,61 +427,44 @@ function createInteractions(scene, camera, renderer, mouse){
 					}
 					break;
 				case 't':
-				case 'T':
-					var message = window.prompt('Message to send:')
-					if(message){
-						message = message.trim()
-						if(message.length > 0){
-							sendMultiplayerMessage(message)
+					if(window.multiplayerIsEnabled){
+						var message = window.prompt('Message to send:')
+						if(message){
+							message = message.trim()
+							if(message.length > 0){
+								sendMultiplayerMessage(message)
+							}
 						}
 					}
 					break
-				//MAI'S DEBUGGING SIDE KEYS
+				// MAI'S DEBUGGING SIDE KEYS
 				case 'ö':
 					updateStory() //story ++
 					break
 				case 'ä':
-					printInteractables()//story --
+					printInteractables() //story --
 					break
 				case 'ü':
 					updateOnce() //once ++
 					break
-				
-				//display picture (vorerst hierüber)
-				case 'p':
-					if(infoPictureOpen == false){
-						document.getElementById("infoPicture").style.visibility = 'visible';
-						display_image('images/history.jpg'); // image height relates to browser-window height
-						infoPictureOpen = true;
-					}else{
-						document.getElementById("infoPicture").style.visibility = 'hidden';
-						close_image('leImage');
-						infoPictureOpen = false;
-					}
-					break;
-
-				case '.':	// display Abbeanum-Quiz (vorerst hierüber)
-					if(quizOpen == false){
-						document.getElementById("abbeanum-quiz").style.visibility = 'visible';
-						quizOpen = true;
-					}else{
-						document.getElementById("abbeanum-quiz").style.visibility = 'hidden';
-						quizOpen = false;
-					}
-					break;
+				case 'z':
+					// MAI'S DEBUGGING MAIN KEY
+					console.log('story: ', story) //test where in story we are
+					console.log('once: ', once) //teste once variable 
+					//console.log('isPlaying: ', isPlaying)
+					console.log('openOnce: ', openOnce)
+					console.log('infoPictureOpen: ', infoPictureOpen)
+					//console.log('inventory: ', inInventory)
+					//console.log(findElement())
+					console.log(closeEnough)
+					break
 			}
 		}
 	}
 	
 	function keyUp(event){
 		if(!isBlocked) keyWasPressed = true
-		switch(event.key){
-			case 'w':
-			case 'W':
-				lastTimeWWasPressed = keyboard[event.key]
-				break
-		}
-		delete keyboard[event.key]
+		delete keyboard[event.key.toLowerCase()]
 		delete keyboard[event.keyCode]
 	}
 	
@@ -492,22 +479,21 @@ function createInteractions(scene, camera, renderer, mouse){
 	window.addEventListener('mousemove', (event) => {
 		mouse.x =   (event.clientX / window.innerWidth ) * 2 - 1
 		mouse.y = - (event.clientY / window.innerHeight) * 2 + 1
-		if(keyboard.rightMouseButton){
-			var mouseSpeed = 4 / window.innerHeight
+		if(keyboard.leftMouseButton || keyboard.middleMouseButton || keyboard.rightMouseButton){
+			var mouseSpeed = -4 / window.innerHeight
 			camera.rotation.y += mouseSpeed * (event.movementX || 0)
 			camera.rotation.x += mouseSpeed * (event.movementY || 0)
 			clampCameraRotation()
 		}
-	}, false );
+	}, false )
 	
 	var mouseButtonNames = ['leftMouseButton', 'middleMouseButton', 'rightMouseButton']
 	
 	// event listener mouse click
 	window.addEventListener('mousedown', (event) => {
 		if(event.button == 0) wasClicked = true // left mouse button only
-		mouse.x =   ( event.clientX / window.innerWidth  ) * 2 - 1;
-		mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-   		console.log("mouse position: (" + mouse.x + ", "+ mouse.y + ")");
+		mouse.x =   ( event.clientX / window.innerWidth  ) * 2 - 1
+		mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1
 		keyboard[mouseButtonNames[event.button]] = 1
 	}, false)
 	
@@ -529,7 +515,7 @@ var acceleration = new THREE.Vector3(0,0,0)
 var couldInteract = false
 
 const dumpsterTmpPos = new THREE.Vector3() // temporary variable
-const beamerInteractionPosition = new THREE.Vector3(-7.065151656086955, 3.1155215629228477, -35.33847308541997)
+const beamerInteractionPosition = new THREE.Vector3(-7.07, 3.12, -35.34)
 
 // helper functions for the animation loop
 function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, dt, outlinepass = null){
@@ -609,7 +595,7 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 	}
 	
 	// check for key-presses, which try to interact
-	if((keyboard.e || keyboard.E || keyboard.Enter) && 
+	if((keyboard.e || keyboard.enter) && 
 		keyWasPressed && !isBlocked &&
 		currentInteractables &&
 		currentInteractables.length > 0
@@ -626,19 +612,24 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 		velocity.add(acceleration.multiplyScalar(dt * user.speed * frictionMultiplier))
 	}
 	
+	// apply velocity on position as far as reasonably possible
 	checkCollision(velocity, user, keyWasPressed, jumpTime, dt)
 	
+	// progress jump forward in time
 	jumpTime += dt
 	
 	updateSparkles(scene, camera, targetSizes, sparkleTargets, time, dt)
 	
-	//AUTOMATICALLY CLOSE PICTURE WHEN WALKING AWAY
+	// AUTOMATICALLY CLOSE PICTURE WHEN WALKING AWAY
 	if(infoPictureOpen){
-		const infoboardCorridor = infoboardCorridorInteractable.interactableModel
-		const distance = camera.position.distanceTo(infoboardCorridor.position)
+		const infoboard1 = infoboardCorridorInteractable.interactableModel
+		const infoboard2 = infoboardOutside.interactableModel
+		const distance = Math.min(
+			infoboard1 && infoboard1.position ? camera.position.distanceTo(infoboard1.position) : 0,
+			infoboard2 && infoboard2.position ? camera.position.distanceTo(infoboard2.position) : 0
+		)
 		if(distance > 2){
 			close_image('leImage')
-			//console.log('TOO FAR')
 		}
 	}
 	
@@ -691,28 +682,27 @@ function allowUserInput(){
 
 //hide inventory
 function hideInventory(){
-	document.getElementById("inventory").style.visibility = 'hidden';
+	document.getElementById("inventory").style.visibility = 'hidden'
 	inventoryOpen = false
 }
 
 //Bildanzeige (derzeit über p)
 function display_image(src) {
 	infoPictureOpen = true
-	document.getElementById("infoPicture").style.visibility = 'visible'; //new
-	var a = document.createElement("img");
-	a.src = src;
-	//a.width = width;
-	a.height = window.innerHeight-100;
-	a.id = 'leImage';
-	a.style.margin = "0 auto";
-	document.getElementById("dispImage").appendChild(a);  
+	document.getElementById("infoPicture").style.visibility = 'visible'
+	var a = document.createElement("img")
+	a.src = src
+	a.id = 'leImage'
+	a.style.margin = "0 auto"
+	a.style.height = "calc(100vh - 100px)"
+	document.getElementById("dispImage").appendChild(a)
 }
 function close_image(imgID){
 	infoPictureOpen = false
-	document.getElementById("infoPicture").style.visibility = 'hidden'; //new
-	var imgID = imgID;
-	var b = document.getElementById(imgID);
-	b.parentNode.removeChild(b);
+	document.getElementById("infoPicture").style.visibility = 'hidden'
+	var imgID = imgID
+	var b = document.getElementById(imgID)
+	b.parentNode.removeChild(b)
 }
 
 // temporary variables

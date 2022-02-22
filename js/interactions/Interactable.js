@@ -1,7 +1,7 @@
 import { inInventory } from './Interactions.js'
 import { printInventory, interactables, findElement, lockElement, unlockElement } from './Interactions.js'
 import { audio, audioStory, doNow, isPlaying, playAudioTrack, playStoryTrack, stopStoryTrack, showLoadinOverlay } from '../UserInterface.js'
-import { updateOnce, updateStory, once, story } from './Story.js'
+import { updateOnce, updateStory, once, story, setMissionText } from './Story.js'
 
 //boolean for infoObject audios
 let playedOnce = false
@@ -80,12 +80,12 @@ class InventoryObject extends Interactable {
 		//console.log('Inventory: ', inInventory)
 		if(once == 7 && this.interactableModel.name == 'Kaffeetasse'){
 			updateOnce() //to 8
-			missionText.innerHTML = "Auf zur Kaffeemaschine"
+			setMissionText("Auf zur Kaffeemaschine im Flur")
 			playStoryTrack('audio/008_Kaffeetasse.mp3')
 			unlockElement("CoffeeMachine")
 		} else if(once == 12 && this.interactableModel.name == 'Stock'){
 			updateOnce() //to 13
-			missionText.innerHTML = "Verprügel den Beamer"
+			setMissionText("Verprügel den Beamer")
 			playStoryTrack('audio/012_Mordwaffe.mp3')
 			unlockElement("Beamer")
 		}

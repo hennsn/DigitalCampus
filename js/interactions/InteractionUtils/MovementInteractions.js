@@ -17,15 +17,15 @@ function handleKeyBoardMovementInteractionsInteraction(acceleration, debuggedObj
 		user.speed = speedMultiplier * user.outsideSpeed
 	}
 	
-	if(keyboard.ArrowLeft)  camera.rotation.y += user.turnSpeed
-	if(keyboard.ArrowRight) camera.rotation.y -= user.turnSpeed
-	if(keyboard.ArrowUp)    camera.rotation.x += user.turnSpeed
-	if(keyboard.ArrowDown)  camera.rotation.x -= user.turnSpeed
+	if(keyboard.arrowleft)  camera.rotation.y += user.turnSpeed
+	if(keyboard.arrowright) camera.rotation.y -= user.turnSpeed
+	if(keyboard.arrowup)    camera.rotation.x += user.turnSpeed
+	if(keyboard.arrowdown)  camera.rotation.x -= user.turnSpeed
 	
-	if(keyboard.W || keyboard.w) acceleration.add(forward)
-	if(keyboard.S || keyboard.s) acceleration.sub(forward)
-	if(keyboard.A || keyboard.a) acceleration.sub(right)
-	if(keyboard.D || keyboard.d) acceleration.add(right)
+	if(keyboard.w) acceleration.add(forward)
+	if(keyboard.s) acceleration.sub(forward)
+	if(keyboard.a) acceleration.sub(right)
+	if(keyboard.d) acceleration.add(right)
 	
 	if(keyboard.MotionX) acceleration.x += keyboard.MotionX
 	if(keyboard.MotionY) acceleration.z -= keyboard.MotionY

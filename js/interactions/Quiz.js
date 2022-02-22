@@ -28,10 +28,10 @@ function openOnce_False(){
 }
 
 // Start-, Next- and Exit-Button
-quizStartBtn.addEventListener('click', quizStart);
+quizStartBtn.addEventListener('click', quizStart)
 quizNextBtn.addEventListener('click', () => {
-	quizQuestionIndex++;
-	quizNextQuestion();
+	quizQuestionIndex++
+	quizNextQuestion()
 });
 quizExitBtn.addEventListener('click', () => {
 	document.getElementById("abbeanum-quiz").style.visibility = 'hidden';
@@ -46,63 +46,64 @@ quizExitBtn.addEventListener('click', () => {
 
 function quizStart(){	
 	// start quiz, hide start-btn, show questions
-	quizStartBtn.classList.add('hide');
-	quizExitBtn.classList.add('hide');
-	quizQuestionIndex = 0;
-	quizCountCorrect = 0;
-	quizQuestionContainer.classList.remove('hide');
-	quizNextQuestion();
+	quizStartBtn.classList.add('hide')
+	quizExitBtn.classList.add('hide')
+	quizQuestionIndex = 0
+	quizCountCorrect = 0
+	quizQuestionContainer.classList.remove('hide')
+	quizNextQuestion()
+	document.getElementById('quizFinished').innerText = ''
 }
 
 function quizNextQuestion(){	
-	resetAnswers();
-	display_question(quizQuestions[quizQuestionIndex]);
+	resetAnswers()
+	display_question(quizQuestions[quizQuestionIndex])
 }
 
 function display_question(question){
 	quizQuestionElem.innerText = question.question;
 	question.answers.forEach(answer => {	// display the answers onto the Buttons
-		const button = document.createElement('button');
-		button.innerText = answer.text;
-		button.classList.add('btn');
+		const button = document.createElement('button')
+		button.innerText = answer.text
+		button.classList.add('btn')
 		if(answer.correct){
-			button.dataset.correct = answer.correct;
+			button.dataset.correct = answer.correct
 		}
-		button.addEventListener('click', quizAnswer);
-		quizAnswerBtnElem.appendChild(button);
+		button.addEventListener('click', quizAnswer)
+		quizAnswerBtnElem.appendChild(button)
 	})
 }
 
 function resetAnswers(){
-	quizAnswerEvaluatedElem.innerText = '';
-	clearGivenAnswer(document.body);
-	quizNextBtn.classList.add('hide');
+	quizAnswerEvaluatedElem.innerText = ''
+	clearGivenAnswer(document.body)
+	quizNextBtn.classList.add('hide')
 	while(quizAnswerBtnElem.firstChild){
-		quizAnswerBtnElem.removeChild(quizAnswerBtnElem.firstChild);
+		quizAnswerBtnElem.removeChild(quizAnswerBtnElem.firstChild)
 	}
 }
 
-function quizAnswer(e){		// check the answer
-	const clickedBtn = e.target;
-	const correct = clickedBtn.dataset.correct;	// check the dataset
+function quizAnswer(e){ // check the answer
+	const clickedBtn = e.target
+	const correct = clickedBtn.dataset.correct	// check the dataset
 	
 	if (clickedBtn.dataset.correct =='true'){
-		quizAnswerEvaluatedElem.innerText = 'richtig!';
+		quizAnswerEvaluatedElem.innerText = 'richtig!'
 		quizCountCorrect++;
 	} else if (clickedBtn.dataset.correct != 'true') {
-		quizAnswerEvaluatedElem.innerText = 'leider falsch';
+		quizAnswerEvaluatedElem.innerText = 'leider falsch'
 	}
-	setGivenAnswer(document.body, correct);	
+	setGivenAnswer(document.body, correct)
 	Array.from(quizAnswerBtnElem.children).forEach(button => {
 		setGivenAnswer(button, button.dataset.correct)
 	})
 	if (quizQuestions.length > quizQuestionIndex +1){	
-		quizNextBtn.classList.remove('hide');
+		quizNextBtn.classList.remove('hide')
 	} else {
-		document.getElementById('quizFinished').innerText = 'du hast ' + quizCountCorrect + ' von ' + quizQuestions.length + ' richtig';
-		quizStartBtn.innerText = 'Restart';
-		quizStartBtn.classList.remove('hide');
-		quizExitBtn.classList.remove('hide');
+		document.getElementById('quizFinished').innerText = 'du hast ' + quizCountCorrect + ' von ' + quizQuestions.length + ' richtig'
+		quizStartBtn.innerText = 'Restart'
+		quizStartBtn.classList.remove('hide')
+		quizExitBtn.classList.remove('hide')
 	}
 }
 
@@ -129,7 +130,7 @@ const quizQuestions = [
 			{ text: 'Ernst-Abbe-Hochschule', correct: false}
 		]
 	},{
-		question: 'Wer war der Architekt diese Gebäudes?',
+		question: 'Wer war der Architekt dieses Gebäudes?',
 		answers: [
 			{text: 'Hugo Hartung', correct: false},
 			{text: 'Ernst Abbe', correct: false},

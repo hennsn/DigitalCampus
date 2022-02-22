@@ -19,38 +19,45 @@ const overlay = document.getElementById('overlay');
 overlay.addEventListener('click', closeText);
 
 function openText(){
-	//document.getElementById("infoPicture").classList.add("active");
-	document.getElementById("overlay").classList.add("active");
+	//document.getElementById("infoPicture").classList.add("active")
+	document.getElementById("overlay").classList.add("active")
 	overlayActive = true
 	hideInventory()
 	blockUserInput()
 }
 
 function closeText(){
-	//document.getElementById("infoPicture").classList.remove("active");
-	document.getElementById("overlay").classList.remove("active");
+	//document.getElementById("infoPicture").classList.remove("active")
+	document.getElementById("overlay").classList.remove("active")
 	overlayActive = false
 	allowUserInput()
 }
 
+var lastMissionText = 'x'
+function setMissionText(text){
+	if(text != lastMissionText){
+		missionText.innerHTML = text
+		lastMissionText = text
+	}
+}
 
 function startStory(scene, mousecaster){
 	//Spawn
 	if(scene == outsideScene && story == 0 && (keyWasPressed || wasClicked)){
 		if(once == 0){
-			playStoryTrack('audio/springTestSound.wav')//('audio/001_Einleitung_Spawn_New.mp3')
+			playStoryTrack('audio/001_Einleitung_Spawn_New.mp3')
 			once = 1
 			lockElement("AbbeanumDoorEntrance")
 		}
 	}
 	//end of spawn audio
 	if(once == 1 && scene == outsideScene && !isPlaying){
-		missionText.innerHTML = "Gehe ins Abbeanum"
+		setMissionText("Gehe ins Abbeanum")
 		unlockElement("AbbeanumInfoBoard")
 	}
 	//enter abbeanum
 	if(scene == flurScene && story == 0){
-		missionText.innerHTML = "Gehe zum Hörsaal 1"
+		setMissionText("Gehe zum Hörsaal 1")
 		story = 1
 		setTimeout(function(){ //delay needed
 			unlockElement("Flyer")
@@ -59,7 +66,7 @@ function startStory(scene, mousecaster){
 	}
 	//enter hs1
 	if(scene == hs1Scene && story == 1){
-		missionText.innerHTML = "Gehe zum Laptop und teste deine Powerpoint"
+		setMissionText("Gehe zum Laptop und teste deine Powerpoint")
 		if(once == 1){
 			playStoryTrack('audio/002_Hier_Laptop.mp3')
 			once = 2
@@ -74,12 +81,12 @@ function startStory(scene, mousecaster){
 		inInventory.pop()
 		inInventory.push('*falscher* USB Stick')
 		printInventory()
-		missionText.innerHTML = "Ruf Lisa an"
+		setMissionText("Ruf Lisa an")
 		document.getElementById("button").classList.add("active")
 		button.addEventListener('click', () =>{
 			if(once == 3 && story == 2){
-				playStoryTrack('audio/springTestSound.wav')//("audio/004_Telefonat.mp3")
-				missionText.innerHTML = "Pace aufgeregt im Hörsaal umher"
+				playStoryTrack("audio/004_Telefonat.mp3")
+				setMissionText("Renne aufgeregt im Hörsaal umher")
 				document.getElementById("button").classList.remove("active")
 				once = 4
 			}
@@ -93,12 +100,12 @@ function startStory(scene, mousecaster){
 	}
 	//after phone call
 	if(story == 3){
-		missionText.innerHTML = "Gehe Kai, Henrik und Jan um einen Laptop anflehen"
+		setMissionText("Flehe Kai, Henrik und Jan in Hörsaal 2 um einen Laptop an")
 		unlockElement("HS2DoorDummy")
 	}
 	//after hs2 dialogue
 	if(story == 4 && once == 5 && !isPlaying){
-		missionText.innerHTML = "Schließ den rettenden Laptop an den Beamer an"
+		setMissionText("Schließ den rettenden Laptop an den Beamer an")
 		closeText() 
 		if(!inInventory.includes('Laptop mit Backup')){
 			inInventory.push('Laptop mit Backup')
@@ -107,15 +114,16 @@ function startStory(scene, mousecaster){
 		unlockElement("Laptop")
 	}
 	if(story == 5 && once == 6 && !isPlaying){
-		missionText.innerHTML = "*Leihe* dir irgendwo im Abbeanum ein Kabel"
+		// zu schwierig ohne Hilfe
+		setMissionText("*Leihe* dir irgendwo im Abbeanum ein Kabel 📺")
 		unlockElement("TvCuboid")
 	}
 	if(once == 7 && story == 6 && !isPlaying){
 		unlockElement("Kaffeetasse")
-		missionText.innerHTML = "Hole die Kaffeetasse"
+		setMissionText("Hole die Kaffeetasse aus dem Hörsaal 1")
 	}
 	if(once == 13 && story == 7){
-		mousecaster.far = 6 //adjusts mousecaster to click on beamer
+		mousecaster.far = 6 // adjusts mousecaster to click on beamer
 	}
 	if(once == 15 && story == 8 && !isPlaying){
 		updateOnce() //to 16
@@ -125,12 +133,12 @@ function startStory(scene, mousecaster){
 			missionText.innerHTML = ""
 		}, 4000)
 		setTimeout(function(){
-			missionText.innerHTML = "Danke für Deine Aufmerksamkeit :-)"
+			setMissionText("<h1>Danke für Deine Aufmerksamkeit 😊</h1>")
 		}, 25000)
 		setTimeout(closeText, 28000)
 	}
-	if(once == 16 && !overlayActive) missionText.innerHTML = ""
+	if(once == 16 && !overlayActive) setMissionText("🎉")
 	
 }
 
-export {story, once, openText, closeText, overlayActive, startStory, updateStory, updateOnce}
+export { story, once, openText, closeText, overlayActive, startStory, updateStory, updateOnce, setMissionText }
