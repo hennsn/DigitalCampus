@@ -276,6 +276,34 @@ function fillScene(scene) {
 	})
 	.catch(printError)
 
+	fbxLoader.loadAsync('models/samples/snake/snake.FBX', e => updateDownloadProgress('snake', e))
+	.then(model => {
+		placeLatLonObject(model, 'snake', 50.93405321, 11.58083749, 183.463-1.4, 0)
+		const s = 0.6 / 70
+		
+		model.scale.set(s,s,s)
+		const mixer = new THREE.AnimationMixer(model)
+		mixer.clipAction(model.animations[0]).play()
+		mixers.push(mixer)
+		outsideScene.add(model)
+	})
+	.catch(printError)
+
+	fbxLoader.loadAsync('models/samples/bot/bot.fbx', e => updateDownloadProgress('bot', e))
+	.then(model => {
+		placeLatLonObject(model, 'bot', 50.93432318, 11.58049268, 184.518, 0)
+		const s = 0.3 / 70
+	
+		model.scale.set(s,s,s)
+		const mixer = new THREE.AnimationMixer(model)
+		mixer.clipAction(model.animations[0]).play()
+		mixers.push(mixer)
+		flurScene.add(model)
+	})
+	.catch(printError)
+
+	
+
 	glTFLoader.loadAsync('models/samples/coffee_machine.glb', e => updateDownloadProgress('coffeeMachine', e))
 	.then(gltf => {
 		const model = gltf.scene
