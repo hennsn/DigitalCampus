@@ -7,33 +7,30 @@ import {placeLatLonObject} from "../Coordinates.js";
 
 
 function fillAbbeanumCorridorScene(){
+		
         // these two belong together:
-        glTFLoader.loadAsync('models/samples/abbeanum_inside_v2.glb', e => updateDownloadProgress('abbeanumInside', e))
-            .then(gltf => {
-                    const model = gltf.scene
-                    model.position.set(-9.8872, 3.8, -24.3727)
-                    model.rotation.set(0,0.1246,0)
-                    model.name = 'AbbeanumInside'
-                    const scale = 1.4 // a guess
-                    model.scale.set(scale, scale, scale)
-                    flurScene.add(model)
-            })
-            .catch(printError)
+		glTFLoader.loadAsync('models/samples/abbeanum_inside_v2.glb', e => updateDownloadProgress('abbeanumInside', e))
+		.then(gltf => {
+			const model = gltf.scene
+			placeLatLonObject(model, 'AbbeanumInside', 50.9341504543, 11.580580902721955, 185.8, 7.139)
+			const scale = 1.4 // a guess
+			model.scale.set(scale, scale, scale)
+			flurScene.add(model)
+		})
+		.catch(printError)
 
 
-        glTFLoader.loadAsync('models/samples/abbeanum_inside_collisions.glb', e => updateDownloadProgress('abbeanumCorridorCollisions', e))
-            .then(gltf => {
-                    // needs to have the exact same coordinates as abbeanumInside, as it was based on it
-                    const model = gltf.scene
-                    model.position.set(-9.8872, 3.8, -24.3727)
-                    model.rotation.set(0,0.1246,0)
-                    model.name = 'AbbeanumCorridorCollisions'
-                    const scale = 1.4
-                    model.scale.set(scale, scale, scale)
-                    model.visible = false
-                    flurScene.add(model)
-            })
-            .catch(printError)
+		glTFLoader.loadAsync('models/samples/abbeanum_inside_collisions.glb', e => updateDownloadProgress('abbeanumCorridorCollisions', e))
+		.then(gltf => {
+			// needs to have the exact same coordinates as abbeanumInside, as it was based on it
+			const model = gltf.scene
+			placeLatLonObject(model, 'AbbeanumCorridorCollisions', 50.9341504543, 11.580580902721955, 185.8, 7.139)
+			const scale = 1.4
+			model.scale.set(scale, scale, scale)
+			model.visible = false
+			flurScene.add(model)
+		})
+		.catch(printError)
 
         glTFLoader.loadAsync('models/samples/flyer.glb', e => updateDownloadProgress('flyer', e))
             .then(gltf => {

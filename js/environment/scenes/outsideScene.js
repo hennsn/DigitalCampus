@@ -55,6 +55,7 @@ function fillOutsideScene() {
     textureLoader.load("history.jpg", texture => {
         const scale = 0.7
         const material = new THREE.MeshLambertMaterial({ map : texture })
+		// 2864/2179 is the aspect ratio, width/height
         const model = new THREE.Mesh(new THREE.PlaneGeometry(scale * 2864/2179, scale), material)
         placeLatLonObject(model, 'HistoryBoard', 50.93412719, 11.58074277, 183.715, 102)
         material.side = THREE.DoubleSide
