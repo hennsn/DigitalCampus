@@ -1,7 +1,8 @@
 import { inInventory } from './Interactions.js'
-import { printInventory, interactables, findElement, lockElement, unlockElement } from './Interactions.js'
+import { interactables, lockElement, unlockElement } from './Interactions.js'
 import { audio, audioStory, doNow, isPlaying, playAudioTrack, playStoryTrack, showLoadinOverlay } from '../UserInterface.js'
 import { updateOnce, updateStory, once, story, setMissionText } from './Story.js'
+import {findElement, printInventory} from "./InteractionUtils/auxiliaryFunctions.js";
 
 //boolean for infoObject audios
 let playedOnce = false
@@ -58,7 +59,7 @@ class Door extends Interactable {
 	
 	#openDoor(currentScene, camera){
 		window.scene = window[this.sceneName]
-		playAudioTrack('audio/door-1-open.mp3');
+		playAudioTrack('audio/door_1_open.mp3');
 		showLoadinOverlay(150)
 		camera.position.copy(this.entryPoint)
 	}
@@ -81,12 +82,12 @@ class InventoryObject extends Interactable {
 		if(once == 7 && this.interactableModel.name == 'Kaffeetasse'){
 			updateOnce() //to 8
 			setMissionText("Auf zur Kaffeemaschine im Flur")
-			playStoryTrack('audio/008_Kaffeetasse.mp3')
+			playStoryTrack('audio/008_kaffeetasse.mp3')
 			unlockElement("CoffeeMachine")
 		} else if(once == 12 && this.interactableModel.name == 'Stock'){
 			updateOnce() //to 13
 			setMissionText("Verprügel den Beamer")
-			playStoryTrack('audio/012_Mordwaffe.mp3')
+			playStoryTrack('audio/012_mordwaffe.mp3')
 			unlockElement("Beamer")
 		}
 		if(!inInventory.includes(this.interactableModel.name)){

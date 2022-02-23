@@ -1,4 +1,5 @@
-import { allowUserInput, lockElement, unlockElement } from "./Interactions.js";
+import { lockElement, unlockElement } from "./Interactions.js";
+import {allowUserInput} from "./InteractionUtils/auxiliaryFunctions.js";
 
 const quizStartBtn = document.getElementById('quiz-start');
 const quizNextBtn = document.getElementById('quiz-next');

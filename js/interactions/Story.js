@@ -1,5 +1,12 @@
 import { audio, audioStory, doNow, isPlaying, playAudioTrack, playStoryTrack } from '../UserInterface.js'
-import { interactables, keyWasPressed, wasClicked, printInventory, inInventory, hideInventory, blockUserInput, allowUserInput, findElement, lockElement, unlockElement } from './Interactions.js'
+import { interactables, keyWasPressed, wasClicked, inInventory, lockElement, unlockElement } from './Interactions.js'
+import {
+	allowUserInput,
+	blockUserInput,
+	findElement,
+	hideInventory,
+	printInventory
+} from "./InteractionUtils/auxiliaryFunctions.js";
 
 //boolean overlay
 let overlayActive = false
@@ -45,7 +52,7 @@ function startStory(scene, mousecaster){
 	//Spawn
 	if(scene == outsideScene && story == 0 && (keyWasPressed || wasClicked)){
 		if(once == 0){
-			playStoryTrack('audio/001_Einleitung_Spawn_New.mp3')
+			playStoryTrack('audio/001_einleitung_spawn_new.mp3')
 			once = 1
 			lockElement("AbbeanumDoorEntrance")
 		}
@@ -68,7 +75,7 @@ function startStory(scene, mousecaster){
 	if(scene == hs1Scene && story == 1){
 		setMissionText("Gehe zum Laptop und teste deine Powerpoint")
 		if(once == 1){
-			playStoryTrack('audio/002_Hier_Laptop.mp3')
+			playStoryTrack('audio/002_hier_laptop.mp3')
 			once = 2
 		}
 		setTimeout(function(){ //delay needed
@@ -85,7 +92,7 @@ function startStory(scene, mousecaster){
 		document.getElementById("button").classList.add("active")
 		button.addEventListener('click', () =>{
 			if(once == 3 && story == 2){
-				playStoryTrack("audio/004_Telefonat.mp3")
+				playStoryTrack("audio/004_telefonat.mp3")
 				setMissionText("Renne aufgeregt im Hörsaal umher")
 				document.getElementById("button").classList.remove("active")
 				once = 4
@@ -129,7 +136,7 @@ function startStory(scene, mousecaster){
 		updateOnce() //to 16
 		setTimeout(function(){
 			openText()
-			playStoryTrack('audio/016_Ende.mp3')
+			playStoryTrack('audio/016_ende.mp3')
 			missionText.innerHTML = ""
 		}, 4000)
 		setTimeout(function(){
