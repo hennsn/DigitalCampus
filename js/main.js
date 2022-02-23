@@ -20,9 +20,10 @@ import { fillAbbeanumHS1Scene } from './environment/scenes/abbeanumHS1Scene.js'
 import { fillAbbeanumCorridorScene } from './environment/scenes/abbeanumCorridorScene.js'
 import { createTerrain } from './environment/Terrain.js'
 import { handleUserInterface } from './UserInterface.js'
-import { createInteractions, handleInteractions } from './interactions/Interactions.js'
+import { handleInteractions } from './interactions/Interactions.js'
 import { startStory } from './interactions/Story.js'
 import { updateMultiplayer } from './environment/Multiplayer.js'
+import {createInteractions} from "./interactions/InteractionUtils/CreateInteractions.js";
 
 
 //const scene = outsideScene
@@ -148,7 +149,7 @@ function mainLoop(){
 	handleUserInterface(deltaTime)
 	updateMultiplayer(scene, time, deltaTime, camera)
 	// stats.update()
-	
+
 	if(window.envMap){
 		// normally the environment map is fixed in place automatically, but I didn't find the correct map yet (1 texture for all sides combined)
 		window.envMap.position.set(camera.position.x, camera.position.y, camera.position.z)

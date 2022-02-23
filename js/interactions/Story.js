@@ -1,5 +1,5 @@
 import { audio, audioStory, doNow, isPlaying, playAudioTrack, playStoryTrack } from '../UserInterface.js'
-import { interactables, keyWasPressed, wasClicked, inInventory, lockElement, unlockElement } from './Interactions.js'
+import { interactables, changableInteractionState, inInventory, lockElement, unlockElement } from './Interactions.js'
 import {
 	allowUserInput,
 	blockUserInput,
@@ -50,7 +50,7 @@ function setMissionText(text){
 
 function startStory(scene, mousecaster){
 	//Spawn
-	if(scene == outsideScene && story == 0 && (keyWasPressed || wasClicked)){
+	if(scene == outsideScene && story == 0 && (changableInteractionState.keyWasPressed || changableInteractionState.wasClicked)){
 		if(once == 0){
 			playStoryTrack('audio/001_einleitung_spawn_new.mp3')
 			once = 1

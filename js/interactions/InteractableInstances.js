@@ -4,7 +4,7 @@ import {CustomInteractable, Door, InventoryObject} from "./Interactable.js";
 import {closeText, once, openText, story, updateOnce, updateStory} from "./Story.js";
 import {isPlaying, playStoryTrack} from "../UserInterface.js";
 import {openOnce, openOnce_False, openOnce_True, quizOpen, quizOpen_False, quizOpen_True} from "./Quiz.js";
-import {inInventory, lockElement, unlockElement, closeEnough} from "./Interactions.js";
+import {inInventory, lockElement, unlockElement} from "./Interactions.js";
 import {
     allowUserInput,
     blockUserInput,
@@ -21,7 +21,7 @@ const CorridorEntryPointFromHS1 = new THREE.Vector3(-16.9378, 3.8484, -34.7462)
 const CorridorEntryPointFromOutside = new THREE.Vector3(1.4122, 1.4596, -20.0527)
 const HS1EntryPointFromCorridor = new THREE.Vector3(-15.5154, 3.8484, -35.038)
 
-
+let closeEnought = window.closeEnough
 
 export const abbeanumDoorEntranceInteractable = new Door('AbbeanumDoorEntrance', 'flurScene', CorridorEntryPointFromOutside)
 export const abbeanumDoorExitInteractable = new Door('AbbeanumDoorExit', 'outsideScene', OutsideEntryPointFromAbbeanum)

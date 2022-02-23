@@ -1,5 +1,6 @@
 // find object in interactables array we are looking for
 import {inInventory, interactables, inventoryOpen, isBlocked} from "../Interactions.js";
+import {clamp, degToRad} from "../../Maths.js";
 
 function findElement(lookingFor) {
     const index = interactables.findIndex(interactable => interactable.name == lookingFor || (interactable.interactableModel && interactable.interactableModel.name == name))
@@ -62,3 +63,7 @@ export {blockUserInput};
 export {hideInventory};
 export {printInventory};
 export {findElement};
+
+export function clampCameraRotation() {
+    camera.rotation.x = clamp(camera.rotation.x, -60 * degToRad, +60 * degToRad)
+}
