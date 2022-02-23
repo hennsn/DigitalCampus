@@ -211,13 +211,12 @@ function fillScene(scene) {
 	// ---------------------------------------------- CORRIDOR MODELS -------------------------------------------------
 	
 	// these two belong together:
-	glTFLoader.loadAsync('models/samples/abbeanum_inside.glb', e => updateDownloadProgress('abbeanumInside', e))
+	glTFLoader.loadAsync('models/samples/abbeanum_inside_v2.glb', e => updateDownloadProgress('abbeanumInside', e))
 	.then(gltf => {
 		const model = gltf.scene
 		model.position.set(-9.8872, 3.8, -24.3727)
 		model.rotation.set(0,0.1246,0)
 		model.name = 'AbbeanumInside'
-		//placeLatLonObject(model, 'ScannedAbbeanumInside', 50.93416130, 11.58060685, 185.800)
 		const scale = 1.4 // a guess
 		model.scale.set(scale, scale, scale)
 		flurScene.add(model)
@@ -225,7 +224,7 @@ function fillScene(scene) {
 	.catch(printError)
 
 
-	glTFLoader.loadAsync('models/samples/abbeanum_corridor_collisions.glb', e => updateDownloadProgress('abbeanumCorridorCollisions', e))
+	glTFLoader.loadAsync('models/samples/abbeanum_inside_collisions.glb', e => updateDownloadProgress('abbeanumCorridorCollisions', e))
 	.then(gltf => {
 		// needs to have the exact same coordinates as abbeanumInside, as it was based on it
 		const model = gltf.scene

@@ -4,7 +4,7 @@ import {CustomInteractable, Door, InventoryObject} from "./Interactable.js";
 import {closeText, once, openText, story, updateOnce, updateStory} from "./Story.js";
 import {isPlaying, playStoryTrack} from "../UserInterface.js";
 import {openOnce, openOnce_False, openOnce_True, quizOpen, quizOpen_False, quizOpen_True} from "./Quiz.js";
-import {allowUserInput, blockUserInput, inInventory, lockElement, printInventory, unlockElement, closeEnough, display_image, close_image } from "./Interactions.js";
+import {allowUserInput, blockUserInput, inInventory, lockElement, printInventory, unlockElement, display_image, close_image } from "./Interactions.js";
 
 //triggers interactions when in range
 
@@ -127,7 +127,7 @@ export const abbeanumInfoBoardInteractable = new CustomInteractable('AbbeanumInf
         closeEnough = 1
         playStoryTrack('audio/018_Geschichte_Abb.mp3')
         setTimeout(function () {
-            unlock("AbbeanumDoorEntrance")
+            unlockElement("AbbeanumDoorEntrance")
         }, 1500)
     }
 })

@@ -99,6 +99,7 @@ function playAudioTrack(srcUrl){
 	return audio
 }
 
+var lastAudio = null
 function playStoryTrack(srcUrl){
 	isPlaying = true
 	audioStory = new Audio(srcUrl) 
@@ -110,12 +111,18 @@ function playStoryTrack(srcUrl){
 		console.log('story audio ended')
 		isPlaying = false
 	})
+	lastAudio = audioStory
 	return audioStory
 }
 
 function stopStoryTrack(audioStory) {
-    audioStory.pause();
-    audioStory.currentTime = 0;
+	audioStory = audioStory || lastAudio
+	if(audioStory){
+		console.log('story audio stopped')
+		isPlaying = false
+		audioStory.pause()
+		audioStory.currentTime = 0
+	}
 }
 
 //doesn't work
