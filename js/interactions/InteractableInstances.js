@@ -47,7 +47,7 @@ export const laptopInteractable = new CustomInteractable('Laptop', () => {
         updateStory() //story to 2
         lockElement("Laptop")
         lockElement("HS1DoorExit")
-        playStoryTrack('audio/003_Falscher_Stick.mp3')//('audio/springTestSound.wav')
+        playStoryTrack('audio/003_falscher_stick.mp3')//('audio/spring_test_sound.wav')
         blockUserInput()
         setTimeout(openText, 18000)
         setTimeout(closeText, 34000)
@@ -59,7 +59,7 @@ export const laptopInteractable = new CustomInteractable('Laptop', () => {
         // laptop tausch:
         hs1Scene.getObjectByName("Laptop2").visible = true
         hs1Scene.getObjectByName("Laptop").visible = false
-        playStoryTrack('audio/006_Kein_HDMI.mp3')//('audio/springTestSound.wav')
+        playStoryTrack('audio/006_kein_hdmi.mp3')//('audio/spring_test_sound.wav')
         lockElement("Laptop")
         if (!inInventory.includes('altes VGA Kabel')) {
             inInventory.push('altes VGA Kabel')
@@ -76,7 +76,7 @@ export const laptop2Interactable = new CustomInteractable('Laptop2', () => {
         printInventory()
         lockElement("Laptop2")
         lockElement("HS1DoorExit")
-        playStoryTrack('audio/011_Physische_Intervention_Geplant.mp3')
+        playStoryTrack('audio/011_physische_intervention_geplant.mp3')
         missionText.innerHTML = "Sei entrüstet"
         setTimeout(function () {
             unlockElement("HS1DoorExit")
@@ -94,7 +94,7 @@ export const coffeeMachineInteractable = new CustomInteractable('CoffeeMachine',
         inInventory.pop()
         printInventory()
         lockElement("CoffeeMachine")
-        playStoryTrack('audio/009_Zu_Viel_Kaffee.mp3')
+        playStoryTrack('audio/009_zu_viel_kaffee.mp3')
         unlockElement("BathroomDoorDummyBasement")
         unlockElement("BathroomDoorDummyUpstairs")
         setTimeout(function () {
@@ -110,7 +110,7 @@ export const beamerInteractable = new CustomInteractable('Beamer', () => {
         updateStory() //to 8
         lockElement("Beamer")
         blockUserInput()
-        playStoryTrack('audio/013_Verfehlt.mp3')
+        playStoryTrack('audio/013_verfehlt.mp3')
         setTimeout(function () {
             allowUserInput()
             unlockElement("Beamer")
@@ -120,7 +120,7 @@ export const beamerInteractable = new CustomInteractable('Beamer', () => {
         updateOnce() //to 15
         lockElement("Beamer")
         blockUserInput()
-        playStoryTrack('audio/014_Clonk_Beamer.mp3')
+        playStoryTrack('audio/014_clonk_beamer.mp3')
         inInventory.pop()
         printInventory()
         setTimeout(function () {
@@ -132,7 +132,7 @@ export const beamerInteractable = new CustomInteractable('Beamer', () => {
 export const abbeanumInfoBoardInteractable = new CustomInteractable('AbbeanumInfoBoard', () => {
     if (closeEnough == 0 && !isPlaying && once == 1) {
         closeEnough = 1
-        playStoryTrack('audio/018_Geschichte_Abb.mp3')
+        playStoryTrack('audio/018_geschichte_abb.mp3')
         setTimeout(function () {
             unlockElement("AbbeanumDoorEntrance")
         }, 1500)
@@ -164,7 +164,7 @@ export const HS2DoorDummyInteractable = new CustomInteractable('HS2DoorDummy', (
         if (once == 4) {
             updateOnce() //to 5
             updateStory() //to 4
-            playStoryTrack('audio/creaking-door-2.mp3') //just dummy placeholder
+            playStoryTrack('audio/creaking_door_2.mp3') //just dummy placeholder
             openText() //should stop input at some point
         }
     }
@@ -178,7 +178,7 @@ export const bathroomDoorDummyBasementInteractable = new CustomInteractable('Bat
         lockElement("BathroomDoorDummyBasement")
         lockElement("BathroomDoorDummyUpstairs")
         unlockElement("Laptop2")
-        playStoryTrack('audio/010_Toilettengang.mp3')
+        playStoryTrack('audio/010_toilettengang.mp3')
         missionText.innerHTML = ""
         setTimeout(function () {
             missionText.innerHTML = "Beweise deine Informatik Kenntnisse: Schließ das HDMI-Kabel an!"
@@ -191,7 +191,7 @@ export const bathroomDoorDummyUpstairsInteractable = new CustomInteractable('Bat
     if (once == 9 && story == 7) {
         updateOnce() //to 10
         lockElement("BathroomDoorDummyUpstairs")
-        playStoryTrack('audio/springTestSound.wav')
+        playStoryTrack('audio/spring_test_sound.wav')
         setTimeout(function () {
             missionText.innerHTML = "DIE RICHTIGEN TOILETTEN"
         }, 2000)

@@ -199,7 +199,7 @@ function createInteractions(scene, camera, renderer, mouse){
 				case 'q':
 					// opens inventory
 					if(inventoryOpen == false){
-						playAudioTrack('audio/inventorySound.mp3');
+						playAudioTrack('audio/inventory_sound.mp3');
 						document.getElementById("inventory").style.visibility = 'visible';
 						inventoryOpen = true
 					} else {
@@ -365,7 +365,7 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 		//play the abbeanumInfoboard audio
 		if(closeEnough == 0 && !isPlaying && once == 1){
 			closeEnough = 1
-			playStoryTrack('audio/018_Geschichte_Abb.mp3')
+			playStoryTrack('audio/018_geschichte_abb.mp3')
 			unlockElement("AbbeanumDoorEntrance")
 		} 
 	}
