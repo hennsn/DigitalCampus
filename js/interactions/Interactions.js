@@ -1,7 +1,7 @@
 import * as THREE from 'https://cdn.skypack.dev/three@0.135.0'
 
 import {clamp, degToRad} from '../Maths.js'
-import {isPlaying, playAudioTrack, playStoryTrack} from '../UserInterface.js'
+import {isPlaying, playAudioTrack, playStoryTrack, stopStoryTrack} from '../UserInterface.js'
 import {xToLon, yToHeight, zToLat} from '../environment/Coordinates.js'
 import {updateSparkles} from '../environment/Sparkles.js'
 import {sendMultiplayerMessage} from '../environment/Multiplayer.js'
@@ -47,7 +47,7 @@ let isBlocked = false
 window.infoPictureOpen = false;
 
 //triggers interactions when in range
-export var closeEnough = 0
+window.closeEnough = 0
 
 //array für alle modelle die wir einsammeln
 let inInventory = ["Handy", "USB Stick"]
@@ -215,6 +215,9 @@ function createInteractions(scene, camera, renderer, mouse){
 							}
 						}
 					}
+				case 'c':
+					// skip audio
+					stopStoryTrack()
 					break
 				// MAI'S DEBUGGING SIDE KEYS
 				case 'ö':
