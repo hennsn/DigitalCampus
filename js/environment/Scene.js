@@ -38,8 +38,6 @@ function fillScene(scene) {
 		const model = window.abbeanum = gltf.scene
 		
 		placeLatLonObject(model, 'AbbeanumDoorEntrance', 50.93411238, 11.58074817, 183.243, +15)
-		// 1.8253643247305833 1.2429999999999977 -20.141888888356544
-
 		var scale = 1.3 // a guess
 		model.scale.set(scale, scale, scale)
 		model.visible = false
@@ -186,7 +184,6 @@ function fillScene(scene) {
 	glTFLoader.loadAsync('models/samples/interaction_cuboid.glb', e => updateDownloadProgress('HS1Entrance', e))
 	.then(gltf => {
 		const model = gltf.scene
-		
 		placeLatLonObject(model, 'HS1DoorEntrance', 50.93424072, 11.58049479, 185.863, -15)
 		var scale = 1.3 // a guess
 		model.scale.set(scale, scale, scale)
@@ -194,7 +191,6 @@ function fillScene(scene) {
 		model.children[2].material.wireframe = true;
 		const hs1DoorExit = model.clone()
 		hs1DoorExit.name = 'HS1DoorExit'
-
 		flurScene.add(model)
 		hs1Scene.add(hs1DoorExit) // objects must be cloned, when you want to add them to multiple scenes
 	})
@@ -214,9 +210,7 @@ function fillScene(scene) {
 	glTFLoader.loadAsync('models/samples/abbeanum_inside_v2.glb', e => updateDownloadProgress('abbeanumInside', e))
 	.then(gltf => {
 		const model = gltf.scene
-		model.position.set(-9.8872, 3.8, -24.3727)
-		model.rotation.set(0,0.1246,0)
-		model.name = 'AbbeanumInside'
+		placeLatLonObject(model, 'AbbeanumInside', 50.9341504543, 11.580580902721955, 185.8, 7.139)
 		const scale = 1.4 // a guess
 		model.scale.set(scale, scale, scale)
 		flurScene.add(model)
@@ -228,9 +222,7 @@ function fillScene(scene) {
 	.then(gltf => {
 		// needs to have the exact same coordinates as abbeanumInside, as it was based on it
 		const model = gltf.scene
-		model.position.set(-9.8872, 3.8, -24.3727)
-		model.rotation.set(0,0.1246,0)
-		model.name = 'AbbeanumCorridorCollisions'
+		placeLatLonObject(model, 'AbbeanumCorridorCollisions', 50.9341504543, 11.580580902721955, 185.8, 7.139)
 		const scale = 1.4
 		model.scale.set(scale, scale, scale)
 		model.visible = false
@@ -267,7 +259,6 @@ function fillScene(scene) {
 		model.rotateY(-0.05869048965668795)
 		model.rotateX(-2.519544938372642)
 		model.rotateZ(-0.8419399335047579)
-		
 		model.scale.set(s,s,s)
 		const mixer = new THREE.AnimationMixer(model)
 		mixer.clipAction(model.animations[3]).play()
@@ -280,7 +271,6 @@ function fillScene(scene) {
 	.then(gltf => {
 		const model = gltf.scene
 		placeLatLonObject(model, 'CoffeeMachine' , 50.93416101, 11.58047837, 185.895, 270)
-
 		const scale = 1.4
 		model.scale.set(scale, scale, scale)
 		flurScene.add(model)
@@ -291,7 +281,7 @@ function fillScene(scene) {
 	.then(gltf => {
 		const model = gltf.scene
 		placeLatLonObject(model, 'WetFloorSign' , 50.93398735, 11.58047673, 184.520, 10)
-		// make it wide
+		// make it wide // why tho?, it looks bad...
 		model.scale.set(3.5, 1.5, 2)
 		flurScene.add(model)
 	})

@@ -2,7 +2,7 @@ import * as THREE from 'https://cdn.skypack.dev/three@0.135.0'
 
 import {clamp, degToRad} from '../Maths.js'
 import {isPlaying, playAudioTrack, playStoryTrack, stopStoryTrack} from '../UserInterface.js'
-import {xToLon, yToHeight, zToLat} from '../environment/Coordinates.js'
+import {xToLon, yToHeight, zToLat, xyzToLatLon, latLonToXYZ} from '../environment/Coordinates.js'
 import {updateSparkles} from '../environment/Sparkles.js'
 import {sendMultiplayerMessage} from '../environment/Multiplayer.js'
 import {JoyStick} from '../libs/joystick/joy.min-2.js'
@@ -109,7 +109,7 @@ function createInteractions(scene, camera, renderer, mouse){
 	// renderer.xr.enabled = true
 	// document.body.appendChild(VRButton.createButton(renderer))
 	
-	camera.position.set(7.2525, 0.9494, -21.7161)
+	camera.position.copy(latLonToXYZ(50.9341265449, 11.580825671613702, 182.9494))
 	camera.rotation.set(0, 65 * degToRad, 0)
 	
 	// create joysticks,
@@ -297,7 +297,7 @@ var acceleration = new THREE.Vector3(0,0,0)
 var couldInteract = false
 
 const dumpsterTmpPos = new THREE.Vector3() // temporary variable
-const beamerInteractionPosition = new THREE.Vector3(-7.07, 3.12, -35.34)
+const beamerInteractionPosition = xyzToLatLon(50.93424916, 11.580621134635106, 185.12)
 
 // helper functions for the animation loop
 function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, dt, outlinepass = null){

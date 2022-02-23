@@ -1,25 +1,22 @@
 // Doors
 import * as THREE from 'https://cdn.skypack.dev/three@0.135.0'
+import {latLonToXYZ} from "../environment/Coordinates.js"
 import {CustomInteractable, Door, InventoryObject} from "./Interactable.js";
 import {closeText, once, openText, story, updateOnce, updateStory} from "./Story.js";
 import {isPlaying, playStoryTrack} from "../UserInterface.js";
 import {openOnce, openOnce_False, openOnce_True, quizOpen, quizOpen_False, quizOpen_True} from "./Quiz.js";
 import {allowUserInput, blockUserInput, inInventory, lockElement, printInventory, unlockElement, display_image, close_image } from "./Interactions.js";
 
-//triggers interactions when in range
-
 // Entry points for the scenes
-const OutsideEntryPointFromAbbeanum = new THREE.Vector3(2.8885, 1.6634, -20.2698)
-const CorridorEntryPointFromHS1 = new THREE.Vector3(-16.9378, 3.8484, -34.7462)
-const CorridorEntryPointFromOutside = new THREE.Vector3(1.4122, 1.4596, -20.0527)
-const HS1EntryPointFromCorridor = new THREE.Vector3(-15.5154, 3.8484, -35.038)
-
-
+const OutsideEntryPointFromAbbeanum = latLonToXYZ(50.9341135282, 11.580763350135289, 183.6634)
+const CorridorEntryPointFromHS1     = latLonToXYZ(50.9342438158, 11.580480214404881, 185.8484)
+const CorridorEntryPointFromOutside = latLonToXYZ(50.9341115743, 11.580742267367510, 183.4596)
+const HS1EntryPointFromCorridor     = latLonToXYZ(50.9342464420, 11.580500527436710, 185.8484)
 
 export const abbeanumDoorEntranceInteractable = new Door('AbbeanumDoorEntrance', 'flurScene', CorridorEntryPointFromOutside)
-export const abbeanumDoorExitInteractable = new Door('AbbeanumDoorExit', 'outsideScene', OutsideEntryPointFromAbbeanum)
-export const hs1DoorEntranceInteractable = new Door('HS1DoorEntrance', 'hs1Scene', HS1EntryPointFromCorridor)
-export const hs1DoorExitInteractable = new Door('HS1DoorExit', 'flurScene', CorridorEntryPointFromHS1)
+export const abbeanumDoorExitInteractable     = new Door('AbbeanumDoorExit', 'outsideScene', OutsideEntryPointFromAbbeanum)
+export const hs1DoorEntranceInteractable      = new Door('HS1DoorEntrance', 'hs1Scene', HS1EntryPointFromCorridor)
+export const hs1DoorExitInteractable          = new Door('HS1DoorExit', 'flurScene', CorridorEntryPointFromHS1)
 // Inventory Objects
 export const stickInteractable = new InventoryObject('Stock')
 export const cupInteractable = new InventoryObject('Kaffeetasse')

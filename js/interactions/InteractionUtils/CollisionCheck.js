@@ -1,4 +1,5 @@
 import * as THREE from 'https://cdn.skypack.dev/three@0.135.0'
+import { lonToX, latToZ, latLonToXYZ } from '../../environment/Coordinates.js'
 import { getHeightOnTerrain } from '../../environment/Terrain.js'
 import { Constants } from '../Constants.js'
 import { mix } from '../../Maths.js'
@@ -24,6 +25,7 @@ var jumpTime = Constants.jumpTime
 
 const cameraSpaceRight = new THREE.Vector3()
 const position = new THREE.Vector3()
+const worldCenter = latLonToXYZ(50.9341265, 11.5808257, 182.95)
 
 function jumpCurve(time){
 	// better recommendations for jump functions are welcome xD
@@ -88,9 +90,9 @@ function checkCollision(velocity, user, keyWasPressed, jumpTime, dt){
 		).filter(model => !!model)
 		
 		if(scene && showDebugRays) deleteOldDebugLines()
-			
+		
 		if(abbeanumFlurCollisions && camera.position.y - user.eyeHeight > abbeanumFlurCollisions.position.y - 0.86 &&
-			camera.position.x < -17.1 && camera.position.z > -12.61){
+			camera.position.x < lonToX(11.580477898056623) && camera.position.z > latToZ(50.93404459)){
 			// player is above the normal height, in the sliding region, so he will be sliding down the slippery "stairs"
 			// stair direction: (0,0,+1)
 			var slidingAcceleration = 0.1
@@ -152,7 +154,28 @@ function checkCollision(velocity, user, keyWasPressed, jumpTime, dt){
 				}
 			}
 		}
-
+		
+		// outer boundary
+		if(scene === outsideScene){
+			var maxDistance = 30
+			var delta = position
+			delta.copy(camera.position).sub(worldCenter)
+			if(delta.lengthSq() > maxDistance * maxDistance &&
+				velocity.dot(delta) > 0){
+				isIntersecting = true
+				const normal = delta
+				normal.y = 0 // ignore y component
+				normal.normalize()
+				if(showDebugRays){
+					const p1 = intersection.point.clone()
+					const p2 = normal.clone(); p2.normalize(); p2.add(p1)
+					addDebugLine(p1, p2, 'white')
+				}
+				// remove the projection
+				normal.multiplyScalar(velocity.dot(normal))
+				velocity.sub(normal)
+			}
+		}
 		
 		user.isIntersecting = isIntersecting
 		
@@ -171,7 +194,7 @@ function checkCollision(velocity, user, keyWasPressed, jumpTime, dt){
 			floorY = Math.max(floorY, groundY)
 		}
 		if(floorY > noneY){
-			const sneaking = keyboard.Shift ? -0.4 : 0.0 // could be smoothed a little
+			const sneaking = keyboard.shift ? -0.4 : 0.0 // could be smoothed a little
 			const targetY = floorY + user.eyeHeight + sneaking + jumpCurve(jumpTime)
 			camera.position.y = mix(camera.position.y, targetY, Math.min(20*dt, 1.0)) // smooth it a little, so jumps (e.g. in HS1) feel more natural
 		} else {
