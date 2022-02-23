@@ -4,7 +4,14 @@ import {CustomInteractable, Door, InventoryObject} from "./Interactable.js";
 import {closeText, once, openText, story, updateOnce, updateStory} from "./Story.js";
 import {isPlaying, playStoryTrack} from "../UserInterface.js";
 import {openOnce, openOnce_False, openOnce_True, quizOpen, quizOpen_False, quizOpen_True} from "./Quiz.js";
-import {allowUserInput, blockUserInput, inInventory, lockElement, printInventory, unlockElement, display_image, close_image } from "./Interactions.js";
+import {inInventory, lockElement, unlockElement, closeEnough} from "./Interactions.js";
+import {
+    allowUserInput,
+    blockUserInput,
+    close_image,
+    display_image,
+    printInventory
+} from "./InteractionUtils/auxiliaryFunctions.js";
 
 //triggers interactions when in range
 

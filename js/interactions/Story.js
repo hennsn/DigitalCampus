@@ -1,5 +1,12 @@
 import { audio, audioStory, doNow, isPlaying, playAudioTrack, playStoryTrack } from '../UserInterface.js'
-import { interactables, keyWasPressed, wasClicked, printInventory, inInventory, hideInventory, blockUserInput, allowUserInput, findElement, lockElement, unlockElement } from './Interactions.js'
+import { interactables, keyWasPressed, wasClicked, inInventory, lockElement, unlockElement } from './Interactions.js'
+import {
+	allowUserInput,
+	blockUserInput,
+	findElement,
+	hideInventory,
+	printInventory
+} from "./InteractionUtils/auxiliaryFunctions.js";
 
 //boolean overlay
 let overlayActive = false

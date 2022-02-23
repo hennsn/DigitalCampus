@@ -10,7 +10,7 @@ import {handleKeyBoardMovementInteractionsInteraction} from './InteractionUtils/
 import {checkCollision} from './InteractionUtils/CollisionCheck.js'
 import {Constants} from './Constants.js'
 import {once, story, updateOnce, updateStory} from './Story.js'
-import {openOnce, quizOpen} from './Quiz.js'
+import {openOnce} from './Quiz.js'
 import {
 	abbeanumDoorEntranceInteractable,
 	abbeanumDoorExitInteractable,
@@ -33,6 +33,8 @@ import {
 	trashcanInteractable,
 	tvCuboidInteractable
 } from "./InteractableInstances.js";
+import {close_image} from "./InteractionUtils/auxiliaryFunctions.js";
+import {findElement, printInteractables} from "./InteractionUtils/auxiliaryFunctions.js";
 
 // the keyboard
 const keyboard = window.keyboard = {}
@@ -40,9 +42,9 @@ const keyboard = window.keyboard = {}
 //boolean for raycasting check
 let wasClicked = false
 //boolean for inventory
-let inventoryOpen = false
+export let inventoryOpen = false
 //boolean for user input
-let isBlocked = false
+export let isBlocked = false
 //boolean for picture display
 window.infoPictureOpen = false;
 
@@ -304,14 +306,7 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 	
 	
 	// get the models - maybe move to not do this every frame
-	//const abbeanum = scene.getObjectByName('Abbeanum')
-	const abbeanumInside = scene.getObjectByName('AbbeanumInside')
-	const constabbeanumCorridorCollisions = scene.getObjectByName('AbbeanumCorridorCollisions')
-	//const abbeanumGround = scene.getObjectByName('AbbeanumGround')
-	const cityCenter = scene.getObjectByName('City Center')
-	const terrain = scene.getObjectByName('Terrain')
-	const abbeanumHS1 = scene.getObjectByName('AbbeanumHS1')
-	const wetFloor = scene.getObjectByName('WetFloorSign')
+
 	
 	interactables.forEach(interactable => {
 		if(interactable.name && !interactable.interactableModel){
@@ -330,7 +325,6 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 	const dumpsterGreen  = scene.getObjectByName('DumpsterGreen')
 	const dumpsterBlue   = scene.getObjectByName('DumpsterBlue')
 	const dumpsterYellow = scene.getObjectByName('DumpsterYellow')
-	const bathroomM = scene.getObjectByName('BathroomM')
 
 	/**
 	 * Helper function for updating the camera controls in the animation loop.
@@ -435,57 +429,6 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 	
 }
 
-// find object in interactables array we are looking for
-function findElement(lookingFor){
-	const index = interactables.findIndex(interactable => interactable.name == lookingFor || (interactable.interactableModel && interactable.interactableModel.name == name))
-	return interactables[index]
-}
-
-//prints everything in inventory-array to inventory-textbox
-function printInventory(){
-	inventory.innerHTML = inInventory.join("<br/>")
-}
-function printInteractables(){
-	for(let i=0; i<interactables.length; i++){
-		console.log(interactables[i].name)
-	}
-	console.log(interactables)
-}
-//functions to toggle user input
-function blockUserInput(){
-	isBlocked = true
-	controlHints.style.visibility = 'hidden'
-}
-function allowUserInput(){
-	isBlocked = false
-	controlHints.style.visibility = 'visible'
-}
-
-
-//hide inventory
-function hideInventory(){
-	document.getElementById("inventory").style.visibility = 'hidden'
-	inventoryOpen = false
-}
-
-//Bildanzeige (derzeit über p)
-function display_image(src) {
-	infoPictureOpen = true
-	document.getElementById("infoPicture").style.visibility = 'visible'
-	var a = document.createElement("img")
-	a.src = src
-	a.id = 'leImage'
-	a.style.margin = "0 auto"
-	a.style.height = "calc(100vh - 100px)"
-	document.getElementById("dispImage").appendChild(a)
-}
-function close_image(imgID){
-	infoPictureOpen = false
-	document.getElementById("infoPicture").style.visibility = 'hidden'
-	var imgID = imgID
-	var b = document.getElementById(imgID)
-	b.parentNode.removeChild(b)
-}
 
 // temporary variables
 const interactTmp1 = new THREE.Vector3() 
@@ -536,4 +479,4 @@ function rayInteract(rayIntersects){
 }
 
 
-export { createInteractions, handleInteractions, inInventory, printInventory, hideInventory, interactables, keyWasPressed, wasClicked, blockUserInput, allowUserInput, findElement, lockElement, unlockElement, display_image, close_image }
+export { createInteractions, handleInteractions, inInventory, interactables, keyWasPressed, wasClicked, lockElement, unlockElement}
