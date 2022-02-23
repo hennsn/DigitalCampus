@@ -18,6 +18,9 @@ import Stats from 'https://cdn.skypack.dev/three@0.135.0/examples/jsm/libs/stats
 import { clamp }  from './Maths.js'
 import { createSky }  from './environment/Sky.js'
 import { createLighting, createInsideLighting } from './environment/Lighting.js'
+import { fillOutsideScene } from './environment/scenes/outsideScene.js'
+import { fillAbbeanumHS1Scene } from './environment/scenes/abbeanumHS1Scene.js'
+import { fillAbbeanumCorridorScene } from './environment/scenes/abbeanumCorridorScene.js'
 import { fillScene } from './environment/Scene.js'
 import { createTerrain } from './environment/Terrain.js'
 import { handleUserInterface } from './UserInterface.js'
@@ -69,6 +72,23 @@ const fbxLoader = window.fbxLoader = new FBXLoader()
 var outsideScene = window.outsideScene = new THREE.Scene()
 outsideScene.name = 'outside'
 
+var flurScene = window.flurScene = new THREE.Scene()
+flurScene.name = 'flur'
+
+var hs1Scene = window.hs1Scene = new THREE.Scene()
+hs1Scene.name = 'hs1'
+
+createInsideLighting(flurScene)
+// todo define lighting
+// todo add objects
+
+createInsideLighting(hs1Scene)
+// todo define lighting
+// todo add objects
+
+fillOutsideScene()
+fillAbbeanumCorridorScene()
+fillAbbeanumHS1Scene()
 
 
 
@@ -88,22 +108,12 @@ var outlinePass = new OutlinePass(new THREE.Vector2(window.innerWidth, window.in
 createSky(outsideScene)
 createLighting(outsideScene)
 createTerrain(outsideScene)
-fillScene(outsideScene)
+// ?
+window.mixers = []
 
 
 
 
-var flurScene = window.flurScene = new THREE.Scene()
-flurScene.name = 'flur'
-createInsideLighting(flurScene)
-// todo define lighting
-// todo add objects
-
-var hs1Scene = window.hs1Scene = new THREE.Scene()
-hs1Scene.name = 'hs1'
-createInsideLighting(hs1Scene)
-// todo define lighting
-// todo add objects
 
 // start location
 window.scene = outsideScene
