@@ -10,7 +10,7 @@ import {openOnce} from "../Quiz.js";
 import {inventoryOpen, isBlocked, changableInteractionState, user, } from "../Interactions.js";
 
 function createInteractions(scene, camera, renderer, mouse) {
-    let jumpTime = changableInteractionState.jumpTime
+    //let jumpTime = changableInteractionState.jumpTime
 
     // https://stackoverflow.com/a/4819886/4979303
     function isTouchDevice() {
@@ -89,8 +89,8 @@ function createInteractions(scene, camera, renderer, mouse) {
                     user.isRunning = false
                     break;
                 case ' ':// space for jumping
-                    if (jumpTime <= 0.0 || jumpTime >= jumpDuration * 0.75) {
-                        jumpTime = 0.0
+                    if (changableInteractionState.jumpTime <= 0.0 || changableInteractionState.jumpTime >= jumpDuration * 0.75) {
+                        changableInteractionState.jumpTime = 0.0
                     }
                     break
                 case 'h':
