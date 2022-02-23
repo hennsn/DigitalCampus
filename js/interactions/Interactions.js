@@ -36,9 +36,9 @@ const keyboard = window.keyboard = {}
 
 
 //boolean for inventory
-export let inventoryOpen = false
+//export let inventoryOpen = false
 //boolean for user input
-export let isBlocked = false
+//export let isBlocked = false
 //boolean for picture display
 window.infoPictureOpen = false;
 
@@ -59,7 +59,10 @@ export let changableInteractionState = {
 	keyWasPressed: false,
 	//boolean for raycasting check
 	wasClicked: false,
-	jumpTime: Constants.jumpTime
+	jumpTime: Constants.jumpTime,
+	keyboard: keyboard,
+	isBlocked: false,
+	inventoryOpen: false
 }
 
 //export const changeKeyPressed = newValue => keyWasPressed = newValue;
@@ -169,8 +172,8 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 	}
 	
 	// check for key-presses, which try to interact
-	if((keyboard.e || keyboard.enter) && 
-		changableInteractionState.keyWasPressed && !isBlocked &&
+	if((changableInteractionState.keyboard.e || changableInteractionState.keyboard.enter) &&
+		changableInteractionState.keyWasPressed && !changableInteractionState.isBlocked &&
 		currentInteractables &&
 		currentInteractables.length > 0
 	) keyPressInteract(camera, currentInteractables)
@@ -210,7 +213,7 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 	//////////////////////////////
 	///// MOUSE INTERACTIONS /////
 	//////////////////////////////
-	if(changableInteractionState.wasClicked && !isBlocked){
+	if(changableInteractionState.wasClicked && !changableInteractionState.isBlocked){
 		if(abbeanumDoorEntrance) abbeanumDoorEntrance.visible = true
 
 		mousecaster.setFromCamera(mouse, camera)

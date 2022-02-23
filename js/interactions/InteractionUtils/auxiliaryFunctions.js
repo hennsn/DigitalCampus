@@ -1,5 +1,5 @@
 // find object in interactables array we are looking for
-import {inInventory, interactables, inventoryOpen, isBlocked} from "../Interactions.js";
+import {inInventory, interactables, changableInteractionState} from "../Interactions.js";
 import {clamp, degToRad} from "../../Maths.js";
 
 function findElement(lookingFor) {
@@ -22,17 +22,17 @@ export function printInteractables() {
 //hide inventory
 function hideInventory() {
     document.getElementById("inventory").style.visibility = 'hidden'
-    inventoryOpen = false
+    changableInteractionState.inventoryOpen = false
 }
 
 //functions to toggle user input
 function blockUserInput() {
-    isBlocked = true
+    changableInteractionState.isBlocked = true
     controlHints.style.visibility = 'hidden'
 }
 
 function allowUserInput() {
-    isBlocked = false
+    changableInteractionState.isBlocked = false
     controlHints.style.visibility = 'visible'
 }
 

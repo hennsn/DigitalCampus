@@ -7,7 +7,7 @@ import {sendMultiplayerMessage} from "../../environment/Multiplayer.js";
 import {once, story, updateOnce, updateStory} from "../Story.js";
 import {clampCameraRotation, printInteractables} from "./auxiliaryFunctions.js";
 import {openOnce} from "../Quiz.js";
-import {inventoryOpen, isBlocked, changableInteractionState, user, } from "../Interactions.js";
+import {changableInteractionState, user, } from "../Interactions.js";
 
 function createInteractions(scene, camera, renderer, mouse) {
     //let jumpTime = changableInteractionState.jumpTime
@@ -20,7 +20,6 @@ function createInteractions(scene, camera, renderer, mouse) {
     }
 
 
-    const keyboard = window.keyboard = {}
     var lastTimeWWasPressed = 0
     const jumpDuration = Constants.jumpDuration
     // change to a more intuitive rotation order
@@ -52,12 +51,12 @@ function createInteractions(scene, camera, renderer, mouse) {
             externalStrokeColor: '#fff'
         }
         new JoyStick('motionJoyStick', joyStickColors, data => {
-            keyboard.MotionX = data.x / 100
-            keyboard.MotionY = data.y / 100
+            changableInteractionState.keyboard.MotionX = data.x / 100
+            changableInteractionState.keyboard.MotionY = data.y / 100
         })
         new JoyStick('turningJoyStick', joyStickColors, data => {
-            keyboard.TurningX = data.x / 100
-            keyboard.TurningY = data.y / 100
+            changableInteractionState.keyboard.TurningX = data.x / 100
+            changableInteractionState.keyboard.TurningY = data.y / 100
         })
     }
 
@@ -75,11 +74,11 @@ function createInteractions(scene, camera, renderer, mouse) {
     }
 
     function keyDown(event) {
-        if (!isBlocked) {
+        if (!changableInteractionState.isBlocked) {
             var key = event.key.toLowerCase()
             changableInteractionState.keyWasPressed = true
-            keyboard[key] = event.timeStamp
-            keyboard[event.keyCode] = event.timeStamp
+            changableInteractionState.keyboard[key] = event.timeStamp
+            changableInteractionState.keyboard[event.keyCode] = event.timeStamp
             switch (key) {
                 case 'w':// tap w twice to run
                     user.isRunning = event.timeStamp - lastTimeWWasPressed < 300
@@ -116,13 +115,13 @@ function createInteractions(scene, camera, renderer, mouse) {
                     break;
                 case 'q':
                     // opens inventory
-                    if (inventoryOpen == false) {
+                    if (changableInteractionState.inventoryOpen == false) {
                         playAudioTrack('audio/inventorySound.mp3');
                         document.getElementById("inventory").style.visibility = 'visible';
-                        inventoryOpen = true
+                        changableInteractionState.inventoryOpen = true
                     } else {
                         document.getElementById("inventory").style.visibility = 'hidden';
-                        inventoryOpen = false
+                        changableInteractionState.inventoryOpen = false
                     }
                     break;
                 case 't':
@@ -165,9 +164,9 @@ function createInteractions(scene, camera, renderer, mouse) {
     }
 
     function keyUp(event) {
-        if (!isBlocked) changableInteractionState.keyWasPressed = true
-        delete keyboard[event.key.toLowerCase()]
-        delete keyboard[event.keyCode]
+        if (!changableInteractionState.isBlocked) changableInteractionState.keyWasPressed = true
+        delete changableInteractionState.keyboard[event.key.toLowerCase()]
+        delete changableInteractionState.keyboard[event.keyCode]
     }
 
     // for debugging: fps/frame-time/memory usage
@@ -181,7 +180,7 @@ function createInteractions(scene, camera, renderer, mouse) {
     window.addEventListener('mousemove', (event) => {
         mouse.x = (event.clientX / window.innerWidth) * 2 - 1
         mouse.y = -(event.clientY / window.innerHeight) * 2 + 1
-        if (keyboard.leftMouseButton || keyboard.middleMouseButton || keyboard.rightMouseButton) {
+        if (changableInteractionState.keyboard.leftMouseButton || changableInteractionState.keyboard.middleMouseButton || changableInteractionState.keyboard.rightMouseButton) {
             var mouseSpeed = -4 / window.innerHeight
             camera.rotation.y += mouseSpeed * (event.movementX || 0)
             camera.rotation.x += mouseSpeed * (event.movementY || 0)
@@ -196,11 +195,11 @@ function createInteractions(scene, camera, renderer, mouse) {
         if (event.button == 0) changableInteractionState.wasClicked = true // left mouse button only
         mouse.x = (event.clientX / window.innerWidth) * 2 - 1
         mouse.y = -(event.clientY / window.innerHeight) * 2 + 1
-        keyboard[mouseButtonNames[event.button]] = 1
+        changableInteractionState.keyboard[mouseButtonNames[event.button]] = 1
     }, false)
 
     window.addEventListener('mouseup', (event) => {
-        delete keyboard[mouseButtonNames[event.button]]
+        delete changableInteractionState.keyboard[mouseButtonNames[event.button]]
     }, false)
 
     // prevent the context menu to be opened on right click,
