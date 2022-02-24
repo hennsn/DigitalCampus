@@ -15,15 +15,15 @@ import { RGBELoader } from "https://cdn.skypack.dev/three@0.135.0/examples/jsm/l
 import { clamp }  from './Maths.js'
 import { createSky }  from './environment/Sky.js'
 import { createLighting, createInsideLighting } from './environment/Lighting.js'
-import { fillOutsideScene } from './environment/scenes/outsideScene.js'
-import { fillAbbeanumHS1Scene } from './environment/scenes/abbeanumHS1Scene.js'
-import { fillAbbeanumCorridorScene } from './environment/scenes/abbeanumCorridorScene.js'
+import { fillOutsideScene } from './environment/scenes/OutsideScene.js'
+import { fillAbbeanumHS1Scene } from './environment/scenes/AbbeanumHS1Scene.js'
+import { fillAbbeanumCorridorScene } from './environment/scenes/AbbeanumCorridorScene.js'
 import { createTerrain } from './environment/Terrain.js'
 import { handleUserInterface } from './UserInterface.js'
 import { handleInteractions } from './interactions/Interactions.js'
 import { startStory } from './interactions/Story.js'
 import { updateMultiplayer } from './environment/Multiplayer.js'
-import {createInteractions} from "./interactions/InteractionUtils/CreateInteractions.js";
+import { createInteractions } from "./interactions/InteractionUtils/CreateInteractions.js";
 
 
 //const scene = outsideScene

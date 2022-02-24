@@ -135,7 +135,7 @@ function fillOutsideScene() {
         .then(gltf => {// these coordinates need to be the same as above!
             var scale = 0.4
             var model = gltf.scene
-            model.visibility = false
+            model.visible = false
             model.scale.set(scale, scale, scale)
             placeLatLonObject(model, 'DumpsterBlueCollision', 50.93409359, 11.58079671, 182.33, 195)
             outsideScene.add(model)

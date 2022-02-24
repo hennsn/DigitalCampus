@@ -1,8 +1,8 @@
 import { inInventory } from './Interactions.js'
 import { interactables, lockElement, unlockElement } from './Interactions.js'
 import { audio, audioStory, doNow, isPlaying, playAudioTrack, playStoryTrack, showLoadinOverlay } from '../UserInterface.js'
-import { updateOnce, updateStory, once, story, setMissionText } from './Story.js'
-import {findElement, printInventory} from "./InteractionUtils/auxiliaryFunctions.js";
+import { updateOnce, updateStory, setMissionText } from './Story.js'
+import { findElement, printInventory } from "./InteractionUtils/AuxiliaryFunctions.js";
 
 //boolean for infoObject audios
 let playedOnce = false

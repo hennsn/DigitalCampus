@@ -26,13 +26,15 @@ function createSky(scene){
 		const url = 'environment/kloofendal_38d_partly_cloudy_2k.jpg'
 		textureLoader.load(url, tex => {
 			tex.magFilter = THREE.LinearFilter
+			tex.wrapS = THREE.RepeatWrapping
+			tex.wrapT = THREE.MirroredRepeatWrapping
 			tex.needsUpdate = true
 			const scale = camera.far * 0.707 // slightly less than 1/sqrt(2)
 			const cube = new THREE.BoxGeometry(scale, scale, scale)
 			const material = new THREE.ShaderMaterial({
 				uniforms: { tex: { value: tex } }, side: THREE.DoubleSide,
 				vertexShader: 'varying vec3 v_pos; void main(){ v_pos = position; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1); }',
-				fragmentShader: 'varying vec3 v_pos; uniform sampler2D tex; void main(){ vec3 n = normalize(v_pos); vec3 c = texture(tex, vec2(atan(n.x, n.z)*'+(0.5/Math.PI)+'+.5, n.y*.5+.5)).rgb; gl_FragColor = vec4(c, 1); }'
+				fragmentShader: 'varying vec3 v_pos; uniform sampler2D tex; void main(){ vec3 n = normalize(v_pos); vec3 c = texture(tex, vec2(atan(n.x, n.z)*'+(1/Math.PI)+', n.y*.5+.5)).rgb; gl_FragColor = vec4(c, 1); }'
 			})
 			const mesh = window.envMap = new THREE.Mesh(cube, material)
 			mesh.name = 'EnvironmentMap'

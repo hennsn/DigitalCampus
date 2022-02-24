@@ -1,18 +1,18 @@
-import { lockElement, unlockElement } from "./Interactions.js";
-import {allowUserInput} from "./InteractionUtils/auxiliaryFunctions.js";
+import { lockElement, unlockElement } from "./Interactions.js"
+import {allowUserInput} from "./InteractionUtils/auxiliaryFunctions.js"
 
-const quizStartBtn = document.getElementById('quiz-start');
-const quizNextBtn = document.getElementById('quiz-next');
-const quizExitBtn = document.getElementById('quiz-exit');
-const quizQuestionContainer = document.getElementById('quiz-container');
-const quizQuestionElem = document.getElementById('question');
-const quizAnswerBtnElem = document.getElementById('quiz-answer-btns');
-const quizAnswerEvaluatedElem = document.getElementById('quizAnswerEvaluated'); 
+const quizStartBtn = document.getElementById('quiz-start')
+const quizNextBtn = document.getElementById('quiz-next')
+const quizExitBtn = document.getElementById('quiz-exit')
+const quizQuestionContainer = document.getElementById('quiz-container')
+const quizQuestionElem = document.getElementById('question')
+const quizAnswerBtnElem = document.getElementById('quiz-answer-btns')
+const quizAnswerEvaluatedElem = document.getElementById('quizAnswerEvaluated');
 
-let quizQuestionIndex;
-let quizCountCorrect;
+let quizQuestionIndex
+let quizCountCorrect
 //boolean for quiz
-let quizOpen = false;
+let quizOpen = false
 let openOnce = false
 
 function quizOpen_True(){
@@ -36,7 +36,7 @@ quizNextBtn.addEventListener('click', () => {
 });
 quizExitBtn.addEventListener('click', () => {
 	document.getElementById("abbeanum-quiz").style.visibility = 'hidden';
-	quizOpen = false;
+	quizOpen = false
 	openOnce = false
 	allowUserInput()
 	setTimeout(function(){
@@ -90,7 +90,7 @@ function quizAnswer(e){ // check the answer
 	
 	if (clickedBtn.dataset.correct =='true'){
 		quizAnswerEvaluatedElem.innerText = 'richtig!'
-		quizCountCorrect++;
+		quizCountCorrect++
 	} else if (clickedBtn.dataset.correct != 'true') {
 		quizAnswerEvaluatedElem.innerText = 'leider falsch'
 	}
@@ -111,15 +111,15 @@ function quizAnswer(e){ // check the answer
 function setGivenAnswer(element, correct){
 	clearGivenAnswer(element);
 	if (correct){
-		element.classList.add('correct');
+		element.classList.add('correct')
 	} else {
-		element.classList.add('wrong');
+		element.classList.add('wrong')
 	}
 }
 
 function clearGivenAnswer(element){
-	element.classList.remove('correct');
-	element.classList.remove('wrong');
+	element.classList.remove('correct')
+	element.classList.remove('wrong')
 }
 
 const quizQuestions = [

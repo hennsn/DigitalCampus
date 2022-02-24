@@ -11,11 +11,8 @@ function clampCameraRotation(){
 function handleKeyBoardMovementInteractionsInteraction(acceleration, debuggedObject, user, dt){
 	
 	const speedMultiplier = user.isRunning ? 2.0 : 1.0
-	if(scene != outsideScene){
-		user.speed = speedMultiplier * user.insideSpeed
-	} else {
-		user.speed = speedMultiplier * user.outsideSpeed
-	}
+	const speedBase = scene === outsideScene ? user.outsideSpeed : user.insideSpeed
+	user.speed = speedMultiplier * speedBase
 	
 	if(keyboard.arrowleft)  camera.rotation.y += user.turnSpeed
 	if(keyboard.arrowright) camera.rotation.y -= user.turnSpeed
@@ -38,8 +35,8 @@ function handleKeyBoardMovementInteractionsInteraction(acceleration, debuggedObj
 	if(keyboard.TurningY) camera.rotation.x += keyboard.TurningY * dt
 	clampCameraRotation(camera)
 
-	if(debuggedObject)
-	{	// placing a debug object
+	if(debuggedObject){
+		// moving a debug object
 		if(keyboard.l) debuggedObject.position.z -= dt // model front
 		if(keyboard.i) debuggedObject.position.x -= dt // model left
 		if(keyboard.j) debuggedObject.position.z += dt // model back

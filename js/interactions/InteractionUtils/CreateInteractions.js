@@ -1,13 +1,13 @@
-import {Constants} from "../Constants.js";
-import {degToRad} from "../../Maths.js";
-import {JoyStick} from "../../libs/joystick/joy.min-2.js";
-import {xToLon, yToHeight, zToLat} from "../../environment/Coordinates.js";
-import {playAudioTrack, stopStoryTrack} from "../../UserInterface.js";
-import {sendMultiplayerMessage} from "../../environment/Multiplayer.js";
-import {once, story, updateOnce, updateStory} from "../Story.js";
-import {clampCameraRotation, printInteractables} from "./auxiliaryFunctions.js";
-import {openOnce} from "../Quiz.js";
-import {changableInteractionState, user, } from "../Interactions.js";
+import {Constants} from "../Constants.js"
+import {degToRad} from "../../Maths.js"
+import {JoyStick} from "../../libs/joystick/joy.min-2.js"
+import {xToLon, yToHeight, zToLat} from "../../environment/Coordinates.js"
+import {playAudioTrack, stopStoryTrack} from "../../UserInterface.js"
+import {sendMultiplayerMessage} from "../../environment/Multiplayer.js"
+import {updateOnce, updateStory} from "../Story.js"
+import {clampCameraRotation, printInteractables} from "./AuxiliaryFunctions.js"
+import {openOnce} from "../Quiz.js"
+import {changableInteractionState, user } from "../Interactions.js"
 
 function createInteractions(scene, camera, renderer, mouse) {
     //let jumpTime = changableInteractionState.jumpTime
@@ -209,4 +209,4 @@ function createInteractions(scene, camera, renderer, mouse) {
     })
 }
 
-export {createInteractions};
+export {createInteractions}

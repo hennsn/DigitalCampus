@@ -29,15 +29,8 @@ const worldCenter = latLonToXYZ(50.9341265, 11.5808257, 182.95)
 
 function jumpCurve(time){
 	// better recommendations for jump functions are welcome xD
-	/*const fDuration = 2.5
-	const x = time * fDuration / jumpDuration - 1
-	const f = Math.sin(x+.5)*Math.exp(-x*x*4)
-	const fMax = 0.56*/
-	const fDuration = 8
-	const x = time * fDuration / jumpDuration - 2.75
-	const f = Math.sin(x+x*x/10+2)*Math.exp(-x*x/4)
-	const fMax = 0.95
-	return f / fMax * jumpHeight
+	const x = time/jumpDuration * 2 - 1
+	return jumpHeight * Math.max(0, 1-x*x)
 }
 
 const showDebugRays = false
@@ -74,7 +67,7 @@ function checkCollision(velocity, user, keyWasPressed, jumpTime, dt){
 	const dumpster2 = scene.getObjectByName('DumpsterGreenCollision')
 
 	if(velocity.length() > 1e-3 * user.speed || // we're in motion / might move camera up/down
-		keyWasPressed || (jumpTime > 0.0 && jumpTime < jumpDuration)){
+		keyWasPressed || (jumpTime > 0.0 && jumpTime <= jumpDuration + 1)){
 		
 		if(abbeanumFlurCollisions) abbeanumFlurCollisions.visible = true
 		if(dumpster0) dumpster0.visible = true

@@ -2,7 +2,7 @@
 import * as THREE from 'https://cdn.skypack.dev/three@0.135.0'
 import {latLonToXYZ} from "../environment/Coordinates.js"
 import {CustomInteractable, Door, InventoryObject} from "./Interactable.js";
-import {closeText, once, openText, story, updateOnce, updateStory} from "./Story.js";
+import {closeText, openText, updateOnce, updateStory} from "./Story.js";
 import {isPlaying, playStoryTrack} from "../UserInterface.js";
 import {openOnce, openOnce_False, openOnce_True, quizOpen, quizOpen_False, quizOpen_True} from "./Quiz.js";
 import {inInventory, lockElement, unlockElement} from "./Interactions.js";
@@ -12,7 +12,7 @@ import {
     close_image,
     display_image,
     printInventory
-} from "./InteractionUtils/auxiliaryFunctions.js";
+} from "./InteractionUtils/AuxiliaryFunctions.js";
 
 // Entry points for the scenes
 

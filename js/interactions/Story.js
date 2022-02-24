@@ -11,8 +11,8 @@ import {
 //boolean overlay
 let overlayActive = false
 ///COUNTER FOR STORY (we'll see if it works that way or if it's to simple) /////
-let story = 0
-let once = 0
+window.story = 0
+window.once = 0
 
 function updateStory(){
 	story++
@@ -148,4 +148,4 @@ function startStory(scene, mousecaster){
 	
 }
 
-export { story, once, openText, closeText, overlayActive, startStory, updateStory, updateOnce, setMissionText }
+export { openText, closeText, overlayActive, startStory, updateStory, updateOnce, setMissionText }
