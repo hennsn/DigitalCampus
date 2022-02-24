@@ -5,7 +5,7 @@ import {CustomInteractable, Door, InventoryObject} from "./Interactable.js";
 import {closeText, once, openText, story, updateOnce, updateStory} from "./Story.js";
 import {isPlaying, playStoryTrack} from "../UserInterface.js";
 import {openOnce, openOnce_False, openOnce_True, quizOpen, quizOpen_False, quizOpen_True} from "./Quiz.js";
-import {inInventory, lockElement, unlockElement, closeEnough} from "./Interactions.js";
+import {inInventory, lockElement, unlockElement} from "./Interactions.js";
 import {
     allowUserInput,
     blockUserInput,
@@ -15,6 +15,7 @@ import {
 } from "./InteractionUtils/auxiliaryFunctions.js";
 
 // Entry points for the scenes
+
 const OutsideEntryPointFromAbbeanum = latLonToXYZ(50.9341135282, 11.580763350135289, 183.6634)
 const CorridorEntryPointFromHS1     = latLonToXYZ(50.9342438158, 11.580480214404881, 185.8484)
 const CorridorEntryPointFromOutside = latLonToXYZ(50.9341115743, 11.580742267367510, 183.4596)

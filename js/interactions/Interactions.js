@@ -1,16 +1,13 @@
 import * as THREE from 'https://cdn.skypack.dev/three@0.135.0'
 
 import {clamp, degToRad} from '../Maths.js'
-import {isPlaying, playAudioTrack, playStoryTrack, stopStoryTrack} from '../UserInterface.js'
+import {isPlaying, playStoryTrack, stopStoryTrack} from '../UserInterface.js'
 import {xToLon, yToHeight, zToLat, xyzToLatLon, latLonToXYZ} from '../environment/Coordinates.js'
 import {updateSparkles} from '../environment/Sparkles.js'
-import {sendMultiplayerMessage} from '../environment/Multiplayer.js'
-import {JoyStick} from '../libs/joystick/joy.min-2.js'
 import {handleKeyBoardMovementInteractionsInteraction} from './InteractionUtils/MovementInteractions.js'
 import {checkCollision} from './InteractionUtils/CollisionCheck.js'
 import {Constants} from './Constants.js'
-import {once, story, updateOnce, updateStory} from './Story.js'
-import {openOnce} from './Quiz.js'
+import {once} from './Story.js'
 import {
 	abbeanumDoorEntranceInteractable,
 	abbeanumDoorExitInteractable,
@@ -33,18 +30,16 @@ import {
 	trashcanInteractable,
 	tvCuboidInteractable
 } from "./InteractableInstances.js";
-import {close_image} from "./InteractionUtils/auxiliaryFunctions.js";
-import {findElement, printInteractables} from "./InteractionUtils/auxiliaryFunctions.js";
+import {close_image, findElement} from "./InteractionUtils/auxiliaryFunctions.js";
 
 // the keyboard
 const keyboard = window.keyboard = {}
 
-//boolean for raycasting check
-let wasClicked = false
+
 //boolean for inventory
-export let inventoryOpen = false
+//export let inventoryOpen = false
 //boolean for user input
-export let isBlocked = false
+//export let isBlocked = false
 //boolean for picture display
 window.infoPictureOpen = false;
 
@@ -57,29 +52,25 @@ inventory.innerHTML += "Handy <br> USB Stick"
 
 // the user
 // block user for cutscenes 
-let user = { height: 1.7, eyeHeight: 1.6, speed: 1.3, turnSpeed: 0.03, insideSpeed: 0.7, outsideSpeed: 1.3, isIntersecting: false, isBlocked: false } //add let isBlocked to block user input
+export let user = { height: 1.7, eyeHeight: 1.6, speed: 1.3, turnSpeed: 0.03, insideSpeed: 0.7, outsideSpeed: 1.3, isIntersecting: false, isBlocked: false } //add let isBlocked to block user input
 //const distanceToWalls = 1
 let lastInteractionTime = Date.now()
 
-var keyWasPressed = false
-
-const jumpDuration = Constants.jumpDuration
-const jumpHeight = Constants.jumpHeight
-
-var jumpTime = Constants.jumpTime
-
-var lastTimeWWasPressed = 0
-
-function clampCameraRotation(){
-	camera.rotation.x = clamp(camera.rotation.x, -60*degToRad, +60*degToRad)
+export let changableInteractionState = {
+	keyWasPressed: false,
+	//boolean for raycasting check
+	wasClicked: false,
+	jumpTime: Constants.jumpTime,
+	keyboard: keyboard,
+	isBlocked: false,
+	inventoryOpen: false
 }
 
-// https://stackoverflow.com/a/4819886/4979303
-function isTouchDevice() {
-	return (('ontouchstart' in window) ||
-		(navigator.maxTouchPoints > 0) ||
-		(navigator.msMaxTouchPoints > 0));
-}
+//export const changeKeyPressed = newValue => keyWasPressed = newValue;
+
+
+
+
 
 const interactables = [
 	abbeanumDoorEntranceInteractable, abbeanumDoorExitInteractable, 
@@ -102,6 +93,7 @@ function lockElement(name){
 	findElement(name).unlocked = false
 }
 
+<<<<<<< HEAD
 function createInteractions(scene, camera, renderer, mouse){
 
 	// change to a more intuitive rotation order
@@ -291,6 +283,8 @@ function createInteractions(scene, camera, renderer, mouse){
 		event.preventDefault()
 	})
 }
+=======
+>>>>>>> c04eb980e5569920b84b955fbdd3463dcdc93d44
 
 
 var velocity = new THREE.Vector3(0,0,0)
@@ -371,8 +365,8 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 	}
 	
 	// check for key-presses, which try to interact
-	if((keyboard.e || keyboard.enter) && 
-		keyWasPressed && !isBlocked &&
+	if((changableInteractionState.keyboard.e || changableInteractionState.keyboard.enter) &&
+		changableInteractionState.keyWasPressed && !changableInteractionState.isBlocked &&
 		currentInteractables &&
 		currentInteractables.length > 0
 	) keyPressInteract(camera, currentInteractables)
@@ -389,10 +383,10 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 	}
 	
 	// apply velocity on position as far as reasonably possible
-	checkCollision(velocity, user, keyWasPressed, jumpTime, dt)
+	checkCollision(velocity, user, changableInteractionState.keyWasPressed, changableInteractionState.jumpTime, dt)
 	
 	// progress jump forward in time
-	jumpTime += dt
+	changableInteractionState.jumpTime += dt
 	
 	updateSparkles(scene, camera, targetSizes, sparkleTargets, time, dt)
 	
@@ -412,7 +406,7 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 	//////////////////////////////
 	///// MOUSE INTERACTIONS /////
 	//////////////////////////////
-	if(wasClicked && !isBlocked){
+	if(changableInteractionState.wasClicked && !changableInteractionState.isBlocked){
 		if(abbeanumDoorEntrance) abbeanumDoorEntrance.visible = true
 
 		mousecaster.setFromCamera(mouse, camera)
@@ -424,8 +418,8 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 		
 	}
 	
-	wasClicked = false
-	keyWasPressed = false
+	changableInteractionState.wasClicked = false
+	changableInteractionState.keyWasPressed = false
 	
 }
 
@@ -479,4 +473,4 @@ function rayInteract(rayIntersects){
 }
 
 
-export { createInteractions, handleInteractions, inInventory, interactables, keyWasPressed, wasClicked, lockElement, unlockElement}
+export { handleInteractions, inInventory, interactables, lockElement, unlockElement}
