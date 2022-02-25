@@ -6,7 +6,7 @@ import {
 	findElement,
 	hideInventory,
 	printInventory
-} from "./InteractionUtils/auxiliaryFunctions.js";
+} from "./InteractionUtils/AuxiliaryFunctions.js";
 
 //boolean overlay
 let overlayActive = false

@@ -30,7 +30,7 @@ import {
 	trashcanInteractable,
 	tvCuboidInteractable
 } from "./InteractableInstances.js";
-import {close_image, findElement} from "./InteractionUtils/auxiliaryFunctions.js";
+import {close_image, findElement} from "./InteractionUtils/AuxiliaryFunctions.js";
 
 // the keyboard
 const keyboard = window.keyboard = {}
