@@ -10,7 +10,7 @@ function clampCameraRotation(){
 
 function handleKeyBoardMovementInteractionsInteraction(acceleration, debuggedObject, user, dt){
 	
-	const speedMultiplier = user.isRunning ? 2.0 : 1.0
+	const speedMultiplier = user.isRunning ? 1.5 : 1.0
 	const speedBase = scene === outsideScene ? user.outsideSpeed : user.insideSpeed
 	user.speed = speedMultiplier * speedBase
 	
