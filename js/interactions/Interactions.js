@@ -14,7 +14,8 @@ import {
 	bathroomDoorDummyBasementInteractable,
 	bathroomDoorDummyUpstairsInteractable,
 	beamerInteractable,
-	blackboardsInteractable,
+	//unused
+	//blackboardsInteractable,
 	coffeeMachineInteractable,
 	cupInteractable,
 	flyerInteractable,
@@ -75,7 +76,7 @@ const interactables = [
 	abbeanumDoorEntranceInteractable, abbeanumDoorExitInteractable, 
 	hs1DoorEntranceInteractable, hs1DoorExitInteractable, 
 	laptopInteractable, stickInteractable,
-	trashcanInteractable, laptop2Interactable, blackboardsInteractable, cupInteractable,
+	trashcanInteractable, laptop2Interactable, cupInteractable, //blackboardsInteractable, unused
 	beamerInteractable, tvCuboidInteractable, HS2DoorDummyInteractable,
 	flyerInteractable, bathroomDoorDummyBasementInteractable,
 	bathroomDoorDummyUpstairsInteractable, abbeanumInfoBoardInteractable,
@@ -274,5 +275,7 @@ function rayInteract(rayIntersects){
 	}
 }
 
-
-export { handleInteractions, inInventory, interactables, lockElement, unlockElement}
+function filterInventory(exp){
+	inInventory = inInventory.filter(exp);
+}
+export { handleInteractions, inInventory, filterInventory, interactables, lockElement, unlockElement}

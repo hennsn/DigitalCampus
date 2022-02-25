@@ -116,7 +116,7 @@ function createInteractions(scene, camera, renderer, mouse) {
                 case 'q':
                     // opens inventory
                     if (changableInteractionState.inventoryOpen == false) {
-                        playAudioTrack('audio/inventorySound.mp3');
+                        playAudioTrack('audio/inventory_sound.mp3');
                         document.getElementById("inventory").style.visibility = 'visible';
                         changableInteractionState.inventoryOpen = true
                     } else {

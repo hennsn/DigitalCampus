@@ -5,7 +5,7 @@ import {CustomInteractable, Door, InventoryObject} from "./Interactable.js";
 import {closeText, openText, updateOnce, updateStory} from "./Story.js";
 import {isPlaying, playStoryTrack} from "../UserInterface.js";
 import {openOnce, openOnce_False, openOnce_True, quizOpen, quizOpen_False, quizOpen_True} from "./Quiz.js";
-import {inInventory, lockElement, unlockElement} from "./Interactions.js";
+import {inInventory, filterInventory, lockElement, unlockElement} from "./Interactions.js";
 import {
     allowUserInput,
     blockUserInput,
@@ -26,14 +26,17 @@ export const abbeanumDoorExitInteractable     = new Door('AbbeanumDoorExit', 'ou
 export const hs1DoorEntranceInteractable      = new Door('HS1DoorEntrance', 'abbeanumHS1Scene', HS1EntryPointFromCorridor)
 export const hs1DoorExitInteractable          = new Door('HS1DoorExit', 'abbeanumCorridorScene', CorridorEntryPointFromHS1)
 // Inventory Objects
-export const stickInteractable = new InventoryObject('Stock')
-export const cupInteractable = new InventoryObject('Kaffeetasse')
+// irgendwas mit once 7 und once 12
+export const stickInteractable = new InventoryObject('Stock', 'audio/012_mordwaffe.mp3',
+                                    "Verprügel den Beamer", "Beamer" , true)
+export const cupInteractable = new InventoryObject('Kaffeetasse', 'audio/008_kaffeetasse.mp3',
+                                    "Auf zur Kaffeemaschine im Flur", "CoffeeMachine", true)
 // NOT REALLY NEEDED
-export const blackboardsInteractable = new InventoryObject('Blackboards')
+//export const blackboardsInteractable = new InventoryObject('Blackboards')
 // Custom Objects
 export const trashcanInteractable = new CustomInteractable('Trashcan', () => {
     if (inInventory.includes("altes VGA Kabel")) {
-        inInventory = inInventory.filter(e => e !== 'altes VGA Kabel');
+        filterInventory(e => e !== 'altes VGA Kabel');
         printInventory()
         lockElement("Trashcan")
     }
