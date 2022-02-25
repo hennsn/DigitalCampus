@@ -5,6 +5,7 @@ import { Constants } from '../Constants.js'
 import { mix } from '../../Maths.js'
 
 const distanceToWalls = 0.3
+const raycaster = window.raycaster = new THREE.Raycaster()
 
 // left/right, up/down, forward/backward
 var rayChecks = [

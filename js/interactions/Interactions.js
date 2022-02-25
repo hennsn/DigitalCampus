@@ -101,7 +101,7 @@ const dumpsterTmpPos = new THREE.Vector3() // temporary variable
 const beamerInteractionPosition = latLonToXYZ(50.93424916, 11.580621134635106, 185.12)
 
 // helper functions for the animation loop
-function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, dt, outlinepass = null){
+function handleInteractions(scene, camera, mousecaster, mouse, time, dt, outlinepass = null){
 	
 	// get the models for all interactables, where missing
 	// theoretically only needed if a mesh changes

@@ -106,12 +106,6 @@ window.mixers = []
 // start location
 window.scene = outsideScene
 
-
-///////////////
-// raycaster //
-//////////////
-const raycaster = window.raycaster = new THREE.Raycaster()
-raycaster.far = 8
 const mousecaster = new THREE.Raycaster() //new raycaster for mouse
 mousecaster.far = 3
 
@@ -145,7 +139,7 @@ function mainLoop(){
 
 	startStory(scene, mousecaster)
 	// animation / physics stuff goes here
-	handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, deltaTime, outlinePass)
+	handleInteractions(scene, camera, mousecaster, mouse, time, deltaTime, outlinePass)
 	handleUserInterface(deltaTime)
 	updateMultiplayer(scene, time, deltaTime, camera)
 	// stats.update()
