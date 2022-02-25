@@ -5,6 +5,7 @@ import { Constants } from '../Constants.js'
 import { mix } from '../../Maths.js'
 
 const distanceToWalls = 0.3
+const raycaster = window.raycaster = new THREE.Raycaster()
 
 // left/right, up/down, forward/backward
 var rayChecks = [
@@ -77,8 +78,8 @@ function checkCollision(velocity, user, keyWasPressed, jumpTime, dt){
 		// we cant check whole scene (too big) maybe copy the important objects from scene then do raycasting collision check
 		const collidables = ( 
 			scene == outsideScene ? [abbeanum, abbeanumGround, dumpster0, dumpster1, dumpster2] :
-			scene == flurScene ? [abbeanumFlurCollisions, wetFloor, coffeeMachine] :
-			scene == hs1Scene ? [hs1] :
+			scene == abbeanumCorridorScene ? [abbeanumFlurCollisions, wetFloor, coffeeMachine] :
+			scene == abbeanumHS1Scene ? [hs1] :
 			[]
 		).filter(model => !!model)
 		

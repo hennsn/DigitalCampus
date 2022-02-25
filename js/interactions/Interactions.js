@@ -14,7 +14,8 @@ import {
 	bathroomDoorDummyBasementInteractable,
 	bathroomDoorDummyUpstairsInteractable,
 	beamerInteractable,
-	blackboardsInteractable,
+	//unused
+	//blackboardsInteractable,
 	coffeeMachineInteractable,
 	cupInteractable,
 	flyerInteractable,
@@ -29,7 +30,7 @@ import {
 	trashcanInteractable,
 	tvCuboidInteractable
 } from "./InteractableInstances.js";
-import {close_image, findElement} from "./InteractionUtils/auxiliaryFunctions.js";
+import {close_image, findElement} from "./InteractionUtils/AuxiliaryFunctions.js";
 
 // the keyboard
 const keyboard = window.keyboard = {}
@@ -75,7 +76,7 @@ const interactables = [
 	abbeanumDoorEntranceInteractable, abbeanumDoorExitInteractable, 
 	hs1DoorEntranceInteractable, hs1DoorExitInteractable, 
 	laptopInteractable, stickInteractable,
-	trashcanInteractable, laptop2Interactable, blackboardsInteractable, cupInteractable,
+	trashcanInteractable, laptop2Interactable, cupInteractable, //blackboardsInteractable, unused
 	beamerInteractable, tvCuboidInteractable, HS2DoorDummyInteractable,
 	flyerInteractable, bathroomDoorDummyBasementInteractable,
 	bathroomDoorDummyUpstairsInteractable, abbeanumInfoBoardInteractable,
@@ -101,7 +102,7 @@ const dumpsterTmpPos = new THREE.Vector3() // temporary variable
 const beamerInteractionPosition = latLonToXYZ(50.93424916, 11.580621134635106, 185.12)
 
 // helper functions for the animation loop
-function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, dt, outlinepass = null){
+function handleInteractions(scene, camera, mousecaster, mouse, time, dt, outlinepass = null){
 	
 	// get the models for all interactables, where missing
 	// theoretically only needed if a mesh changes
@@ -274,5 +275,7 @@ function rayInteract(rayIntersects){
 	}
 }
 
-
-export { handleInteractions, inInventory, interactables, lockElement, unlockElement}
+function filterInventory(exp){
+	inInventory = inInventory.filter(exp);
+}
+export { handleInteractions, inInventory, filterInventory, interactables, lockElement, unlockElement}

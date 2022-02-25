@@ -5,7 +5,7 @@ import {CustomInteractable, Door, InventoryObject} from "./Interactable.js";
 import {closeText, openText, updateOnce, updateStory} from "./Story.js";
 import {isPlaying, playStoryTrack} from "../UserInterface.js";
 import {openOnce, openOnce_False, openOnce_True, quizOpen, quizOpen_False, quizOpen_True} from "./Quiz.js";
-import {inInventory, lockElement, unlockElement} from "./Interactions.js";
+import {inInventory, filterInventory, lockElement, unlockElement} from "./Interactions.js";
 import {
     allowUserInput,
     blockUserInput,
@@ -21,19 +21,22 @@ const CorridorEntryPointFromHS1     = latLonToXYZ(50.9342438158, 11.580480214404
 const CorridorEntryPointFromOutside = latLonToXYZ(50.9341115743, 11.580742267367510, 183.4596)
 const HS1EntryPointFromCorridor     = latLonToXYZ(50.9342464420, 11.580500527436710, 185.8484)
 
-export const abbeanumDoorEntranceInteractable = new Door('AbbeanumDoorEntrance', 'flurScene', CorridorEntryPointFromOutside)
+export const abbeanumDoorEntranceInteractable = new Door('AbbeanumDoorEntrance', 'abbeanumCorridorScene', CorridorEntryPointFromOutside)
 export const abbeanumDoorExitInteractable     = new Door('AbbeanumDoorExit', 'outsideScene', OutsideEntryPointFromAbbeanum)
-export const hs1DoorEntranceInteractable      = new Door('HS1DoorEntrance', 'hs1Scene', HS1EntryPointFromCorridor)
-export const hs1DoorExitInteractable          = new Door('HS1DoorExit', 'flurScene', CorridorEntryPointFromHS1)
+export const hs1DoorEntranceInteractable      = new Door('HS1DoorEntrance', 'abbeanumHS1Scene', HS1EntryPointFromCorridor)
+export const hs1DoorExitInteractable          = new Door('HS1DoorExit', 'abbeanumCorridorScene', CorridorEntryPointFromHS1)
 // Inventory Objects
-export const stickInteractable = new InventoryObject('Stock')
-export const cupInteractable = new InventoryObject('Kaffeetasse')
+// irgendwas mit once 7 und once 12
+export const stickInteractable = new InventoryObject('Stock', 'audio/012_mordwaffe.mp3',
+                                    "Verprügel den Beamer", "Beamer" , true)
+export const cupInteractable = new InventoryObject('Kaffeetasse', 'audio/008_kaffeetasse.mp3',
+                                    "Auf zur Kaffeemaschine im Flur", "CoffeeMachine", true)
 // NOT REALLY NEEDED
-export const blackboardsInteractable = new InventoryObject('Blackboards')
+//export const blackboardsInteractable = new InventoryObject('Blackboards')
 // Custom Objects
 export const trashcanInteractable = new CustomInteractable('Trashcan', () => {
     if (inInventory.includes("altes VGA Kabel")) {
-        inInventory = inInventory.filter(e => e !== 'altes VGA Kabel');
+        filterInventory(e => e !== 'altes VGA Kabel');
         printInventory()
         lockElement("Trashcan")
     }
@@ -55,8 +58,8 @@ export const laptopInteractable = new CustomInteractable('Laptop', () => {
         inInventory.pop()
         printInventory()
         // laptop tausch:
-        hs1Scene.getObjectByName("Laptop2").visible = true
-        hs1Scene.getObjectByName("Laptop").visible = false
+        abbeanumHS1Scene.getObjectByName("Laptop2").visible = true
+        abbeanumHS1Scene.getObjectByName("Laptop").visible = false
         playStoryTrack('audio/006_kein_hdmi.mp3')//('audio/spring_test_sound.wav')
         lockElement("Laptop")
         if (!inInventory.includes('altes VGA Kabel')) {

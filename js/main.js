@@ -67,23 +67,23 @@ const fbxLoader = window.fbxLoader = new FBXLoader()
 ///////////
 
 var outsideScene = window.outsideScene = new THREE.Scene()
-outsideScene.name = 'outside'
+outsideScene.name = 'Outside'
 
-var flurScene = window.flurScene = new THREE.Scene()
-flurScene.name = 'flur'
+var abbeanumCorridorScene = window.abbeanumCorridorScene = new THREE.Scene()
+abbeanumCorridorScene.name = 'AbbeanumCorridor'
 
-var hs1Scene = window.hs1Scene = new THREE.Scene()
-hs1Scene.name = 'hs1'
+var abbeanumHS1Scene = window.abbeanumHS1Scene = new THREE.Scene()
+abbeanumHS1Scene.name = 'AbbeanumHS1'
 
-createInsideLighting(flurScene)
+// loading functions for the respective scene
+const loaders = {'AbbeanumHS1': fillAbbeanumHS1Scene, 'AbbeanumCorridor': fillAbbeanumCorridorScene}
+// neighbors of the scene
+const neighbors = {'Outside': [abbeanumCorridorScene], "AbbeanumCorridor": [abbeanumHS1Scene]}
+// keep track of scenes that were already loaded
+let loaded = [outsideScene]
 
-createInsideLighting(hs1Scene)
-
+// load the starting point
 fillOutsideScene()
-fillAbbeanumCorridorScene()
-fillAbbeanumHS1Scene()
-
-
 createSky(outsideScene)
 createLighting(outsideScene)
 createTerrain(outsideScene)
@@ -106,12 +106,6 @@ window.mixers = []
 // start location
 window.scene = outsideScene
 
-
-///////////////
-// raycaster //
-//////////////
-const raycaster = window.raycaster = new THREE.Raycaster()
-raycaster.far = 8
 const mousecaster = new THREE.Raycaster() //new raycaster for mouse
 mousecaster.far = 3
 
@@ -138,14 +132,23 @@ var lastTime = new Date().getTime()
 function mainLoop(){
 
 	const scene = window.scene
-
+	for(const idx in neighbors[scene.name]){
+		const neighbor = neighbors[scene.name][idx]
+		if(!(loaded.includes(neighbor))){
+			console.log(neighbor.name)
+			console.log('calling loader for ' + neighbor.name)
+			loaders[neighbor.name]()
+			createInsideLighting(neighbor)
+			loaded.push(neighbor)
+		}
+	}
 	const time = new Date().getTime()
 	const deltaTime = clamp((time-lastTime)/1e3, 1e-3, 1.0)
 	lastTime = time
 
 	startStory(scene, mousecaster)
 	// animation / physics stuff goes here
-	handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, deltaTime, outlinePass)
+	handleInteractions(scene, camera, mousecaster, mouse, time, deltaTime, outlinePass)
 	handleUserInterface(deltaTime)
 	updateMultiplayer(scene, time, deltaTime, camera)
 	// stats.update()

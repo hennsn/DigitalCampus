@@ -72,24 +72,21 @@ class Door extends Interactable {
 
 
 class InventoryObject extends Interactable {
-	constructor(name) {
+	constructor(name, audioTrack=undefined, missionText=undefined,unlock=undefined,updateOnce=false) {
 		super(name)
 		this.unlocked = false
+		this.audioTrack = audioTrack
+		this.missionText = missionText
+		this.unlock = unlock
+		this.updateOnce = updateOnce
 	}
 
 	#takeObject(){
-		//console.log('Inventory: ', inInventory)
-		if(once == 7 && this.interactableModel.name == 'Kaffeetasse'){
-			updateOnce() //to 8
-			setMissionText("Auf zur Kaffeemaschine im Flur")
-			playStoryTrack('audio/008_kaffeetasse.mp3')
-			unlockElement("CoffeeMachine")
-		} else if(once == 12 && this.interactableModel.name == 'Stock'){
-			updateOnce() //to 13
-			setMissionText("Verprügel den Beamer")
-			playStoryTrack('audio/012_mordwaffe.mp3')
-			unlockElement("Beamer")
-		}
+		if(this.updateOnce) updateOnce()
+		if(this.missionText) setMissionText(this.missionText)
+		if(this.audioTrack) playStoryTrack(this.audioTrack)
+		if(this.unlock) unlockElement(this.unlock)
+		
 		if(!inInventory.includes(this.interactableModel.name)){
 			//maybe remove object instead?
 			this.unlocked = false // apparently now works

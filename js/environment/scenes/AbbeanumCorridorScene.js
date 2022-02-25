@@ -15,7 +15,7 @@ function fillAbbeanumCorridorScene(){
 			placeLatLonObject(model, 'AbbeanumInside', 50.9341504543, 11.580580902721955, 185.8, 7.139)
 			const scale = 1.4 // a guess
 			model.scale.set(scale, scale, scale)
-			flurScene.add(model)
+			abbeanumCorridorScene.add(model)
 		})
 		.catch(printError)
 
@@ -28,16 +28,26 @@ function fillAbbeanumCorridorScene(){
 			const scale = 1.4
 			model.scale.set(scale, scale, scale)
 			model.visible = false
-			flurScene.add(model)
+			abbeanumCorridorScene.add(model)
 		})
 		.catch(printError)
+
+
+        glTFLoader.loadAsync('models/samples/trashcan.glb', e => updateDownloadProgress('trashcan', e))
+        .then(gltf => {
+            const model = gltf.scene
+            placeLatLonObject(model, 'Trashcan', 50.93423726, 11.58043197, 185.090, 90)
+            abbeanumCorridorScene.add(model)
+        })
+        .catch(printError)
+
 
         glTFLoader.loadAsync('models/samples/flyer.glb', e => updateDownloadProgress('flyer', e))
             .then(gltf => {
                     const model = gltf.scene
                     placeLatLonObject(model, 'Flyer',  50.93413136, 11.58053499, 186.608, 186)
                     model.scale.set(1,3,3)
-                    flurScene.add(model)
+                    abbeanumCorridorScene.add(model)
             })
             .catch(printError)
 
@@ -50,7 +60,7 @@ function fillAbbeanumCorridorScene(){
                     const mixer = new THREE.AnimationMixer(model)
                     mixer.clipAction(model.animations[0]).play()
                     mixers.push(mixer)
-                    flurScene.add(model)
+                    abbeanumCorridorScene.add(model)
             })
             .catch(printError)
 
@@ -66,7 +76,7 @@ function fillAbbeanumCorridorScene(){
                     const mixer = new THREE.AnimationMixer(model)
                     mixer.clipAction(model.animations[3]).play()
                     mixers.push(mixer)
-                    flurScene.add(model)
+                    abbeanumCorridorScene.add(model)
             })
             .catch(printError)
 
@@ -92,7 +102,7 @@ function fillAbbeanumCorridorScene(){
                     const mixer = new THREE.AnimationMixer(model)
                     mixer.clipAction(model.animations[0]).play()
                     mixers.push(mixer)
-                    flurScene.add(model)
+                    abbeanumCorridorScene.add(model)
             })
             .catch(printError)
 
@@ -105,7 +115,7 @@ function fillAbbeanumCorridorScene(){
 
                     const scale = 1.4
                     model.scale.set(scale, scale, scale)
-                    flurScene.add(model)
+                    abbeanumCorridorScene.add(model)
             })
             .catch(printError)
 
@@ -115,7 +125,7 @@ function fillAbbeanumCorridorScene(){
                     placeLatLonObject(model, 'WetFloorSign' , 50.93398735, 11.58047673, 184.520, 10)
                     // make it wide
                     model.scale.set(3.5, 1.5, 2)
-                    flurScene.add(model)
+                    abbeanumCorridorScene.add(model)
             })
             .catch(printError)
 
@@ -124,7 +134,7 @@ function fillAbbeanumCorridorScene(){
                     const model = gltf.scene
                     placeLatLonObject(model, 'BathroomM', 50.93403099, 11.58052090, 183.547, 190)
                     model.scale.set(1,1.7,1.7)
-                    flurScene.add(model)
+                    abbeanumCorridorScene.add(model)
             })
             .catch(printError)
 
@@ -140,35 +150,35 @@ function fillAbbeanumCorridorScene(){
                     const abbeanumDoorExit = model.clone()
                     abbeanumDoorExit.name = ''
                     placeLatLonObject(abbeanumDoorExit, 'AbbeanumDoorExit', 50.93411372, 11.58075194, 183.243)
-                    flurScene.add(abbeanumDoorExit) // objects must be cloned, when you want to add them to multiple scenes
+                    abbeanumCorridorScene.add(abbeanumDoorExit) // objects must be cloned, when you want to add them to multiple scenes
                     const tvCuboid = model.clone()
                     tvCuboid.name = ''
                     tvCuboid.scale.set(1.3,0.7,1.3)
                     placeLatLonObject(tvCuboid, 'TvCuboid', 50.93409346, 11.58043388, 186.776, 10)
-                    flurScene.add(tvCuboid)
+                    abbeanumCorridorScene.add(tvCuboid)
 
                     const HS2DoorDummy = model.clone()
                     placeLatLonObject(HS2DoorDummy, 'HS2DoorDummy', 50.93406258, 11.58054770, 186.776, 10)
-                    flurScene.add(HS2DoorDummy)
+                    abbeanumCorridorScene.add(HS2DoorDummy)
 
                     const bathroomDoorDummyBasement = model.clone()
                     placeLatLonObject(bathroomDoorDummyBasement, 'BathroomDoorDummyBasement', 50.93403072, 11.58052132, 182.666, 10)
                     bathroomDoorDummyBasement.scale.set(1,1.7,1.2)
 
-                    flurScene.add(bathroomDoorDummyBasement)
+                    abbeanumCorridorScene.add(bathroomDoorDummyBasement)
 
 
                     const bathroomDoorDummyUpstairs = model.clone()
                     placeLatLonObject(bathroomDoorDummyUpstairs, 'BathroomDoorDummyUpstairs', 50.93434830, 11.58048668, 185.792, 69) // if you know what i'm saying
                     bathroomDoorDummyUpstairs.scale.set(1,1.7,1.2)
 
-                    flurScene.add(bathroomDoorDummyUpstairs)
+                    abbeanumCorridorScene.add(bathroomDoorDummyUpstairs)
 
                     const infoboardCorridor = model.clone()
                     placeLatLonObject(infoboardCorridor, 'InfoboardCorridor',  50.93411436, 11.58043701, 186.176, 5)
-                    flurScene.add(infoboardCorridor)
+                    abbeanumCorridorScene.add(infoboardCorridor)
 
-                    flurScene.add(model)
+                    abbeanumCorridorScene.add(model)
             })
             .catch(printError)
 
