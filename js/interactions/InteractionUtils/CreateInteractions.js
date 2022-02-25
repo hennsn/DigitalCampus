@@ -82,7 +82,6 @@ function createInteractions(scene, camera, renderer, mouse) {
             switch (key) {
                 case 'w':// tap w twice to run
                     user.isRunning = event.timeStamp - lastTimeWWasPressed < 300
-                    lastTimeWWasPressed = event.timeStamp
                     break;
                 case 's':
                     user.isRunning = false
@@ -165,6 +164,7 @@ function createInteractions(scene, camera, renderer, mouse) {
 
     function keyUp(event) {
         if (!changableInteractionState.isBlocked) changableInteractionState.keyWasPressed = true
+		if(event.key.toLowerCase() == 'w') lastTimeWWasPressed = event.timeStamp // must be placed here, because keyDown() is called for every char that would be entered into a text field
         delete changableInteractionState.keyboard[event.key.toLowerCase()]
         delete changableInteractionState.keyboard[event.keyCode]
     }
