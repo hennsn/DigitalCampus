@@ -67,17 +67,17 @@ const fbxLoader = window.fbxLoader = new FBXLoader()
 ///////////
 
 var outsideScene = window.outsideScene = new THREE.Scene()
-outsideScene.name = 'outside'
+outsideScene.name = 'Outside'
 
-var flurScene = window.flurScene = new THREE.Scene()
-flurScene.name = 'flur'
+var abbeanumCorridorScene = window.abbeanumCorridorScene = new THREE.Scene()
+abbeanumCorridorScene.name = 'AbbeanumCorridor'
 
-var hs1Scene = window.hs1Scene = new THREE.Scene()
-hs1Scene.name = 'hs1'
+var abbeanumHS1Scene = window.abbeanumHS1Scene = new THREE.Scene()
+abbeanumHS1Scene.name = 'AbbeanumHS1'
 
-createInsideLighting(flurScene)
+createInsideLighting(abbeanumCorridorScene)
 
-createInsideLighting(hs1Scene)
+createInsideLighting(abbeanumHS1Scene)
 
 fillOutsideScene()
 fillAbbeanumCorridorScene()

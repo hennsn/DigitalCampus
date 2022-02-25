@@ -63,7 +63,7 @@ function startStory(scene, mousecaster){
 		unlockElement("AbbeanumInfoBoard")
 	}
 	//enter abbeanum
-	if(scene == flurScene && story == 0){
+	if(scene == abbeanumCorridorScene && story == 0){
 		setMissionText("Gehe zum Hörsaal 1")
 		story = 1
 		setTimeout(function(){ //delay needed
@@ -72,7 +72,7 @@ function startStory(scene, mousecaster){
 		}, 500)
 	}
 	//enter hs1
-	if(scene == hs1Scene && story == 1){
+	if(scene == abbeanumHS1Scene && story == 1){
 		setMissionText("Gehe zum Laptop und teste deine Powerpoint")
 		if(once == 1){
 			playStoryTrack('audio/002_hier_laptop.mp3')
