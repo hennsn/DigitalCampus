@@ -75,15 +75,15 @@ abbeanumCorridorScene.name = 'AbbeanumCorridor'
 var abbeanumHS1Scene = window.abbeanumHS1Scene = new THREE.Scene()
 abbeanumHS1Scene.name = 'AbbeanumHS1'
 
-createInsideLighting(abbeanumCorridorScene)
+// loading functions for the respective scene
+const loaders = {'AbbeanumHS1': fillAbbeanumHS1Scene, 'AbbeanumCorridor': fillAbbeanumCorridorScene}
+// neighbors of the scene
+const neighbors = {'Outside': [abbeanumCorridorScene], "AbbeanumCorridor": [abbeanumHS1Scene]}
+// keep track of scenes that were already loaded
+let loaded = [outsideScene]
 
-createInsideLighting(abbeanumHS1Scene)
-
+// load the starting point
 fillOutsideScene()
-fillAbbeanumCorridorScene()
-fillAbbeanumHS1Scene()
-
-
 createSky(outsideScene)
 createLighting(outsideScene)
 createTerrain(outsideScene)
@@ -132,7 +132,16 @@ var lastTime = new Date().getTime()
 function mainLoop(){
 
 	const scene = window.scene
-
+	for(const idx in neighbors[scene.name]){
+		const neighbor = neighbors[scene.name][idx]
+		if(!(loaded.includes(neighbor))){
+			console.log(neighbor.name)
+			console.log('calling loader for ' + neighbor.name)
+			loaders[neighbor.name]()
+			createInsideLighting(neighbor)
+			loaded.push(neighbor)
+		}
+	}
 	const time = new Date().getTime()
 	const deltaTime = clamp((time-lastTime)/1e3, 1e-3, 1.0)
 	lastTime = time
