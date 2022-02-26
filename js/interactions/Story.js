@@ -22,7 +22,6 @@ const overlay = document.getElementById('overlay');
 overlay.addEventListener('click', closeText);
 
 function openText(){
-	//document.getElementById("infoPicture").classList.add("active");
 	document.getElementById("overlay").classList.add("active");
 	overlayActive = true
     hideInventory()
@@ -30,7 +29,6 @@ function openText(){
 }
 
 function closeText(){
-	//document.getElementById("infoPicture").classList.remove("active");
 	document.getElementById("overlay").classList.remove("active");
 	overlayActive = false
     allowUserInput()
@@ -41,7 +39,7 @@ function startStory(scene, mousecaster){
     //Spawn
     if(scene == outsideScene && story == 0 && keyWasPressed == true || wasClicked == true){
         if(once == 0){
-            playStoryTrack('audio/springTestSound.wav')//('audio/001_Einleitung_Spawn_New.mp3')
+            playStoryTrack('audio/001_Einleitung_Spawn_New.mp3')
             once = 1
             interactables[findElement("AbbeanumDoorEntrance")].unlocked = false 
         }
@@ -81,7 +79,7 @@ function startStory(scene, mousecaster){
         document.getElementById("button").classList.add("active")
         button.addEventListener('click', () =>{
             if(once == 3 && story == 2){
-                playStoryTrack('audio/springTestSound.wav')//("audio/004_Telefonat.mp3")
+                playStoryTrack("audio/004_Telefonat.mp3")
                 missionText.innerHTML = "Pace aufgeregt im Hörsaal umher"
                 document.getElementById("button").classList.remove("active")
                 once = 4
@@ -117,8 +115,9 @@ function startStory(scene, mousecaster){
         interactables[findElement("Kaffeetasse")].unlocked = true 
         missionText.innerHTML = "Hole die Kaffeetasse"
     }
-    if(once == 13 && story == 7){
+    if(once == 13 && story == 7 && scene == flurScene){
         mousecaster.far = 6 //adjusts mousecaster to click on beamer
+        playAudioTrack('audio/015_Verdammte_Klauschweine.mp3')
     }
     if(once == 15 && story == 8 && isPlaying == false){
         updateOnce() //to 16

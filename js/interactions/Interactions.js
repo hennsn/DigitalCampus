@@ -99,6 +99,7 @@ const blackboardsInteractable =
 const trashcanInteractable =
 	new CustomInteractable(undefined, undefined, () => {
 		if(inInventory.includes("altes VGA Kabel")){
+			playAudioTrack('audio/020_VGA_Wegwerfen.mp3')
 			inInventory = inInventory.filter(e => e !== 'altes VGA Kabel');
 			printInventory()
 			interactables[findElement("Trashcan")].unlocked = false
@@ -113,13 +114,15 @@ const laptopInteractable =
 			updateStory() //story to 2
 			interactables[findElement("Laptop")].unlocked = false
 			interactables[findElement("HS1DoorExit")].unlocked = false  
-			playStoryTrack('audio/003_Falscher_Stick.mp3')//('audio/springTestSound.wav')
+			playStoryTrack('audio/003_Falscher_Stick.mp3')
 			blockUserInput()
 			setTimeout(function(){
 				openText()
+				display_image('images/wrongUsb.png')
 			}, 18000)
 			setTimeout(function(){
 				closeText()
+				close_image('leImage')
 			}, 34000)
 		}
 		if(story == 4 && once == 5){
@@ -250,8 +253,13 @@ const HS2DoorDummyInteractable =
 			if(once == 4){
 				updateOnce() //to 5
 				updateStory() //to 4
-				playStoryTrack('audio/creaking-door-2.mp3') //just dummy placeholder
-				openText() //should stop input at some point
+				playStoryTrack('audio/005_Laptop_Holen.mp3') 
+				openText()
+				display_image('images/hs2.jpg')
+				setTimeout(function(){
+					closeText()
+					close_image('leImage')
+				}, 35000)
 			}	
 		}
 	})
@@ -263,6 +271,7 @@ const bathroomDoorDummyBasementInteractable =
 			if(once == 9) updateOnce() //to 10
 			updateOnce() //to 11
 			openText()
+			display_image('images/standBy.jpg');
 			interactables[findElement("BathroomDoorDummyBasement")].unlocked = false
 			interactables[findElement("BathroomDoorDummyUpstairs")].unlocked = false 
 			interactables[findElement("Laptop2")].unlocked = true
@@ -271,6 +280,7 @@ const bathroomDoorDummyBasementInteractable =
 			setTimeout(function(){
 				missionText.innerHTML = "Beweise deine Informatik Kenntnisse: Schließ das HDMI-Kabel an!"
 				closeText()
+				close_image('leImage');
 			}, 12000)
 		}
 	})
@@ -281,7 +291,7 @@ const bathroomDoorDummyUpstairsInteractable =
 		if(once == 9 && story == 7){
 			updateOnce() //to 10
 			interactables[findElement("BathroomDoorDummyUpstairs")].unlocked = false 
-			playStoryTrack('audio/springTestSound.wav')
+			playStoryTrack('audio/010a_Damentoiletten.mp3')
 			setTimeout(function(){
 				missionText.innerHTML = "DIE RICHTIGEN TOILETTEN"
 			}, 2000)
@@ -777,9 +787,9 @@ function handleInteractions(scene, camera, raycaster, mousecaster, mouse, time, 
 	updateSparkles(scene, camera, targetSizes, sparkleTargets, time, dt)
 	
 	//AUTOMATICALLY CLOSE PICTURE WHEN WALKING AWAY
-	if(infoPictureOpen==true){
-		let distance =camera.position.distanceTo(infoboardCorridor.position)
-		if(distance > 2){
+	if(infoPictureOpen==true && scene == flurScene){
+		let distance = camera.position.distanceTo(infoboardCorridor.position)
+		if(distance > 2 && distance <= 3){
 			close_image('leImage')
 			//console.log('TOO FAR')
 		}
