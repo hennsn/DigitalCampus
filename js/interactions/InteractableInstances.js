@@ -3,7 +3,7 @@ import * as THREE from 'https://cdn.skypack.dev/three@0.135.0'
 import {latLonToXYZ} from "../environment/Coordinates.js"
 import {CustomInteractable, Door, InventoryObject} from "./Interactable.js";
 import {closeText, openText, updateOnce, updateStory} from "./Story.js";
-import {isPlaying, playStoryTrack} from "../UserInterface.js";
+import {isPlaying, playStoryTrack, playAudioTrack} from "../UserInterface.js";
 import {openOnce, openOnce_False, openOnce_True, quizOpen, quizOpen_False, quizOpen_True} from "./Quiz.js";
 import {inInventory, filterInventory, lockElement, unlockElement} from "./Interactions.js";
 import {
@@ -36,8 +36,8 @@ export const cupInteractable = new InventoryObject('Kaffeetasse', 'audio/008_kaf
 // Custom Objects
 export const trashcanInteractable = new CustomInteractable('Trashcan', () => {
     if(inInventory.includes("altes VGA Kabel")){
-        playAudioTrack('audio/020_VGA_Wegwerfen.mp3')
-        inInventory = inInventory.filter(e => e !== 'altes VGA Kabel');
+        playAudioTrack('audio/020_vga_wegwerfen.mp3')
+        filterInventory(e => e !== 'altes VGA Kabel');
         printInventory()
         lockElement('Trashcan')
     }
@@ -53,7 +53,7 @@ export const laptopInteractable = new CustomInteractable('Laptop', () => {
 			blockUserInput()
 			setTimeout(function(){
 				openText()
-				display_image('images/wrongUsb.png')
+				display_image('images/wrong_usb.png')
 			}, 18000)
 			setTimeout(function(){
 				closeText()
@@ -173,7 +173,7 @@ export const HS2DoorDummyInteractable = new CustomInteractable('HS2DoorDummy', (
 			if(once == 4){
 				updateOnce() //to 5
 				updateStory() //to 4
-				playStoryTrack('audio/005_Laptop_Holen.mp3') 
+				playStoryTrack('audio/005_laptop_holen.mp3')
 				openText()
 				display_image('images/hs2.jpg')
 				setTimeout(function(){
@@ -189,7 +189,7 @@ export const bathroomDoorDummyBasementInteractable = new CustomInteractable('Bat
 			if(once == 9) updateOnce() //to 10
 			updateOnce() //to 11
 			openText()
-			display_image('images/standBy.jpg');
+			display_image('images/stand_by.jpg');
             lockElement("BathroomDoorDummyBasement")
             lockElement("BathroomDoorDummyUpstairs")
             unlockElement("Laptop2")
@@ -207,7 +207,7 @@ export const bathroomDoorDummyUpstairsInteractable = new CustomInteractable('Bat
 		if(once == 9 && story == 7){
 			updateOnce() //to 10
             lockElement("BathroomDoorDummyUpstairs")
-			playStoryTrack('audio/010a_Damentoiletten.mp3')
+			playStoryTrack('audio/010a_damentoiletten.mp3')
 			setTimeout(function(){
 				missionText.innerHTML = "DIE RICHTIGEN TOILETTEN"
 			}, 2000)

@@ -226,7 +226,7 @@ function startStory(scene, mousecaster){
     }
     if(once == 13 && story == 7 && scene == flurScene){
         mousecaster.far = 6 //adjusts mousecaster to click on beamer
-        playAudioTrack('audio/015_Verdammte_Klauschweine.mp3')
+        playAudioTrack('audio/015_verdammte_klauschweine.mp3')
     }
     if(once == 15 && story == 8 && isPlaying == false){
         updateOnce() //to 16
