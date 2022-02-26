@@ -52,6 +52,28 @@ function fillAbbeanumCorridorScene(){
             .catch(printError)
 
 
+        glTFLoader.loadAsync('models/samples/table.glb', e => updateDownloadProgress('table', e))
+            .then(gltf => {
+                    const model = gltf.scene
+                    placeLatLonObject(model, 'table', 50.93407436, 11.58044715, 185.178, -87)
+                    const s = 1
+                    model.scale.set(s,s,s)
+                    abbeanumCorridorScene.add(model)
+            })
+            .catch(printError)
+
+
+        glTFLoader.loadAsync('models/samples/pokal.glb', e => updateDownloadProgress('pokal', e))
+            .then(gltf => {
+                    const model = gltf.scene
+                    placeLatLonObject(model, 'pokal', 50.93407436, 11.58044715, 185.632, -87)
+                    const s = 1
+                    model.scale.set(s,s,s)
+                    abbeanumCorridorScene.add(model)
+                    model.visible = false 
+            })
+            .catch(printError)
+
         fbxLoader.loadAsync('models/samples/moving_plant.fbx', e => updateDownloadProgress('movingPlant', e))
             .then(model => {
                     placeLatLonObject(model, 'MovingPlant', 50.93410364, 11.58043476, 184.518, 0)
@@ -80,18 +102,6 @@ function fillAbbeanumCorridorScene(){
             })
             .catch(printError)
 
-        fbxLoader.loadAsync('models/samples/snake/snake.FBX', e => updateDownloadProgress('snake', e))
-            .then(model => {
-                    placeLatLonObject(model, 'snake', 50.93405321, 11.58083749, 183.463-1.4, 0)
-                    const s = 0.6 / 70
-
-                    model.scale.set(s,s,s)
-                    const mixer = new THREE.AnimationMixer(model)
-                    mixer.clipAction(model.animations[0]).play()
-                    mixers.push(mixer)
-                    outsideScene.add(model)
-            })
-            .catch(printError)
 
         fbxLoader.loadAsync('models/samples/bot/bot.fbx', e => updateDownloadProgress('bot', e))
             .then(model => {
