@@ -1,3 +1,5 @@
+import { fillAbbeanumCorridorScene } from "../environment/scenes/AbbeanumCorridorScene.js"
+import { playAudioTrack } from "../UserInterface.js"
 import { lockElement, unlockElement } from "./Interactions.js"
 import {allowUserInput} from "./InteractionUtils/AuxiliaryFunctions.js"
 
@@ -14,6 +16,8 @@ let quizCountCorrect
 //boolean for quiz
 let quizOpen = false
 let openOnce = false
+
+let firstTry = 0
 
 function quizOpen_True(){
 	quizOpen = true
@@ -105,6 +109,13 @@ function quizAnswer(e){ // check the answer
 		quizStartBtn.innerText = 'Restart'
 		quizStartBtn.classList.remove('hide')
 		quizExitBtn.classList.remove('hide')
+		if(firstTry==0 && quizCountCorrect==4){
+			firstTry=1
+			playAudioTrack('audio/win.wav')
+			abbeanumCorridorScene.getObjectByName("pokal").visible = true
+		}else{
+			firstTry = 1
+		}
 	}
 	//quizCountCorrect ist the variable you want to work with
 }
