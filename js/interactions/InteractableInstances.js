@@ -49,7 +49,7 @@ export const laptopInteractable = new CustomInteractable('Laptop', () => {
 			updateStory() //story to 2
             lockElement('Laptop')
             lockElement("HS1DoorExit")
-			playStoryTrack('audio/003_Falscher_Stick.mp3')
+			playStoryTrack('audio/003_falscher_stick.mp3')
 			blockUserInput()
 			setTimeout(function(){
 				openText()
@@ -68,7 +68,7 @@ export const laptopInteractable = new CustomInteractable('Laptop', () => {
 			//laptop tausch:
 			abbeanumHS1Scene.getObjectByName("Laptop2").visible = true
 			abbeanumHS1Scene.getObjectByName("Laptop").visible = false
-			playStoryTrack('audio/006_Kein_HDMI.mp3')
+			playStoryTrack('audio/006_kein_hdmi.mp3')
             lockElement('Laptop')
 			if(!inInventory.includes('altes VGA Kabel')){
 				inInventory.push('altes VGA Kabel')
@@ -153,7 +153,7 @@ export const tvCuboidInteractable = new CustomInteractable('TvCuboid', () => {
         blockUserInput()
         updateOnce() //to 7
         updateStory() //to 6
-        playStoryTrack('audio/007_Kabel_Gefunden_kaffee.mp3')
+        playStoryTrack('audio/007_kabel_gefunden_kaffee.mp3')
         setTimeout(function () {
             scene.getObjectByName('AbbeanumInside').getObjectByName('Fernseher_aus').visible = true
             scene.getObjectByName('AbbeanumInside').getObjectByName('Fernseher_an').visible = false
@@ -193,7 +193,7 @@ export const bathroomDoorDummyBasementInteractable = new CustomInteractable('Bat
             lockElement("BathroomDoorDummyBasement")
             lockElement("BathroomDoorDummyUpstairs")
             unlockElement("Laptop2")
-			playStoryTrack('audio/010_Toilettengang.mp3')
+			playStoryTrack('audio/010_toilettengang.mp3')
 			missionText.innerHTML = ""
 			setTimeout(function(){
 				missionText.innerHTML = "Beweise deine Informatik Kenntnisse: Schließ das HDMI-Kabel an!"
