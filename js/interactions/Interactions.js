@@ -28,7 +28,8 @@ import {
 	laptopInteractable,
 	stickInteractable,
 	trashcanInteractable,
-	tvCuboidInteractable
+	tvCuboidInteractable,
+	wetFloorInteractable
 } from "./InteractableInstances.js";
 import {close_image, findElement} from "./InteractionUtils/AuxiliaryFunctions.js";
 
@@ -49,6 +50,8 @@ window.closeEnough = 0
 //array für alle modelle die wir einsammeln
 let inInventory = ["Handy", "USB Stick"]
 inventory.innerHTML += "Handy <br> USB Stick"
+
+let wetFloorAudio = ['audio/017a_gewischt.mp3', 'audio/017b_hier_nicht_lang.mp3', 'audio/017c_you_shall_not_pass.mp3']
 
 // the user
 // block user for cutscenes 
@@ -76,7 +79,7 @@ const interactables = [
 	beamerInteractable, tvCuboidInteractable, HS2DoorDummyInteractable,
 	flyerInteractable, bathroomDoorDummyBasementInteractable,
 	bathroomDoorDummyUpstairsInteractable, abbeanumInfoBoardInteractable,
-	coffeeMachineInteractable, infoboardCorridorInteractable, infoboardOutside
+	coffeeMachineInteractable, infoboardCorridorInteractable, infoboardOutside, wetFloorInteractable
 ]
 
 window.interactables = interactables
@@ -206,6 +209,16 @@ function handleInteractions(scene, camera, mousecaster, mouse, time, dt, outline
 		}	
 	}else{
 		unlockElement('AbbeanumDoorEntrance')
+	}
+
+	//play audios near wet floor sign
+	if(scene == abbeanumCorridorScene){
+		if(camera.position.distanceTo(wetFloorInteractable.position) <= 2 && !isPlaying){
+			console.log('working')
+			playStoryTrack(wetFloorAudio[0])
+			let first = wetFloorAudio.shift();
+    		wetFloorAudio.push(first);
+		}
 	}
 	
 	//////////////////////////////

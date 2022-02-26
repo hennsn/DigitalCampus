@@ -14,8 +14,9 @@ import {
     printInventory
 } from "./InteractionUtils/AuxiliaryFunctions.js";
 
-// Entry points for the scenes
+let quizAudio = false
 
+// Entry points for the scenes
 const OutsideEntryPointFromAbbeanum = latLonToXYZ(50.9341135282, 11.580763350135289, 183.6634)
 const CorridorEntryPointFromHS1     = latLonToXYZ(50.9342438158, 11.580480214404881, 185.8484)
 const CorridorEntryPointFromOutside = latLonToXYZ(50.9341115743, 11.580742267367510, 183.4596)
@@ -34,6 +35,10 @@ export const cupInteractable = new InventoryObject('Kaffeetasse', 'audio/008_kaf
 // NOT REALLY NEEDED
 //export const blackboardsInteractable = new InventoryObject('Blackboards')
 // Custom Objects
+export const wetFloorInteractable = new CustomInteractable('WetFloorSign', () => {
+
+})
+
 export const trashcanInteractable = new CustomInteractable('Trashcan', () => {
     if(inInventory.includes("altes VGA Kabel")){
         playAudioTrack('audio/020_vga_wegwerfen.mp3')
@@ -214,6 +219,10 @@ export const bathroomDoorDummyUpstairsInteractable = new CustomInteractable('Bat
 		}
 })
 export const flyerInteractable = new CustomInteractable('Flyer', () => {
+    if(!quizAudio){
+        playStoryTrack('audio/019_quiz.mp3')
+        quizAudio = true
+    }
     console.log(quizOpen)
     if (openOnce == false) {
         openOnce_True()
