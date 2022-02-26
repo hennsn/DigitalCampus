@@ -42,9 +42,9 @@ function display_image(src) {
     document.getElementById("infoPicture").style.visibility = 'visible'
     var a = document.createElement("img")
     a.src = src
+    a.style.height = "calc(100vh - 100px)" //dynamic picture size // LEERZEICHEN UM MINUS IMPORTANT!!
     a.id = 'leImage'
     a.style.margin = "0 auto"
-    a.style.height = "calc(100vh - 100px)"
     document.getElementById("dispImage").appendChild(a)
 }
 

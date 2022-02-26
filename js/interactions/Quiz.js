@@ -53,7 +53,7 @@ function quizStart(){
 	quizCountCorrect = 0
 	quizQuestionContainer.classList.remove('hide')
 	quizNextQuestion()
-	document.getElementById('quizFinished').innerText = ''
+	document.getElementById('quizFinished').innerText = '' //fixes problem of score displayed after restart
 }
 
 function quizNextQuestion(){	
@@ -106,6 +106,7 @@ function quizAnswer(e){ // check the answer
 		quizStartBtn.classList.remove('hide')
 		quizExitBtn.classList.remove('hide')
 	}
+	//quizCountCorrect ist the variable you want to work with
 }
 
 function setGivenAnswer(element, correct){
