@@ -40,7 +40,7 @@ export const wetFloorInteractable = new CustomInteractable('WetFloorSign', () =>
 })
 
 export const trashcanInteractable = new CustomInteractable('Trashcan', () => {
-    if(inInventory.includes("altes VGA Kabel")){
+    if(inInventory.includes("altes VGA Kabel") && !isPlaying){
         playAudioTrack('audio/020_vga_wegwerfen.mp3')
         filterInventory(e => e !== 'altes VGA Kabel');
         printInventory()
