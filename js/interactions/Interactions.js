@@ -45,7 +45,10 @@ const keyboard = window.keyboard = {}
 window.infoPictureOpen = false;
 
 //triggers interactions when in range
-window.closeEnough = 0
+let closeEnough = 0
+function adjustCloseEnough(a){
+	closeEnough = 1
+}
 
 //array für alle modelle die wir einsammeln
 let inInventory = ["Handy", "USB Stick"]
@@ -214,13 +217,14 @@ function handleInteractions(scene, camera, mousecaster, mouse, time, dt, outline
     		wetFloorAudio.push(first);
 		}
 	}
-	if(scene == outsideScene){
+
+	if(scene == outsideScene && once == 1){
 		if(camera.position.distanceTo(abbeanumInfoBoardInteractable.position <=3 && !isPlaying && closeEnough == 0)){
-			closeEnough = 1
+			adjustCloseEnough()
 			playStoryTrack('audio/018_geschichte_abb.mp3')
 		}
 	}
-	
+
 	//////////////////////////////
 	///// MOUSE INTERACTIONS /////
 	//////////////////////////////
@@ -295,4 +299,4 @@ function rayInteract(rayIntersects){
 function filterInventory(exp){
 	inInventory = inInventory.filter(exp);
 }
-export { handleInteractions, inInventory, filterInventory, interactables, lockElement, unlockElement}
+export { handleInteractions, inInventory, filterInventory, interactables, lockElement, unlockElement, closeEnough, adjustCloseEnough}

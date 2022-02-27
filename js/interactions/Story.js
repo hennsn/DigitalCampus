@@ -148,14 +148,6 @@ function startStory(scene, mousecaster){
 		setTimeout(closeText, 28000)
 	}
 	if(once == 16 && !overlayActive) setMissionText("🎉")
-
-
-	/*let loop = 0
-	if((once == 9 && story == 7) || ((once == 10 || once == 9) && story == 7) && isPlaying == false && loop == 0){
-		loop = 1
-		playAudioTrack('audio/gvidonsound_pixabay.mp3')
-		
-	}*/
 }
 
 export { openText, closeText, overlayActive, startStory, updateStory, updateOnce, setMissionText }

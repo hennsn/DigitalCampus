@@ -59,7 +59,9 @@ class Door extends Interactable {
 	
 	#openDoor(currentScene, camera){
 		window.scene = window[this.sceneName]
-		playAudioTrack('audio/door_1_open.mp3');
+		if(!((once == 9 && story == 7) || ((once == 10 || once == 9) && story == 7))){
+			playAudioTrack('audio/door_1_open.mp3');
+		}
 		showLoadinOverlay(150)
 		camera.position.copy(this.entryPoint)
 	}

@@ -5,7 +5,7 @@ import {CustomInteractable, Door, InventoryObject} from "./Interactable.js";
 import {closeText, openText, updateOnce, updateStory} from "./Story.js";
 import {isPlaying, playStoryTrack, playAudioTrack, stopStoryTrack, audioStory, audio} from "../UserInterface.js";
 import {openOnce, openOnce_False, openOnce_True, quizOpen, quizOpen_False, quizOpen_True} from "./Quiz.js";
-import {inInventory, filterInventory, lockElement, unlockElement} from "./Interactions.js";
+import {inInventory, filterInventory, lockElement, unlockElement, closeEnough, adjustCloseEnough} from "./Interactions.js";
 import {
     allowUserInput,
     blockUserInput,
@@ -41,7 +41,7 @@ export const wetFloorInteractable = new CustomInteractable('WetFloorSign', () =>
 
 export const trashcanInteractable = new CustomInteractable('Trashcan', () => {
     if(inInventory.includes("altes VGA Kabel") && !isPlaying){
-        playAudioTrack('audio/020_vga_wegwerfen.mp3')
+        playStoryTrack('audio/020_vga_wegwerfen.mp3')
         filterInventory(e => e !== 'altes VGA Kabel');
         printInventory()
         lockElement('Trashcan')
@@ -115,7 +115,8 @@ export const coffeeMachineInteractable = new CustomInteractable('CoffeeMachine',
             allowUserInput()
             missionText.innerHTML = "Finde die Toiletten - und zwar schnell!"
             playAudioTrack('audio/gvidonsound_pixabay.mp3')
-        }, 14000)
+            audio.volume = 0.75
+        }, 14400)
     }
 })
 export const beamerInteractable = new CustomInteractable('Beamer', () => {
@@ -145,7 +146,7 @@ export const beamerInteractable = new CustomInteractable('Beamer', () => {
 })
 export const abbeanumInfoBoardInteractable = new CustomInteractable('AbbeanumInfoBoard', () => {
     if (closeEnough == 0 && !isPlaying && once == 1) {
-        closeEnough = 1
+        adjustCloseEnough()
         playStoryTrack('audio/018_geschichte_abb.mp3')
         
     }
@@ -221,8 +222,8 @@ export const bathroomDoorDummyUpstairsInteractable = new CustomInteractable('Bat
 			//playStoryTrack('audio/010a_damentoiletten.mp3')
 			setTimeout(function(){
 				missionText.innerHTML = "DIE RICHTIGEN TOILETTEN"
-                audio.volume = 1
-			}, 2000)
+                audio.volume = 0.75
+			}, 2100)
 		}
 })
 

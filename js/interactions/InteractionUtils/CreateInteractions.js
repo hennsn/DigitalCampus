@@ -7,7 +7,7 @@ import {sendMultiplayerMessage} from "../../environment/Multiplayer.js"
 import {updateOnce, updateStory} from "../Story.js"
 import {clampCameraRotation, printInteractables} from "./AuxiliaryFunctions.js"
 import {openOnce} from "../Quiz.js"
-import {changableInteractionState, user } from "../Interactions.js"
+import {changableInteractionState, user, closeEnough } from "../Interactions.js"
 
 function createInteractions(scene, camera, renderer, mouse) {
     //let jumpTime = changableInteractionState.jumpTime
@@ -114,7 +114,7 @@ function createInteractions(scene, camera, renderer, mouse) {
                     break;
                 case 'q':
                     // opens inventory
-                    if (changableInteractionState.inventoryOpen == false) {
+                    if (changableInteractionState.inventoryOpen == false && !((once == 9 && story == 7) || ((once == 10 || once == 9) && story == 7))) {
                         playAudioTrack('audio/inventory_sound.mp3');
                         document.getElementById("inventory").style.visibility = 'visible';
                         changableInteractionState.inventoryOpen = true
