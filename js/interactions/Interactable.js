@@ -57,7 +57,7 @@ class Door extends Interactable {
 		this.sceneName = sceneName
 	}
 	
-	#openDoor(currentScene, camera){
+	#openDoor(camera){
 		window.scene = window[this.sceneName]
 		if(!((once == 9 && story == 7) || ((once == 10 || once == 9) && story == 7))){
 			playAudioTrack('audio/door_1_open.mp3');
@@ -66,9 +66,9 @@ class Door extends Interactable {
 		camera.position.copy(this.entryPoint)
 	}
 	
-	interact(currentScene, camera){
+	interact(camera){
 		super.interact()
-		this.#openDoor(currentScene, camera)
+		this.#openDoor(camera)
 	}
 }
 
@@ -107,23 +107,6 @@ class InventoryObject extends Interactable {
 }
 
 
-class InfoObject extends Interactable {
-	constructor(name) {
-		super(name)
-		this.unlocked = true
-	}
-	
-	interact(){
-		super.interact()
-		this.#getInfo()
-	}
-	
-	#getInfo(){
-	   
-	}
-}
-
-
 class CustomInteractable extends Interactable {
 	constructor(name, interactionFunction){
 		super(name)
@@ -137,4 +120,4 @@ class CustomInteractable extends Interactable {
 	}
 }
 
-export { Interactable, Door, InfoObject, InventoryObject, CustomInteractable }
+export { Interactable, Door, InventoryObject, CustomInteractable }
