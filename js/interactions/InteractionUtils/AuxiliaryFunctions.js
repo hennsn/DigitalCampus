@@ -1,7 +1,7 @@
-// find object in interactables array we are looking for
 import {inInventory, interactables, changableInteractionState} from "../Interactions.js";
 import {clamp, degToRad} from "../../Maths.js";
 
+//returns element in questio out of interactables array
 function findElement(lookingFor) {
     const index = interactables.findIndex(interactable => interactable.name == lookingFor || (interactable.interactableModel && interactable.interactableModel.name == name))
     return interactables[index]
@@ -12,6 +12,7 @@ function printInventory() {
     inventory.innerHTML = inInventory.join("<br/>")
 }
 
+//prints all interactables
 export function printInteractables() {
     for (let i = 0; i < interactables.length; i++) {
         console.log(interactables[i].name)
@@ -30,13 +31,12 @@ function blockUserInput() {
     changableInteractionState.isBlocked = true
     controlHints.style.visibility = 'hidden'
 }
-
 function allowUserInput() {
     changableInteractionState.isBlocked = false
     controlHints.style.visibility = 'visible'
 }
 
-//Bildanzeige (derzeit über p)
+//Bildanzeige
 function display_image(src) {
     infoPictureOpen = true
     document.getElementById("infoPicture").style.visibility = 'visible'
@@ -47,7 +47,6 @@ function display_image(src) {
     a.style.margin = "0 auto"
     document.getElementById("dispImage").appendChild(a)
 }
-
 function close_image(imgID) {
     infoPictureOpen = false
     document.getElementById("infoPicture").style.visibility = 'hidden'

@@ -8,12 +8,11 @@ import {
 	printInventory
 } from "./InteractionUtils/AuxiliaryFunctions.js";
 
-//boolean overlay
-let overlayActive = false
-///COUNTER FOR STORY (we'll see if it works that way or if it's to simple) /////
+///COUNTER FOR STORY
 window.story = 0
 window.once = 0
 
+//adjust story counter variables
 function updateStory(){
 	story++
 }
@@ -21,23 +20,24 @@ function updateOnce(){
 	once++
 }
 
-//overlay//
+//overlay variables
+let overlayActive = false
 const overlay = document.getElementById('overlay');
-//overlay.addEventListener('click', closeText);
 
+//overlay functions
 function openText(){
 	document.getElementById("overlay").classList.add("active");
 	overlayActive = true
 	hideInventory()
 	blockUserInput()
 }
-
 function closeText(){
 	document.getElementById("overlay").classList.remove("active");
 	overlayActive = false
 	allowUserInput()
 }
 
+//missiontext
 var lastMissionText = 'x'
 function setMissionText(text){
 	if(text != lastMissionText){
@@ -47,14 +47,15 @@ function setMissionText(text){
 }
 
 function startStory(scene, mousecaster){
+	/*DISCLAIMER: the once variable adjustment is necessary after every playStoryTrack function call; 
+	otherwise the audio might be triggered multiple times and create the choir of doom an despair straight out of hell */
+
 	//Spawn
 	if(scene == outsideScene && story == 0 && (changableInteractionState.keyWasPressed || changableInteractionState.wasClicked)){
 		if(once == 0){
 			updateOnce() // to 1
 			playStoryTrack('audio/001_einleitung_spawn_new.mp3')
-			setTimeout(function(){
-				lockElement("AbbeanumDoorEntrance")
-			}, 200)
+			lockElement("AbbeanumDoorEntrance")
 		}
 	}
 	//end of spawn audio
@@ -99,13 +100,13 @@ function startStory(scene, mousecaster){
 			}
 		})
 	}
-	//after phone call
+	//after phone call pt. 1
 	if(once == 4 && !isPlaying){
 		story = 3
 		document.getElementById("button").classList.remove("active")
 		unlockElement("HS1DoorExit")
 	}
-	//after phone call
+	//after phone call pt. 2
 	if(story == 3){
 		setMissionText("Flehe Kai, Henrik und Jan in Hörsaal 2 um einen Laptop an")
 		unlockElement("HS2DoorDummy")
@@ -120,15 +121,17 @@ function startStory(scene, mousecaster){
 		printInventory()
 		unlockElement("Laptop")
 	}
+	//after laptop2 interaction
 	if(story == 5 && once == 6 && !isPlaying){
-		// zu schwierig ohne Hilfe
 		setMissionText("*Leihe* dir irgendwo im Abbeanum ein Kabel 📺")
 		unlockElement("TvCuboid")
 	}
+	//after TV interaction
 	if(once == 7 && story == 6 && !isPlaying){
 		unlockElement("Kaffeetasse")
 		setMissionText("Hole die Kaffeetasse aus dem Hörsaal 1")
 	}
+	//after stick interaction
 	if(once == 13 && story == 7){
 		mousecaster.far = 6 // adjusts mousecaster to click on beamer
 		if (scene == abbeanumCorridorScene){
@@ -137,6 +140,7 @@ function startStory(scene, mousecaster){
 
 		}
 	}
+	//after beamer interaction
 	if(once == 15 && story == 8 && !isPlaying){
 		updateOnce() //to 16
 		setTimeout(function(){

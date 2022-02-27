@@ -34,19 +34,9 @@ export const cupInteractable = new InventoryObject('Kaffeetasse', 'audio/008_kaf
                                     "Auf zur Kaffeemaschine im Flur", "CoffeeMachine", true)
 // NOT REALLY NEEDED
 //export const blackboardsInteractable = new InventoryObject('Blackboards')
-// Custom Objects
-export const wetFloorInteractable = new CustomInteractable('WetFloorSign', () => {
 
-})
-
-export const trashcanInteractable = new CustomInteractable('Trashcan', () => {
-    if(inInventory.includes("altes VGA Kabel") && !isPlaying){
-        playStoryTrack('audio/020_vga_wegwerfen.mp3')
-        filterInventory(e => e !== 'altes VGA Kabel');
-        printInventory()
-        lockElement('Trashcan')
-    }
-})
+//CUSTOM OBJECTS//
+//story-relevant
 export const laptopInteractable = new CustomInteractable('Laptop', () => {
     console.log('laptop1 was clicked')
 		if(once == 2){
@@ -82,23 +72,45 @@ export const laptopInteractable = new CustomInteractable('Laptop', () => {
 			printInventory()
 		}
 })
-export const laptop2Interactable = new CustomInteractable('Laptop2', () => {
-    console.log('laptopt2 was clicked')
-    if (once == 11 && story == 7) {
-        updateOnce() //to 12
-        inInventory.pop()
-        printInventory()
-        lockElement("Laptop2")
-        lockElement("HS1DoorExit")
-        playStoryTrack('audio/011_physische_intervention_geplant.mp3')
-        missionText.innerHTML = "Sei entrüstet"
+
+export const HS2DoorDummyInteractable = new CustomInteractable('HS2DoorDummy', () => {
+    console.log('hs2door was clicked')
+		if(story == 3 && isPlaying == false){
+            lockElement('HS2DoorDummy')
+			if(once == 4){
+				updateOnce() //to 5
+				updateStory() //to 4
+				playStoryTrack('audio/005_laptop_holen.mp3')
+				openText()
+				display_image('images/hs2.jpg')
+				setTimeout(function(){
+					closeText()
+					close_image('leImage')
+				}, 35000)
+			}	
+		}
+})
+
+export const tvCuboidInteractable = new CustomInteractable('TvCuboid', () => {
+    if (once == 6 && !isPlaying) {
+        lockElement("TvCuboid")
+        blockUserInput()
+        updateOnce() //to 7
+        updateStory() //to 6
+        playStoryTrack('audio/007_kabel_gefunden_kaffee.mp3')
         setTimeout(function () {
-            unlockElement("HS1DoorExit")
-            unlockElement("Stock")
-            missionText.innerHTML = "Finde einen Stock"
-        }, 17000)
+            scene.getObjectByName('AbbeanumInside').getObjectByName('Fernseher_aus').visible = true
+            scene.getObjectByName('AbbeanumInside').getObjectByName('Fernseher_an').visible = false
+            if (!inInventory.includes('brandneues HDMI-Kabel')) {
+                inInventory.push('brandneues HDMI-Kabel')
+            }
+            missionText.innerHTML = "Schnell weg - du warst nie hier!"
+            printInventory()
+        }, 5000)
+        setTimeout(allowUserInput, 5000)
     }
 })
+
 export const coffeeMachineInteractable = new CustomInteractable('CoffeeMachine', () => {
     console.log('coffee machine was clicked')
     if (once == 8) {
@@ -119,6 +131,66 @@ export const coffeeMachineInteractable = new CustomInteractable('CoffeeMachine',
         }, 14400)
     }
 })
+
+//optional detour
+export const bathroomDoorDummyUpstairsInteractable = new CustomInteractable('BathroomDoorDummyUpstairs', () => {
+    console.log('bathroom upstairs was clicked')
+		if(once == 9 && story == 7){
+			updateOnce() //to 10
+            audio.volume = 0.07
+            lockElement("BathroomDoorDummyUpstairs")
+            setTimeout(function(){
+                playStoryTrack('audio/010a_damentoiletten.mp3')
+            }, 200)
+			setTimeout(function(){
+				missionText.innerHTML = "DIE RICHTIGEN TOILETTEN"
+                audio.volume = 0.75
+			}, 2100)
+		}
+})
+
+export const bathroomDoorDummyBasementInteractable = new CustomInteractable('BathroomDoorDummyBasement', () => {
+    console.log('bathroom basement was clicked')
+		if((once == 10 || once == 9) && story == 7){
+			if(once == 9) updateOnce() //to 10
+			updateOnce() //to 11
+            audio.pause()
+            audio.currentTime = 0
+			openText()
+			display_image('images/stand_by.jpg');
+            lockElement("BathroomDoorDummyBasement")
+            lockElement("BathroomDoorDummyUpstairs")
+            unlockElement("Laptop2")
+            setTimeout(function(){
+                playStoryTrack('audio/010_toilettengang.mp3')
+            }, 200)
+			missionText.innerHTML = ""
+			setTimeout(function(){
+				missionText.innerHTML = "Beweise deine Informatik Kenntnisse: Schließ das HDMI-Kabel an!"
+				closeText()
+				close_image('leImage');
+			}, 12000)
+		}
+})
+
+export const laptop2Interactable = new CustomInteractable('Laptop2', () => {
+    console.log('laptopt2 was clicked')
+    if (once == 11 && story == 7) {
+        updateOnce() //to 12
+        inInventory.pop()
+        printInventory()
+        lockElement("Laptop2")
+        lockElement("HS1DoorExit")
+        playStoryTrack('audio/011_physische_intervention_geplant.mp3')
+        missionText.innerHTML = "Sei entrüstet"
+        setTimeout(function () {
+            unlockElement("HS1DoorExit")
+            unlockElement("Stock")
+            missionText.innerHTML = "Finde einen Stock"
+        }, 17000)
+    }
+})
+
 export const beamerInteractable = new CustomInteractable('Beamer', () => {
     console.log('beamer was clicked')
     if (once == 13 && story == 8) {
@@ -144,90 +216,8 @@ export const beamerInteractable = new CustomInteractable('Beamer', () => {
         }, 3000)
     }
 })
-export const abbeanumInfoBoardInteractable = new CustomInteractable('AbbeanumInfoBoard', () => {
-    if (closeEnough == 0 && !isPlaying && once == 1) {
-        adjustCloseEnough()
-        playStoryTrack('audio/018_geschichte_abb.mp3')
-        
-    }
-})
-export const tvCuboidInteractable = new CustomInteractable('TvCuboid', () => {
-    if (once == 6 && !isPlaying) {
-        lockElement("TvCuboid")
-        blockUserInput()
-        updateOnce() //to 7
-        updateStory() //to 6
-        playStoryTrack('audio/007_kabel_gefunden_kaffee.mp3')
-        setTimeout(function () {
-            scene.getObjectByName('AbbeanumInside').getObjectByName('Fernseher_aus').visible = true
-            scene.getObjectByName('AbbeanumInside').getObjectByName('Fernseher_an').visible = false
-            if (!inInventory.includes('brandneues HDMI-Kabel')) {
-                inInventory.push('brandneues HDMI-Kabel')
-            }
-            missionText.innerHTML = "Schnell weg - du warst nie hier!"
-            printInventory()
-        }, 5000)
-        setTimeout(allowUserInput, 5000)
-    }
-})
-export const HS2DoorDummyInteractable = new CustomInteractable('HS2DoorDummy', () => {
-    console.log('hs2door was clicked')
-		if(story == 3 && isPlaying == false){
-            lockElement('HS2DoorDummy')
-			if(once == 4){
-				updateOnce() //to 5
-				updateStory() //to 4
-				playStoryTrack('audio/005_laptop_holen.mp3')
-				openText()
-				display_image('images/hs2.jpg')
-				setTimeout(function(){
-					closeText()
-					close_image('leImage')
-				}, 35000)
-			}	
-		}
-})
-export const bathroomDoorDummyBasementInteractable = new CustomInteractable('BathroomDoorDummyBasement', () => {
-    console.log('bathroom basement was clicked')
-		if((once == 10 || once == 9) && story == 7){
-			if(once == 9) updateOnce() //to 10
-			updateOnce() //to 11
-            audio.pause()
-            audio.currentTime = 0
-			openText()
-			display_image('images/stand_by.jpg');
-            lockElement("BathroomDoorDummyBasement")
-            lockElement("BathroomDoorDummyUpstairs")
-            unlockElement("Laptop2")
-            setTimeout(function(){
-                playStoryTrack('audio/010_toilettengang.mp3')
-            }, 200)
-			missionText.innerHTML = ""
-			setTimeout(function(){
-				missionText.innerHTML = "Beweise deine Informatik Kenntnisse: Schließ das HDMI-Kabel an!"
-				closeText()
-				close_image('leImage');
-			}, 12000)
-		}
-})
-export const bathroomDoorDummyUpstairsInteractable = new CustomInteractable('BathroomDoorDummyUpstairs', () => {
-    console.log('bathroom upstairs was clicked')
-		if(once == 9 && story == 7){
-			updateOnce() //to 10
-            audio.volume = 0.07
-            lockElement("BathroomDoorDummyUpstairs")
-            setTimeout(function(){
-                playStoryTrack('audio/010a_damentoiletten.mp3')
-            }, 200)
-			//playStoryTrack('audio/010a_damentoiletten.mp3')
-			setTimeout(function(){
-				missionText.innerHTML = "DIE RICHTIGEN TOILETTEN"
-                audio.volume = 0.75
-			}, 2100)
-		}
-})
 
-
+//story-independent (inside)
 export const flyerInteractable = new CustomInteractable('Flyer', () => {
     if(!quizAudio){
         playStoryTrack('audio/019_quiz.mp3')
@@ -247,6 +237,7 @@ export const flyerInteractable = new CustomInteractable('Flyer', () => {
         }
     }
 })
+
 export const infoboardCorridorInteractable = new CustomInteractable('InfoboardCorridor', () => {
     if (!openOnce) {
         openOnce_True() // allows picture to open for the first time
@@ -260,6 +251,27 @@ export const infoboardCorridorInteractable = new CustomInteractable('InfoboardCo
     }
 })
 
+export const wetFloorInteractable = new CustomInteractable('WetFloorSign', () => {
+
+})
+
+export const trashcanInteractable = new CustomInteractable('Trashcan', () => {
+    if(inInventory.includes("altes VGA Kabel") && !isPlaying){
+        playStoryTrack('audio/020_vga_wegwerfen.mp3')
+        filterInventory(e => e !== 'altes VGA Kabel');
+        printInventory()
+        lockElement('Trashcan')
+    }
+})
+
+//story-independent (outside)
+export const abbeanumInfoBoardInteractable = new CustomInteractable('AbbeanumInfoBoard', () => {
+    if (closeEnough == 0 && !isPlaying && once == 1) {
+        adjustCloseEnough()
+        playStoryTrack('audio/018_geschichte_abb.mp3')
+        
+    }
+})
 
 export const infoboardOutside = new CustomInteractable('HistoryBoard', () => {
 	if(!openOnce){

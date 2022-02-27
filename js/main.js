@@ -106,10 +106,11 @@ window.mixers = []
 // start location
 window.scene = outsideScene
 
-const mousecaster = new THREE.Raycaster() //new raycaster for mouse
+//new raycaster for mouse
+const mousecaster = new THREE.Raycaster() 
 mousecaster.far = 3
 
-////mouse/////
+//mouse (x and y values are specified in CreateInteractions.js)
 const mouse = new THREE.Vector2();
 
 // adjust the aspect ratio as needed:

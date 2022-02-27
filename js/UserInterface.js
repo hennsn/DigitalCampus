@@ -93,12 +93,15 @@ function handleUserInterface(dt){
 	updateDownloadBar(dt)
 }
 
+//AUDIO FUNCTIONS//
+//background audio (music, doors, inventory opening sound, ...)
 function playAudioTrack(srcUrl){
 	audio = new Audio(srcUrl) //var audio
 	audio.play()
 	return audio
 }
 
+//story audio (should play uninterrupted)
 var lastAudio = null
 function playStoryTrack(srcUrl){
 	isPlaying = true
@@ -114,7 +117,6 @@ function playStoryTrack(srcUrl){
 	lastAudio = audioStory
 	return audioStory
 }
-
 function stopStoryTrack(audioStory) {
 	audioStory = audioStory || lastAudio
 	if(audioStory){
@@ -124,7 +126,6 @@ function stopStoryTrack(audioStory) {
 		audioStory.currentTime = 0
 	}
 }
-
 //doesn't work
 function queueAudioEvent(setback){
 	console.log('setback: ', setback)

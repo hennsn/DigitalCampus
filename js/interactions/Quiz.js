@@ -12,7 +12,8 @@ const quizAnswerBtnElem = document.getElementById('quiz-answer-btns')
 const quizAnswerEvaluatedElem = document.getElementById('quizAnswerEvaluated');
 
 let quizQuestionIndex
-let quizCountCorrect
+let quizCountCorrect //how many questions are answered correctly
+
 //boolean for quiz
 let quizOpen = false
 let openOnce = false
@@ -108,11 +109,11 @@ function quizAnswer(e){ // check the answer
 	if (quizQuestions.length > quizQuestionIndex +1){	
 		quizNextBtn.classList.remove('hide')
 	} else {
-		document.getElementById('quizFinished').innerText = 'du hast ' + quizCountCorrect + ' von ' + quizQuestions.length + ' richtig'
+		document.getElementById('quizFinished').innerText = 'du hast ' + quizCountCorrect + ' von ' + quizQuestions.length + ' richtig' 
 		quizStartBtn.innerText = 'Restart'
 		quizStartBtn.classList.remove('hide')
 		quizExitBtn.classList.remove('hide')
-		if(firstTry==0 && quizCountCorrect==4){
+		if(firstTry==0 && quizCountCorrect==4){ //trophy only becomes visible when quiz is aced first try
 			firstTry=1
 			playAudioTrack('audio/win_mixkitsounds.wav')
 			abbeanumCorridorScene.getObjectByName("pokal").visible = true
@@ -120,7 +121,6 @@ function quizAnswer(e){ // check the answer
 			firstTry = 1
 		}
 	}
-	//quizCountCorrect ist the variable you want to work with
 }
 
 function setGivenAnswer(element, correct){

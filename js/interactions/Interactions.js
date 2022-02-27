@@ -44,24 +44,24 @@ const keyboard = window.keyboard = {}
 //boolean for picture display
 window.infoPictureOpen = false;
 
-//triggers interactions when in range
+//for abbeanumInfoBoard interaction when in range OR clicked (does not work when in range)
 let closeEnough = 0
-function adjustCloseEnough(a){
+function adjustCloseEnough(){
 	closeEnough = 1
 }
 
-//array für alle modelle die wir einsammeln
+//array for all models we stashed in inventory
 let inInventory = ["Handy", "USB Stick"]
 inventory.innerHTML += "Handy <br> USB Stick"
 
 let wetFloorAudio = ['audio/017a_gewischt.mp3', 'audio/017b_hier_nicht_lang.mp3', 'audio/017c_you_shall_not_pass.mp3']
 
 // the user
-// block user for cutscenes 
-export let user = { height: 1.7, eyeHeight: 1.6, speed: 1.3, turnSpeed: 0.03, insideSpeed: 0.7, outsideSpeed: 1.3, isIntersecting: false, isBlocked: false } //add let isBlocked to block user input
+export let user = { height: 1.7, eyeHeight: 1.6, speed: 1.3, turnSpeed: 0.03, insideSpeed: 0.7, outsideSpeed: 1.3, isIntersecting: false, isBlocked: false }
 //const distanceToWalls = 1
 let lastInteractionTime = Date.now()
 
+//toggling input and display features
 export let changableInteractionState = {
 	keyWasPressed: false,
 	//boolean for raycasting check
@@ -74,6 +74,7 @@ export let changableInteractionState = {
 
 //export const changeKeyPressed = newValue => keyWasPressed = newValue;
 
+//array of all interactable objects
 const interactables = [
 	abbeanumDoorEntranceInteractable, abbeanumDoorExitInteractable, 
 	hs1DoorEntranceInteractable, hs1DoorExitInteractable, 
@@ -87,6 +88,7 @@ const interactables = [
 
 window.interactables = interactables
 
+//shortcuts for locking/unlocking models
 function unlockElement(name){
 	findElement(name).unlocked = true
 }
@@ -186,44 +188,6 @@ function handleInteractions(scene, camera, mousecaster, mouse, time, dt, outline
 	changableInteractionState.jumpTime += dt
 	
 	updateSparkles(scene, camera, targetSizes, sparkleTargets, time, dt)
-	
-	
-	//AUTOMATICALLY CLOSE PICTURE WHEN WALKING AWAY
-	if(infoPictureOpen==true){
-		lockElement('AbbeanumDoorEntrance')
-		if(scene == abbeanumCorridorScene){
-			let distance = camera.position.distanceTo(infoboardCorridorInteractable.position)
-			if(distance > 2 && distance <= 3){
-				close_image('leImage')
-			}
-		}
-		if(scene == outsideScene){
-			let distance = camera.position.distanceTo(infoboardOutside.position)
-			if(distance > 2 && distance <= 3){
-				close_image('leImage')
-			}
-		}	
-	}else{
-		unlockElement('AbbeanumDoorEntrance')
-	}
-
-	//play audios near wet floor sign
-	if(scene == abbeanumCorridorScene){
-		if(camera.position.distanceTo(wetFloorInteractable.position) <= 3 && !isPlaying
-			&& camera.position.y - wetFloorInteractable.position.y > 1.5 ){
-			console.log('working')
-			playStoryTrack(wetFloorAudio[0])
-			let first = wetFloorAudio.shift();
-    		wetFloorAudio.push(first);
-		}
-	}
-
-	if(scene == outsideScene && once == 1){
-		if(camera.position.distanceTo(abbeanumInfoBoardInteractable.position <=3 && !isPlaying && closeEnough == 0)){
-			adjustCloseEnough()
-			playStoryTrack('audio/018_geschichte_abb.mp3')
-		}
-	}
 
 	//////////////////////////////
 	///// MOUSE INTERACTIONS /////
@@ -243,7 +207,45 @@ function handleInteractions(scene, camera, mousecaster, mouse, time, dt, outline
 	
 	changableInteractionState.wasClicked = false
 	changableInteractionState.keyWasPressed = false
+
+
+	//SOME MORE FUNCTIONS/DEPENDENCIES
+	//automatically closing open pictures when walking away
+	if(infoPictureOpen==true){
+		lockElement('AbbeanumDoorEntrance')
+		if(scene == abbeanumCorridorScene){
+			let distance = camera.position.distanceTo(infoboardCorridorInteractable.position)
+			if(distance > 2 && distance <= 3){
+				close_image('leImage')
+			}
+		}
+		if(scene == outsideScene){
+			let distance = camera.position.distanceTo(infoboardOutside.position)
+			if(distance > 2 && distance <= 3){
+				close_image('leImage')
+			}
+		}	
+	}else{
+		if(!(once == 0) && !isPlaying) unlockElement('AbbeanumDoorEntrance') //needed or the abbeanum door won't lock at the beginning
+	}
 	
+	//play audios near wet floor sign
+	if(scene == abbeanumCorridorScene){
+		if(camera.position.distanceTo(wetFloorInteractable.position) <= 3 && !isPlaying && camera.position.y - wetFloorInteractable.position.y > 1.5 ){
+				console.log('working')
+				playStoryTrack(wetFloorAudio[0])
+				let first = wetFloorAudio.shift();
+				wetFloorAudio.push(first);
+			}
+	}
+	
+	//doesn't work; idea: if you get close enough, the audio starts playing
+	if(scene == outsideScene && once == 1){
+		if(camera.position.distanceTo(abbeanumInfoBoardInteractable.position <=3 && !isPlaying && closeEnough == 0)){
+			adjustCloseEnough() //sets closeEnough = 1
+			playStoryTrack('audio/018_geschichte_abb.mp3')
+		}
+	}
 }
 
 

@@ -114,11 +114,12 @@ function createInteractions(scene, camera, renderer, mouse) {
                     break;
                 case 'q':
                     // opens inventory
-                    if (changableInteractionState.inventoryOpen == false && !((once == 9 && story == 7) || ((once == 10 || once == 9) && story == 7))) {
+                    if (changableInteractionState.inventoryOpen == false && !((once == 9 && story == 7) || ((once == 10 || once == 9) && story == 7))) { //prevents opening when music plays (toilet search)
                         playAudioTrack('audio/inventory_sound.mp3');
                         document.getElementById("inventory").style.visibility = 'visible';
                         changableInteractionState.inventoryOpen = true
                     } else {
+                        //closes inventory
                         document.getElementById("inventory").style.visibility = 'hidden';
                         changableInteractionState.inventoryOpen = false
                     }
@@ -137,26 +138,19 @@ function createInteractions(scene, camera, renderer, mouse) {
                     // skip audio
                     stopStoryTrack()
                     break
-                // MAI'S DEBUGGING SIDE KEYS
-                case 'ö':
-                    updateStory() //story ++
-                    break
+                // MAI'S DEBUGGING SIDE KEY
                 case 'ä':
-                    printInteractables() //story --
-                    break
-                case 'ü':
-                    updateOnce() //once ++
+                    printInteractables() //prints all interactable models 
                     break
                 case 'z':
                     // MAI'S DEBUGGING MAIN KEY
-                    console.log('story: ', story) //test where in story we are
-                    console.log('once: ', once) //teste once variable
-                    //console.log('isPlaying: ', isPlaying)
-                    console.log('openOnce: ', openOnce)
+                    console.log('story: ', story) //tests story variable
+                    console.log('once: ', once) //tests once variable
+                    //console.log('isPlaying: ', isPlaying) //tests if story audio is playing
+                    console.log('openOnce: ', openOnce) //for picture display debugging
                     console.log('infoPictureOpen: ', infoPictureOpen)
-                    //console.log('inventory: ', inInventory)
-                    //console.log(findElement())
-                    console.log(closeEnough)
+                    //console.log('inventory: ', inInventory) //prints inventory array
+                    //console.log(closeEnough) //for abbeanumInfoBoard (does not work)
                     break
             }
         }

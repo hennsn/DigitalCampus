@@ -59,7 +59,7 @@ class Door extends Interactable {
 	
 	#openDoor(camera){
 		window.scene = window[this.sceneName]
-		if(!((once == 9 && story == 7) || ((once == 10 || once == 9) && story == 7))){
+		if(!((once == 9 && story == 7) || ((once == 10 || once == 9) && story == 7))){ //prevents sound when searching for toilets
 			playAudioTrack('audio/door_1_open.mp3');
 		}
 		showLoadinOverlay(150)
