@@ -273,7 +273,7 @@ function keyPressInteract(camera, currentInteractables){
 			}
 		}
 	}
-	if(best) best.interact(scene, camera)
+	if(best) best.interact(camera)
 }
 
 function rayInteract(rayIntersects){
@@ -285,7 +285,7 @@ function rayInteract(rayIntersects){
 		//in case one clicks on submesh of a parent mesh
 		while(mesh){
 			if(mesh.userData && mesh.userData.interact){
-				mesh.userData.interact(scene, camera)
+				mesh.userData.interact(camera)
 				return
 			} else mesh = mesh.parent
 		}

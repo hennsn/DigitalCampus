@@ -57,16 +57,16 @@ class Door extends Interactable {
 		this.sceneName = sceneName
 	}
 	
-	#openDoor(currentScene, camera){
+	#openDoor(camera){
 		window.scene = window[this.sceneName]
 		playAudioTrack('audio/door_1_open.mp3');
 		showLoadinOverlay(150)
 		camera.position.copy(this.entryPoint)
 	}
 	
-	interact(currentScene, camera){
+	interact(camera){
 		super.interact()
-		this.#openDoor(currentScene, camera)
+		this.#openDoor(camera)
 	}
 }
 
@@ -102,23 +102,6 @@ class InventoryObject extends Interactable {
 		super.interact()
 		this.#takeObject()
 	}	
-}
-
-
-class InfoObject extends Interactable {
-	constructor(name) {
-		super(name)
-		this.unlocked = true
-	}
-	
-	interact(){
-		super.interact()
-		this.#getInfo()
-	}
-	
-	#getInfo(){
-	   
-	}
 }
 
 
