@@ -161,7 +161,7 @@ function handleInteractions(scene, camera, mousecaster, mouse, time, dt, outline
 			closeEnough = 1
 			playStoryTrack('audio/018_geschichte_abb.mp3')
 			unlockElement("AbbeanumDoorEntrance")
-		} 
+		}
 	}
 	
 	// check for key-presses, which try to interact
@@ -213,7 +213,7 @@ function handleInteractions(scene, camera, mousecaster, mouse, time, dt, outline
 
 	//play audios near wet floor sign
 	if(scene == abbeanumCorridorScene){
-		if(camera.position.distanceTo(wetFloorInteractable.position) < 1 && !isPlaying){
+		if(camera.position.distanceTo(wetFloorInteractable.position) <= 2 && !isPlaying){
 			console.log('working')
 			playStoryTrack(wetFloorAudio[0])
 			let first = wetFloorAudio.shift();
