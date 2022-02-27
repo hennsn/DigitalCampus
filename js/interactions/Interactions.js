@@ -155,12 +155,6 @@ function handleInteractions(scene, camera, mousecaster, mouse, time, dt, outline
 	if(couldInteract != canInteract){
 		couldInteract = canInteract
 		controlHints.innerHTML = canInteract ? 'WASD laufen<br>LEFT/RIGHT drehen<br>Q Inventar<br>E interagieren' : 'WASD walk<br>LEFT/RIGHT turn<br>Q Inventar'
-		//play the abbeanumInfoboard audio
-		if(closeEnough == 0 && !isPlaying && once == 1){
-			closeEnough = 1
-			playStoryTrack('audio/018_geschichte_abb.mp3')
-			unlockElement("AbbeanumDoorEntrance")
-		}
 	}
 	
 	// check for key-presses, which try to interact
@@ -218,6 +212,12 @@ function handleInteractions(scene, camera, mousecaster, mouse, time, dt, outline
 			playStoryTrack(wetFloorAudio[0])
 			let first = wetFloorAudio.shift();
     		wetFloorAudio.push(first);
+		}
+	}
+	if(scene == outsideScene){
+		if(camera.position.distanceTo(abbeanumInfoBoardInteractable.position <=3 && !isPlaying && closeEnough == 0)){
+			closeEnough = 1
+			playStoryTrack('audio/018_geschichte_abb.mp3')
 		}
 	}
 	

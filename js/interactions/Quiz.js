@@ -114,7 +114,7 @@ function quizAnswer(e){ // check the answer
 		quizExitBtn.classList.remove('hide')
 		if(firstTry==0 && quizCountCorrect==4){
 			firstTry=1
-			playAudioTrack('audio/win.wav')
+			playAudioTrack('audio/win_mixkitsounds.wav')
 			abbeanumCorridorScene.getObjectByName("pokal").visible = true
 		}else{
 			firstTry = 1

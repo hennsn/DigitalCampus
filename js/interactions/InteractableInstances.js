@@ -3,7 +3,7 @@ import * as THREE from 'https://cdn.skypack.dev/three@0.135.0'
 import {latLonToXYZ} from "../environment/Coordinates.js"
 import {CustomInteractable, Door, InventoryObject} from "./Interactable.js";
 import {closeText, openText, updateOnce, updateStory} from "./Story.js";
-import {isPlaying, playStoryTrack, playAudioTrack} from "../UserInterface.js";
+import {isPlaying, playStoryTrack, playAudioTrack, stopStoryTrack, audioStory, audio} from "../UserInterface.js";
 import {openOnce, openOnce_False, openOnce_True, quizOpen, quizOpen_False, quizOpen_True} from "./Quiz.js";
 import {inInventory, filterInventory, lockElement, unlockElement} from "./Interactions.js";
 import {
@@ -114,14 +114,14 @@ export const coffeeMachineInteractable = new CustomInteractable('CoffeeMachine',
         setTimeout(function () {
             allowUserInput()
             missionText.innerHTML = "Finde die Toiletten - und zwar schnell!"
-        }, 12000)
+            playAudioTrack('audio/gvidonsound_pixabay.mp3')
+        }, 14000)
     }
 })
 export const beamerInteractable = new CustomInteractable('Beamer', () => {
     console.log('beamer was clicked')
     if (once == 13 && story == 8) {
         updateOnce() //to 14
-        //updateStory() //to 8
         lockElement("Beamer")
         blockUserInput()
         playStoryTrack('audio/013_verfehlt.mp3')
@@ -147,9 +147,7 @@ export const abbeanumInfoBoardInteractable = new CustomInteractable('AbbeanumInf
     if (closeEnough == 0 && !isPlaying && once == 1) {
         closeEnough = 1
         playStoryTrack('audio/018_geschichte_abb.mp3')
-        setTimeout(function () {
-            unlockElement("AbbeanumDoorEntrance")
-        }, 3000)
+        
     }
 })
 export const tvCuboidInteractable = new CustomInteractable('TvCuboid', () => {
@@ -193,12 +191,16 @@ export const bathroomDoorDummyBasementInteractable = new CustomInteractable('Bat
 		if((once == 10 || once == 9) && story == 7){
 			if(once == 9) updateOnce() //to 10
 			updateOnce() //to 11
+            audio.pause()
+            audio.currentTime = 0
 			openText()
 			display_image('images/stand_by.jpg');
             lockElement("BathroomDoorDummyBasement")
             lockElement("BathroomDoorDummyUpstairs")
             unlockElement("Laptop2")
-			playStoryTrack('audio/010_toilettengang.mp3')
+            setTimeout(function(){
+                playStoryTrack('audio/010_toilettengang.mp3')
+            }, 200)
 			missionText.innerHTML = ""
 			setTimeout(function(){
 				missionText.innerHTML = "Beweise deine Informatik Kenntnisse: Schließ das HDMI-Kabel an!"
@@ -211,13 +213,20 @@ export const bathroomDoorDummyUpstairsInteractable = new CustomInteractable('Bat
     console.log('bathroom upstairs was clicked')
 		if(once == 9 && story == 7){
 			updateOnce() //to 10
+            audio.volume = 0.07
             lockElement("BathroomDoorDummyUpstairs")
-			playStoryTrack('audio/010a_damentoiletten.mp3')
+            setTimeout(function(){
+                playStoryTrack('audio/010a_damentoiletten.mp3')
+            }, 200)
+			//playStoryTrack('audio/010a_damentoiletten.mp3')
 			setTimeout(function(){
 				missionText.innerHTML = "DIE RICHTIGEN TOILETTEN"
+                audio.volume = 1
 			}, 2000)
 		}
 })
+
+
 export const flyerInteractable = new CustomInteractable('Flyer', () => {
     if(!quizAudio){
         playStoryTrack('audio/019_quiz.mp3')
