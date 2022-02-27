@@ -108,7 +108,7 @@ function playStoryTrack(srcUrl){
 	audioStory = new Audio(srcUrl) 
 	audioStory.play()
 	audioStory.onloadedmetadata = function(){
-		console.log(audioStory.duration)
+		console.log(audioStory.duration) //prints length of audio in console
 	}
 	audioStory.addEventListener("ended", function(){
 		console.log('story audio ended')
