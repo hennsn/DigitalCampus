@@ -39,7 +39,7 @@ class Interactable {
 		this.scene = scene
 		this.interactableModel = interactableModel
 		this.position = this.interactableModel.position
-		interactableModel.userData.interact = (s,c) => this.interact(s,c) //speichert pointer auf interactble; macht (namens)abgleich überflüssig 
+		interactableModel.userData.interact = (s,c) => this.interact(s,c) //speichert pointer auf interactable; macht (namens)abgleich überflüssig 
 	}
 	
 	// interact is a facade to the individual interaction implementations of inheriting classes

@@ -23,7 +23,7 @@ function updateOnce(){
 
 //overlay//
 const overlay = document.getElementById('overlay');
-overlay.addEventListener('click', closeText);
+//overlay.addEventListener('click', closeText);
 
 function openText(){
 	document.getElementById("overlay").classList.add("active");
