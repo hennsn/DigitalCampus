@@ -119,9 +119,9 @@ export const coffeeMachineInteractable = new CustomInteractable('CoffeeMachine',
 })
 export const beamerInteractable = new CustomInteractable('Beamer', () => {
     console.log('beamer was clicked')
-    if (once == 13 && story == 7) {
+    if (once == 13 && story == 8) {
         updateOnce() //to 14
-        updateStory() //to 8
+        //updateStory() //to 8
         lockElement("Beamer")
         blockUserInput()
         playStoryTrack('audio/013_verfehlt.mp3')
@@ -149,7 +149,7 @@ export const abbeanumInfoBoardInteractable = new CustomInteractable('AbbeanumInf
         playStoryTrack('audio/018_geschichte_abb.mp3')
         setTimeout(function () {
             unlockElement("AbbeanumDoorEntrance")
-        }, 1500)
+        }, 3000)
     }
 })
 export const tvCuboidInteractable = new CustomInteractable('TvCuboid', () => {

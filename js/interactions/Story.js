@@ -50,8 +50,8 @@ function startStory(scene, mousecaster){
 	//Spawn
 	if(scene == outsideScene && story == 0 && (changableInteractionState.keyWasPressed || changableInteractionState.wasClicked)){
 		if(once == 0){
+			updateOnce() // to 1
 			playStoryTrack('audio/001_einleitung_spawn_new.mp3')
-			once = 1
 			lockElement("AbbeanumDoorEntrance")
 		}
 	}
@@ -129,6 +129,11 @@ function startStory(scene, mousecaster){
 	}
 	if(once == 13 && story == 7){
 		mousecaster.far = 6 // adjusts mousecaster to click on beamer
+		if (scene == abbeanumCorridorScene){
+			updateStory() //to 8
+			playAudioTrack('audio/015_verdammte_klauschweine.mp3')
+
+		}
 	}
 	if(once == 15 && story == 8 && !isPlaying){
 		updateOnce() //to 16
