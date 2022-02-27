@@ -110,7 +110,7 @@ function fillAbbeanumCorridorScene(){
 
                     model.scale.set(s,s,s)
                     const mixer = new THREE.AnimationMixer(model)
-                    mixer.clipAction(model.animations[0]).play()
+                    mixer.clipAction(model.animations[5]).play()
                     mixers.push(mixer)
                     abbeanumCorridorScene.add(model)
             })
