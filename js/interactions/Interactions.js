@@ -121,7 +121,6 @@ function handleInteractions(scene, camera, mousecaster, mouse, time, dt, outline
 	const dumpsterGreen  = scene.getObjectByName('DumpsterGreen')
 	const dumpsterBlue   = scene.getObjectByName('DumpsterBlue')
 	const dumpsterYellow = scene.getObjectByName('DumpsterYellow')
-
 	/**
 	 * Helper function for updating the camera controls in the animation loop.
 	 */
@@ -213,7 +212,8 @@ function handleInteractions(scene, camera, mousecaster, mouse, time, dt, outline
 
 	//play audios near wet floor sign
 	if(scene == abbeanumCorridorScene){
-		if(camera.position.distanceTo(wetFloorInteractable.position) <= 2 && !isPlaying){
+		if(camera.position.distanceTo(wetFloorInteractable.position) <= 3 && !isPlaying
+			&& camera.position.y - wetFloorInteractable.position.y > 1.5 ){
 			console.log('working')
 			playStoryTrack(wetFloorAudio[0])
 			let first = wetFloorAudio.shift();
@@ -230,7 +230,7 @@ function handleInteractions(scene, camera, mousecaster, mouse, time, dt, outline
 
 		mousecaster.setFromCamera(mouse, camera)
 		
-		const mouseIntersects = mousecaster.intersectObjects(currentInteractables.map(ci => ci.interactableModel)) //currentIntersctables bildet auf die Modelle ab
+		const mouseIntersects = mousecaster.intersectObjects(currentInteractables.map(ci => ci.interactableModel)) //currentInteractables bildet auf die Modelle ab
 		rayInteract(mouseIntersects)
 	
 		if(abbeanumDoorEntrance) abbeanumDoorEntrance.visible = false;
