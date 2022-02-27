@@ -16,7 +16,7 @@ let quizCountCorrect
 //boolean for quiz
 let quizOpen = false
 let openOnce = false
-
+let correctOnce = false
 let firstTry = 0
 
 function quizOpen_True(){
@@ -63,6 +63,7 @@ function quizStart(){
 function quizNextQuestion(){	
 	resetAnswers()
 	display_question(quizQuestions[quizQuestionIndex])
+	correctOnce = false
 }
 
 function display_question(question){
@@ -92,11 +93,13 @@ function quizAnswer(e){ // check the answer
 	const clickedBtn = e.target
 	const correct = clickedBtn.dataset.correct	// check the dataset
 	
-	if (clickedBtn.dataset.correct =='true'){
+	if (clickedBtn.dataset.correct =='true' && correctOnce == false){
 		quizAnswerEvaluatedElem.innerText = 'richtig!'
+		correctOnce = true
 		quizCountCorrect++
-	} else if (clickedBtn.dataset.correct != 'true') {
+	} else if (clickedBtn.dataset.correct != 'true' && correctOnce == false) {
 		quizAnswerEvaluatedElem.innerText = 'leider falsch'
+		correctOnce = true
 	}
 	setGivenAnswer(document.body, correct)
 	Array.from(quizAnswerBtnElem.children).forEach(button => {
