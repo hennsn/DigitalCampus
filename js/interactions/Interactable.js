@@ -118,4 +118,4 @@ class CustomInteractable extends Interactable {
 	}
 }
 
-export { Interactable, Door, InfoObject, InventoryObject, CustomInteractable }
+export { Interactable, Door, InventoryObject, CustomInteractable }

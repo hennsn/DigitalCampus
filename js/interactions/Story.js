@@ -52,7 +52,9 @@ function startStory(scene, mousecaster){
 		if(once == 0){
 			updateOnce() // to 1
 			playStoryTrack('audio/001_einleitung_spawn_new.mp3')
-			lockElement("AbbeanumDoorEntrance")
+			setTimeout(function(){
+				lockElement("AbbeanumDoorEntrance")
+			}, 200)
 		}
 	}
 	//end of spawn audio
