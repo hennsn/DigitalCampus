@@ -3,6 +3,8 @@ import { interactables, changableInteractionState, inInventory, lockElement, unl
 import {
 	allowUserInput,
 	blockUserInput,
+	display_image,
+	close_image,
 	findElement,
 	hideInventory,
 	printInventory
@@ -146,10 +148,12 @@ function startStory(scene, mousecaster){
 		setTimeout(function(){
 			openText()
 			playStoryTrack('audio/016_ende.mp3')
+			display_image('images/presentation.png')
 			missionText.innerHTML = ""
 		}, 4000)
 		setTimeout(function(){
 			setMissionText("<h1>Danke für Deine Aufmerksamkeit 😊</h1>")
+			close_image('leImage')
 		}, 25000)
 		setTimeout(closeText, 28000)
 	}
