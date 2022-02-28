@@ -11,6 +11,11 @@ function findElement(lookingFor) {
 function printInventory() {
     inventory.innerHTML = inInventory.join("<br/>")
 }
+//hide inventory
+function hideInventory() {
+    document.getElementById("inventory").style.visibility = 'hidden'
+    changableInteractionState.inventoryOpen = false
+}
 
 //prints all interactables
 export function printInteractables() {
@@ -18,12 +23,6 @@ export function printInteractables() {
         console.log(interactables[i].name)
     }
     console.log(interactables)
-}
-
-//hide inventory
-function hideInventory() {
-    document.getElementById("inventory").style.visibility = 'hidden'
-    changableInteractionState.inventoryOpen = false
 }
 
 //functions to toggle user input
