@@ -198,7 +198,8 @@ function handleInteractions(scene, camera, mousecaster, mouse, time, dt, outline
 
 		mousecaster.setFromCamera(mouse, camera)
 		
-		const mouseIntersects = mousecaster.intersectObjects(currentInteractables.map(ci => ci.interactableModel)) //currentInteractables bildet auf die Modelle ab
+		//currentInteractables bildet auf die Modelle ab
+		const mouseIntersects = mousecaster.intersectObjects(currentInteractables.map(ci => ci.interactableModel)) 
 		rayInteract(mouseIntersects)
 	
 		if(abbeanumDoorEntrance) abbeanumDoorEntrance.visible = false;
